@@ -1,0 +1,168 @@
+<?php
+//pass database parameters and connect to database
+include_once './meta/assets/dbconnect.inc';
+//bring special functions and utilities onto page
+include './meta/inc/utilities.php';
+
+//check if the $id variable was passed in url, escape the string for mysql, and validate that it is a numeric value - pass id value to select record
+if (isset($_GET['id']) and is_numeric($_GET['id'])) {
+	$id = strip_tags($connectLibstaff->real_escape_string((int)$_GET['id']));
+} else {
+	echo 'Query type not supported.';
+	exit;
+}
+
+//set and sanitize global variables for URL construction
+$server = htmlentities(strip_tags($_SERVER['SERVER_NAME']));
+$path = htmlentities(strip_tags(dirname($_SERVER['PHP_SELF'])));
+$fileName = htmlentities(strip_tags(basename($_SERVER['SCRIPT_NAME'])));
+
+//request selected staff data fields
+$query = "SELECT * FROM libstaff.staff WHERE staff_status = 'a' AND staff_id='$id'";
+$getPerson = $connectLibstaff->query($query);
+	if ($getPerson->num_rows == 0) {
+
+		header("HTTP/1.0 404 Not Found", true, 404);
+		readfile("https://lib.montana.edu/error.php");
+		exit();
+	}
+	//Display selected staff entry fields in a list
+	while ($row = $getPerson->fetch_object()) {
+		$staff_id = stripslashes($row->staff_id);
+		$staff_fname = stripslashes($row->givenName);
+		$staff_lname = stripslashes($row->familyName);
+		$staff_name = stripslashes($row->givenName . ' ' . $row->familyName);
+        $staff_name_rdf = stripslashes($row->givenName . ' ' . $row->familyName);
+		$staff_title = stripslashes($row->jobTitle);
+		$staff_dept = stripslashes($row->staff_dept);
+		$affiliation = stripslashes($row->affiliation);
+		$staff_room = stripslashes($row->staff_room);
+		$staff_phone = stripslashes($row->staff_phone);
+		$staff_email = stripslashes($row->staff_email);
+		$staff_emailHidden = stripslashes(formatEmailLink($row->staff_email));
+		$staff_vita = stripslashes($row->staff_vita);
+		$staff_web = stripslashes($row->staff_web);
+		$staff_image = 'http://' . $_SERVER['SERVER_NAME'] . dirname($_SERVER['PHP_SELF']) . '/meta/img/photos/' . stripslashes($row->staff_image);
+		$same_as = stripslashes(htmlentities($row->sameAs));
+		$same_as2 = stripslashes(htmlentities($row->sameAs2));
+		$staff_privacy = $row->staff_privacy;
+		$staff_libcal_id = $row->staff_libcal_id;
+        $staff_libguides_link = $row->staff_libguides_link;
+
+?>
+{
+  "@context": "http://schema.org/",
+  "@id": <?php echo json_encode('http://'.$server.$path.'/'.$id); ?>,
+  "@type": "WebPage",
+  "mainContentOfPage": {
+    "@id": <?php echo json_encode('http://'.$server.$path.'/'.$id.'#person'); ?>,
+    "@type": "Person",
+    "name": "<?php echo $staff_name; ?>",
+    "jobTitle": "<?php echo $staff_title; ?>",
+    "workLocation": "<?php echo $staff_dept; ?>",
+    "email": "<?php echo $staff_email; ?>",
+    "image": <?php echo json_encode($staff_image); ?>,
+    "telephone": "<?php echo $staff_phone; ?>",
+<?php
+if (strlen($staff_web) > 3) {
+?>
+    "url": "<?php echo $staff_web; ?>",
+<?php
+}
+?>
+    "affiliation": "<?php echo $affiliation; ?>",
+    "worksFor": "<?php echo $affiliation; ?>",
+    "address": {
+      "@id": <?php echo json_encode('http://'.$server.$path.'/'.$id.'#address'); ?>,
+      "@type": "PostalAddress",
+      "streetAddress": "P.O. Box 173320",
+      "addressLocality": "Bozeman",
+      "addressRegion": "MT",
+      "postalCode": "59717-3320"
+    },
+    "organization": {
+      "@id": <?php echo json_encode('http://'.$server.$path.'/'.$id.'#organization'); ?>,
+      "@type": "EducationalOrganization",
+      "name": "Montana State University (MSU) Library",
+      "sameAs": "http://www.freebase.com/m/0j3y9r1",
+      "member": {
+        "@id": <?php echo json_encode('http://'.$server.$path.'/'.$id.'#member'); ?>,
+        "@type": "OrganizationRole",
+        "member": {
+          "@type": "Person",
+          "@id": <?php echo json_encode('http://'.$server.$path.'/'.$id.'#person'); ?>,
+          "name": "<?php echo $staff_name; ?>"
+        }
+      }
+    },
+    "colleague": [
+<?php
+//get person's colleagues
+$query = "SELECT staff_id FROM libstaff.staff WHERE staff_status = 'a' AND staff_dept='$staff_dept'";
+$getColleagues = $connectLibstaff->query($query);
+if ($getColleagues->num_rows == 0) {
+?>
+	"No colleagues assigned to this person."
+<?php
+}
+  $separator = "";
+  while ($row = $getColleagues->fetch_object()) {
+    $staff_id = $row->staff_id;
+	$colleagueURL = json_encode('http://'.$server.$path.'/'.$staff_id);
+    //print list of colleagues
+    echo $separator.$colleagueURL;
+    $separator = ",\n";
+  }
+?>
+    ],
+    "Specialty": [
+<?php
+//get person's expertise topics
+$query = "SELECT *
+FROM libstaff.staff, libstaff.create_action, libstaff.create_action_match
+WHERE staff.staff_id = '$id'
+AND create_action_match.create_id = create_action.create_id
+AND create_action_match.staff_id = '$id'
+AND staff.staff_status =  'a'";
+
+$getPersonExpertise = $connectLibstaff->query($query);
+if ($getPersonExpertise->num_rows == 0) {
+?>
+    "No expertise or skill(s) assigned to this person."
+<?php
+}
+  $separator = "";
+  while ($row = $getPersonExpertise->fetch_object()) {
+    $object_id = $row->create_id;
+    $object = $row->object;
+    $object_url = $row->object_uri;
+    $specialtyURL = json_encode($row->object_uri);
+    //print list of expertise topics
+    echo $separator.$specialtyURL;
+    $separator = ",\n";
+  }
+?>
+    ],
+    "sameAs" : [
+<?php
+if (strlen($same_as) < 3 && strlen($same_as2) < 3) {
+    echo '"No equivalency mapped for this person."'."\n";
+}
+if (strlen($same_as) > 3 && strlen($same_as2) > 3) {
+    echo json_encode($same_as).",\n";
+    echo json_encode($same_as2);
+}
+
+if (strlen($same_as) > 3 && strlen($same_as2) < 3) {
+    echo json_encode($same_as)."\n";
+}
+
+if (strlen($same_as2) > 3 && strlen($same_as) < 3) {
+    echo json_encode($same_as2)."\n";
+}
+
+}//end initial while loop
+?>
+    ]
+  }
+}
