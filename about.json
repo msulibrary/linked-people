@@ -1,4 +1,7 @@
 <?php
+//set correct content-type for json output
+header('Content-Type: application/json');
+
 //pass database parameters and connect to database
 include_once './meta/assets/dbconnect.inc';
 //bring special functions and utilities onto page
