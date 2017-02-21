@@ -70,19 +70,10 @@ if (strlen($staff_web) > 3) {
 }
 ?>
     "affiliation": "<?php echo $affiliation; ?>",
-    "worksFor": "<?php echo $affiliation; ?>",
-    "address": {
-      "@id": <?php echo json_encode('http://'.$server.$path.'/'.$id.'#address'); ?>,
-      "@type": "PostalAddress",
-      "streetAddress": "P.O. Box 173320",
-      "addressLocality": "Bozeman",
-      "addressRegion": "MT",
-      "postalCode": "59717-3320"
-    },
-    "organization": {
+    "worksFor": {
       "@id": <?php echo json_encode('http://'.$server.$path.'/'.$id.'#organization'); ?>,
       "@type": "EducationalOrganization",
-      "name": "Montana State University (MSU) Library",
+      "name": "<?php echo $affiliation; ?> Library",
       "sameAs": "https://www.wikidata.org/entity/Q15255419",
       "member": {
         "@id": <?php echo json_encode('http://'.$server.$path.'/'.$id.'#member'); ?>,
@@ -93,6 +84,14 @@ if (strlen($staff_web) > 3) {
           "name": "<?php echo $staff_name; ?>"
         }
       }
+    },
+    "address": {
+      "@id": <?php echo json_encode('http://'.$server.$path.'/'.$id.'#address'); ?>,
+      "@type": "PostalAddress",
+      "streetAddress": "P.O. Box 173320",
+      "addressLocality": "Bozeman",
+      "addressRegion": "MT",
+      "postalCode": "59717-3320"
     },
     "colleague": [
 <?php
