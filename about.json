@@ -54,7 +54,7 @@ $getPerson = $connectLibstaff->query($query);
   "@context": "http://schema.org/",
   "@id": <?php echo json_encode('http://'.$server.$path.'/'.$id); ?>,
   "@type": "WebPage",
-  "mainContentOfPage": {
+  "mainEntity": {
     "@id": <?php echo json_encode('http://'.$server.$path.'/'.$id.'#person'); ?>,
     "@type": "Person",
     "name": "<?php echo $staff_name; ?>",
