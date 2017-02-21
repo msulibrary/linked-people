@@ -84,7 +84,7 @@ if (strlen($staff_web) > 3) {
       "@id": <?php echo json_encode('http://'.$server.$path.'/'.$id.'#organization'); ?>,
       "@type": "EducationalOrganization",
       "name": "Montana State University (MSU) Library",
-      "sameAs": "https://www.wikidata.org/wiki/Q15255419",
+      "sameAs": "https://www.wikidata.org/entity/Q15255419",
       "member": {
         "@id": <?php echo json_encode('http://'.$server.$path.'/'.$id.'#member'); ?>,
         "@type": "OrganizationRole",
