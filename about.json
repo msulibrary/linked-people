@@ -118,7 +118,7 @@ while ($row = $getColleagues->fetch_object()) {
       ]
     },
     "makesOffer": {
-      "@id": "offer",
+      "@id": "#offer",
       "@type": "Offer",
       "category": [
 <?php
