@@ -12,10 +12,14 @@ if (isset($_GET['id']) and is_numeric($_GET['id'])) {
   exit;
 }
 
+//get and set url protocol
+$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? 'https://' : 'http://';
 //set and sanitize global variables for URL construction
-$server = htmlentities(strip_tags($_SERVER['SERVER_NAME']));
-$path = htmlentities(strip_tags(dirname($_SERVER['PHP_SELF'])));
-$fileName = htmlentities(strip_tags(basename($_SERVER['SCRIPT_NAME'])));
+$server = isset($_SERVER['SERVER_NAME']) ? htmlentities(strip_tags($_SERVER['SERVER_NAME'])) : null;
+$path = isset($_SERVER['PHP_SELF']) ? htmlentities(strip_tags(dirname($_SERVER['PHP_SELF']))) : null;
+$fileName = isset($_SERVER['SCRIPT_NAME']) ? htmlentities(strip_tags(basename($_SERVER['SCRIPT_NAME']))) : null;
+$fileNameURI = isset($_SERVER['REQUEST_URI']) ? htmlentities(strip_tags($_SERVER['REQUEST_URI'])) : null;
+$fileExtension = isset($_SERVER['PATH_INFO']) ? pathinfo($fileName, PATHINFO_EXTENSION) : null;
 
 //request selected staff data fields
 $query = "SELECT * FROM libstaff.staff WHERE staff_status = 'a' AND staff_id='$id'";
@@ -42,7 +46,7 @@ while ($row = $getPerson->fetch_object()) {
   $staff_emailHidden = stripslashes(formatEmailLink($row->staff_email));
   $staff_vita = stripslashes($row->staff_vita);
   $staff_web = stripslashes($row->staff_web);
-  $staff_image = 'http://' . $_SERVER['SERVER_NAME'] . dirname($_SERVER['PHP_SELF']) . '/meta/img/photos/' . stripslashes($row->staff_image);
+  $staff_image = $protocol.$server.$path.'/meta/img/photos/'.stripslashes($row->staff_image);
   $same_as = stripslashes(htmlentities($row->sameAs));
   $same_as2 = stripslashes(htmlentities($row->sameAs2));
   $staff_privacy = $row->staff_privacy;
@@ -51,10 +55,10 @@ while ($row = $getPerson->fetch_object()) {
 ?>
 {
   "@context": "http://schema.org/",
-  "@id": <?php echo json_encode('http://'.$server.$path.'/'.$id); ?>,
+  "@id": <?php echo json_encode($protocol.$server.$path.'/'.$id); ?>,
   "@type": "WebPage",
   "mainEntity": {
-    "@id": <?php echo json_encode('http://'.$server.$path.'/'.$id.'#person'); ?>,
+    "@id": <?php echo json_encode($protocol.$server.$path.'/'.$id.'#person'); ?>,
     "@type": "Person",
     "name": "<?php echo $staff_name; ?>",
     "jobTitle": "<?php echo $staff_title; ?>",
@@ -71,22 +75,22 @@ if (strlen($staff_web) > 3) {
 ?>
     "affiliation": "<?php echo $affiliation; ?>",
     "worksFor": {
-      "@id": <?php echo json_encode('http://'.$server.$path.'/'.$id.'#organization'); ?>,
+      "@id": <?php echo json_encode($protocol.$server.$path.'/'.$id.'#organization'); ?>,
       "@type": "EducationalOrganization",
       "name": "<?php echo $affiliation; ?> Library",
       "sameAs": "https://www.wikidata.org/entity/Q15255419",
       "member": {
-        "@id": <?php echo json_encode('http://'.$server.$path.'/'.$id.'#member'); ?>,
+        "@id": <?php echo json_encode($protocol.$server.$path.'/'.$id.'#member'); ?>,
         "@type": "OrganizationRole",
         "member": {
           "@type": "Person",
-          "@id": <?php echo json_encode('http://'.$server.$path.'/'.$id.'#person'); ?>,
+          "@id": <?php echo json_encode($protocol.$server.$path.'/'.$id.'#person'); ?>,
           "name": "<?php echo $staff_name; ?>"
         }
       }
     },
     "address": {
-      "@id": <?php echo json_encode('http://'.$server.$path.'/'.$id.'#address'); ?>,
+      "@id": <?php echo json_encode($protocol.$server.$path.'/'.$id.'#address'); ?>,
       "@type": "PostalAddress",
       "streetAddress": "P.O. Box 173320",
       "addressLocality": "Bozeman",
@@ -94,7 +98,7 @@ if (strlen($staff_web) > 3) {
       "postalCode": "59717-3320"
     },
     "knows": {
-      "@id": "#colleague",
+      "@id": <?php echo json_encode($protocol.$server.$path.'/'.$id.'#colleague'); ?>,
       "@type": "Person",
       "colleague": [
 <?php
@@ -109,7 +113,7 @@ if ($getColleagues->num_rows == 0) {
 $separator = "";
 while ($row = $getColleagues->fetch_object()) {
   $staff_id = $row->staff_id;
-  $colleagueURL = json_encode('http://'.$server.$path.'/'.$staff_id);
+  $colleagueURL = json_encode($protocol.$server.$path.'/'.$staff_id);
   //print list of colleagues
   echo $separator.$colleagueURL;
   $separator = ",\n";
@@ -118,7 +122,7 @@ while ($row = $getColleagues->fetch_object()) {
       ]
     },
     "makesOffer": {
-      "@id": "#offer",
+      "@id": "<?php echo json_encode($protocol.$server.$path.'/'.$id.'#offer'); ?>",
       "@type": "Offer",
       "category": [
 <?php
