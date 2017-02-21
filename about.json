@@ -93,9 +93,10 @@ if (strlen($staff_web) > 3) {
       "addressRegion": "MT",
       "postalCode": "59717-3320"
     },
-    "colleague": [
+    "knows": {
     "@id": "#colleague",
     "@type": "Person",
+      colleague [
 <?php
 //get person's colleagues
 $query = "SELECT staff_id FROM libstaff.staff WHERE staff_status = 'a' AND staff_dept='$staff_dept'";
@@ -114,7 +115,8 @@ while ($row = $getColleagues->fetch_object()) {
   $separator = ",\n";
 }
 ?>
-    ],
+      ]
+    },
     "makesOffer": {
       "@id": "offer",
       "@type": "Offer",
