@@ -113,7 +113,9 @@ while ($row = $getColleagues->fetch_object()) {
 }
 ?>
     ],
-    "Specialty": [
+    "makesOffer": {
+      "@id": "offer",
+      "category": [
 <?php
 //get person's expertise topics
 $query = "SELECT *
@@ -140,7 +142,8 @@ while ($row = $getPersonExpertise->fetch_object()) {
   $separator = ",\n";
 }
 ?>
-    ],
+      ]
+    },
     "sameAs" : [
 <?php
 if (strlen($same_as) < 3 && strlen($same_as2) < 3) {
