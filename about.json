@@ -69,28 +69,28 @@ while ($row = $getPerson->fetch_object()) {
   "license": "http://creativecommons.org/licenses/by-nc-sa/3.0/us/deed.en_US",
   "url": <?php echo json_encode($protocol.$server.$path.'/'.$id); ?>,
   "significantLink": <?php echo json_encode($protocol.$server.$path.'/'.$id); ?>,
-  "breadcrumb":{
-  "@type": "BreadcrumbList",
-  "itemListElement":[
+  "breadcrumb": {
+    "@type": "BreadcrumbList",
+    "itemListElement":[
     {
-    "@type": "ListItem",
-    "position": "1",
-      "item":{
+      "@type": "ListItem",
+      "position": "1",
+      "item": {
         "@type": "WebSite",
         "@id": <?php echo json_encode($protocol.$server.'/'); ?>,
         "name": "Home"
       }
     },
     {
-    "@type": "ListItem",
-    "position": "2",
-      "item":{
+      "@type": "ListItem",
+      "position": "2",
+      "item": {
         "@type": "WebPage",
         "@id": <?php echo json_encode($protocol.$server.$path.'/'); ?>,
         "name": "People"
       }
     }
-  ]
+    ]
   },
   "mainEntity": {
     "@id": <?php echo json_encode($protocol.$server.$path.'/'.$id.'#person'); ?>,
