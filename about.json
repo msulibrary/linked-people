@@ -61,6 +61,7 @@ while ($row = $getPerson->fetch_object()) {
   "@id": <?php echo json_encode($protocol.$server.$path.'/'.$id); ?>,
   "@type": "WebPage",
   "url": <?php echo json_encode($protocol.$server.$path.'/'.$id); ?>,
+  "significantLink": <?php echo json_encode($protocol.$server.$path.'/'.$id); ?>,
   "breadcrumb":{
   "@type": "BreadcrumbList",
   "itemListElement":[
