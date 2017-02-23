@@ -61,10 +61,11 @@ while ($row = $getPerson->fetch_object()) {
   "@id": <?php echo json_encode($protocol.$server.$path.'/'.$id); ?>,
   "@type": "WebPage ItemPage",
   "name": "About - <?php echo $staff_name; ?>",
-  "description": "About page for <?php echo $staff_name; ?>",
+  "description": "Page describing <?php echo $staff_name; ?>",
   "publisher": {
     "@id": <?php echo json_encode($protocol.$server.$path.'/'.$id.'#organization'); ?>
   },
+  "license": "http://creativecommons.org/licenses/by-nc-sa/3.0/us/deed.en_US",
   "url": <?php echo json_encode($protocol.$server.$path.'/'.$id); ?>,
   "significantLink": <?php echo json_encode($protocol.$server.$path.'/'.$id); ?>,
   {   
