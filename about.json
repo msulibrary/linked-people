@@ -60,6 +60,24 @@ while ($row = $getPerson->fetch_object()) {
   "@context": "http://schema.org/",
   "@id": <?php echo json_encode($protocol.$server.$path.'/'.$id); ?>,
   "@type": "WebPage",
+  "url": <?php echo json_encode($protocol.$server.$path.'/'.$id); ?>,
+  "@type": "BreadcrumbList",
+    "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1,
+      "item": {
+        "@id": <?php echo json_encode($protocol.$server.'/'); ?>,
+        "name": "Home"
+    }
+  },
+  {
+    "@type": "ListItem",
+    "position": 2,
+    "item": {
+      "@id": <?php echo json_encode($protocol.$server.$path.'/'); ?>,
+      "name": "People"
+    }
+  }],
   "mainEntity": {
     "@id": <?php echo json_encode($protocol.$server.$path.'/'.$id.'#person'); ?>,
     "@type": "Person",
