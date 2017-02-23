@@ -59,7 +59,8 @@ while ($row = $getPerson->fetch_object()) {
 {
   "@context": "http://schema.org/",
   "@id": <?php echo json_encode($protocol.$server.$path.'/'.$id); ?>,
-  "@type": "WebPage ItemPage",
+  "@type": "ItemPage",
+  "isPartOf": <?php echo json_encode($protocol.$server.$path.'/'); ?>,
   "name": "About - <?php echo $staff_name; ?>",
   "description": "Page describing <?php echo $staff_name; ?>",
   "publisher": {
@@ -68,13 +69,6 @@ while ($row = $getPerson->fetch_object()) {
   "license": "http://creativecommons.org/licenses/by-nc-sa/3.0/us/deed.en_US",
   "url": <?php echo json_encode($protocol.$server.$path.'/'.$id); ?>,
   "significantLink": <?php echo json_encode($protocol.$server.$path.'/'.$id); ?>,
-  {   
-    "@id": <?php echo json_encode($protocol.$server.$path.'/'.$id); ?>,
-    "@type": "CollectionPage",
-    "isPartOf": {
-      "@value": <?php echo json_encode($protocol.$server.$path.'/'); ?>
-    }
-  },
   "breadcrumb":{
   "@type": "BreadcrumbList",
   "itemListElement":[
