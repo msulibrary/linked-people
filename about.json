@@ -59,9 +59,16 @@ while ($row = $getPerson->fetch_object()) {
 {
   "@context": "http://schema.org/",
   "@id": <?php echo json_encode($protocol.$server.$path.'/'.$id); ?>,
-  "@type": "WebPage",
+  "@type": "WebPage ItemPage",
   "url": <?php echo json_encode($protocol.$server.$path.'/'.$id); ?>,
   "significantLink": <?php echo json_encode($protocol.$server.$path.'/'.$id); ?>,
+  {   
+    "@id": <?php echo json_encode($protocol.$server.$path.'/'.$id); ?>,
+    "@type": "CollectionPage",
+    "isPartOf": {
+      "@value": <?php echo json_encode($protocol.$server.$path.'/'); ?>
+    }
+  },
   "breadcrumb":{
   "@type": "BreadcrumbList",
   "itemListElement":[
