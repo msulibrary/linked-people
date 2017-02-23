@@ -60,6 +60,11 @@ while ($row = $getPerson->fetch_object()) {
   "@context": "http://schema.org/",
   "@id": <?php echo json_encode($protocol.$server.$path.'/'.$id); ?>,
   "@type": "WebPage ItemPage",
+  "name": "About - <?php echo $staff_name; ?>",
+  "description": "About page for <?php echo $staff_name; ?>",
+  "publisher": {
+    "@id": <?php echo json_encode($protocol.$server.$path.'/'.$id.'#organization'); ?>
+  },
   "url": <?php echo json_encode($protocol.$server.$path.'/'.$id); ?>,
   "significantLink": <?php echo json_encode($protocol.$server.$path.'/'.$id); ?>,
   {   
