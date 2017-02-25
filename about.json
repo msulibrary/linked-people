@@ -59,7 +59,7 @@ while ($row = $getPerson->fetch_object()) {
 {
   "@context": "http://schema.org/",
   "@id": <?php echo json_encode($protocol.$server.$path.'/'.$id); ?>,
-  "@type": "ItemPage",
+  "@type": "ProfilePage",
   "isPartOf": <?php echo json_encode($protocol.$server.$path.'/'); ?>,
   "name": "About - <?php echo $staff_name; ?>",
   "description": "Page describing <?php echo $staff_name; ?>",
