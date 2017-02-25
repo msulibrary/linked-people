@@ -118,7 +118,7 @@ if (strlen($staff_web) > 3) {
         "http://www.freebase.com/m/0j3y9r1",
         "https://www.wikidata.org/entity/Q15255419",
         "https://www.worldcat.org/wcr/organization/data/56245"
-      ]
+      ],
       "member": {
         "@id": <?php echo json_encode($protocol.$server.$path.'/'.$id.'#member'); ?>,
         "@type": "OrganizationRole",
