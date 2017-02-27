@@ -66,6 +66,9 @@ while ($row = $getPerson->fetch_object()) {
   "publisher": {
     "@id": <?php echo json_encode($protocol.$server.$path.'/'.$id.'#organization'); ?>
   },
+  "reviewedBy": {
+    "@id": <?php echo json_encode($protocol.$server.$path.'/'.$id.'#organization'); ?>
+  },
   "license": "http://creativecommons.org/licenses/by-nc-sa/3.0/us/deed.en_US",
   "url": <?php echo json_encode($protocol.$server.$path.'/'.$id); ?>,
   "significantLink": <?php echo json_encode($protocol.$server.$path.'/'.$id); ?>,
