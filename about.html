@@ -1,0 +1,328 @@
+<?php
+//get and set url protocol
+$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? 'https://' : 'http://';
+//set and sanitize global variables for URL construction
+$server = isset($_SERVER['SERVER_NAME']) ? htmlentities(strip_tags($_SERVER['SERVER_NAME'])) : null;
+$path = isset($_SERVER['PHP_SELF']) ? htmlentities(strip_tags(dirname($_SERVER['PHP_SELF']))) : null;
+$fileName = isset($_SERVER['SCRIPT_NAME']) ? htmlentities(strip_tags(basename($_SERVER['SCRIPT_NAME']))) : null;
+$fileNameURI = isset($_SERVER['REQUEST_URI']) ? htmlentities(strip_tags($_SERVER['REQUEST_URI'])) : null;
+$fileExtension = isset($_SERVER['PATH_INFO']) ? pathinfo($fileName, PATHINFO_EXTENSION) : null;
+
+//assign value for title of page
+$pageTitle = 'People at Your Library';
+
+//declare filename for additional stylesheet variable - default is "none"
+$customCSS[0] = '/people/meta/styles/people.css';
+//pass database parameters and connect to database
+include_once './meta/assets/dbconnect.inc';
+//bring special functions and utilities onto page
+include './meta/inc/utilities.php';
+//create an array with filepaths for multiple page scripts - default is meta/scripts/global.js
+$customScript[0] = '/meta/scripts/global.js';
+$customScript[1] = 'http://montana.libcal.com/schedulerjs.php';
+//check if the $id variable was passed in url, escape the string for mysql, and validate that it is a numeric value - pass id value to select record
+if (isset($_GET['id']) and is_numeric($_GET['id'])) {
+  $id = strip_tags($connectLibstaff->real_escape_string((int)$_GET['id']));
+} else {
+  echo 'Query type not supported.';
+  exit;
+}
+
+//request selected staff data fields
+$query = "SELECT * FROM libstaff.staff WHERE staff_status = 'a' AND staff_id='$id'";
+$getPerson = $connectLibstaff->query($query);
+if ($getPerson->num_rows == 0) {
+  header("HTTP/1.0 404 Not Found", true, 404);
+  readfile("https://lib.montana.edu/error.php");
+  exit();
+}
+//Display selected staff entry fields in a list
+while ($row = $getPerson->fetch_object()) {
+  $staff_id = stripslashes($row->staff_id);
+  $staff_fname = stripslashes($row->givenName);
+  $staff_lname = stripslashes($row->familyName);
+  $staff_name = stripslashes($row->givenName . ' ' . $row->familyName);
+  $staff_name_rdf = stripslashes($row->givenName . ' ' . $row->familyName);
+  $staff_title = stripslashes($row->jobTitle);
+  $staff_dept = stripslashes($row->staff_dept);
+  $affiliation = stripslashes($row->affiliation);
+  $staff_room = stripslashes($row->staff_room);
+  $staff_phone = stripslashes($row->staff_phone);
+  $staff_email = stripslashes($row->staff_email);
+  $staff_emailHidden = stripslashes(formatEmailLink($row->staff_email));
+  $staff_vita = stripslashes($row->staff_vita);
+  $staff_web = stripslashes($row->staff_web);
+  $staff_image = 'http://' . $_SERVER['SERVER_NAME'] . dirname($_SERVER['PHP_SELF']) . '/meta/img/photos/' . stripslashes($row->staff_image);
+  $same_as = stripslashes(htmlentities($row->sameAs));
+  $same_as2 = stripslashes(htmlentities($row->sameAs2));
+  $staff_privacy = $row->staff_privacy;
+  $staff_libcal_id = $row->staff_libcal_id;
+  $staff_libguides_link = $row->staff_libguides_link;
+
+  $vcard_raw =
+    'BEGIN:VCARD
+    VERSION:3.0
+    N:'.$staff_lname.';'.$staff_fname.'
+    FN:'.$staff_name.'
+    ORG:MSU Library
+    TITLE:'.$staff_title.'
+    TEL;TYPE=WORK,VOICE:'.$staff_phone.'
+    EMAIL;TYPE=PREF,INTERNET:'.$staff_email.'
+    URL:'.$staff_web.'
+    REV:20111013T195243Z
+    END:VCARD';
+
+    $vcard = urlencode($vcard_raw);
+
+?>
+<!DOCTYPE html>
+<html class="no-js" lang="en-US">
+<head>
+  <meta charset="utf-8">
+  <meta content="ie=edge" http-equiv="x-ua-compatible">
+  <title><?php (empty($staff_name)) ? null : $staff_name; if (strlen($staff_name) < 3 ) { echo $pageTitle; } else { echo $staff_name.' - '.$staff_title.', '.$staff_dept; } ?> - Montana State University (MSU) Library</title>
+  <meta content="" name="description">
+  <meta content="width=device-width, initial-scale=1" name="viewport">
+  <link rel="shortcut icon" href="/meta/img/msu_favicon.ico" />
+<?php
+//get default value for id for setting rel=canonical URL
+$fileID = isset($_GET['id']) ? strip_tags((int)$_GET['id']) : null;
+if ($fileName == 'about.php') {
+?>
+  <link rel="canonical" href="<?php echo 'http://'.$_SERVER['SERVER_NAME'].dirname($_SERVER['PHP_SELF']).'/about/'.$fileID; ?>" />
+<?php
+} elseif ($fileName == 'index.php') {
+?>
+  <link rel="canonical" href="<?php echo 'http://'.$_SERVER['SERVER_NAME'].dirname($_SERVER['PHP_SELF']).'/'; ?>" />
+<?php
+} else {
+?>
+  <link rel="canonical" href="<?php echo 'http://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']; ?>" />
+<?php
+//end $fileName rel=canonical conditional
+}
+?>
+  <link href="apple-touch-icon.png" rel="apple-touch-icon"><!-- Place favicon.ico in the root directory -->
+  <link href='https://fonts.googleapis.com/css?family=Noto+Sans:400,700,400italic' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="/meta/styles/global.css">
+<?php
+if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
+  $countedCSS = count($customCSS);
+  for ($i = 0; $i < $countedCSS; $i++) {
+?>
+  <link rel="stylesheet" href="<?php echo $customCSS[$i]; ?>">
+<?php
+  }
+}
+?>
+</head>
+<body>
+  <main>
+  <a id="mainContent"></a>
+  <!-- Add your site or application content here -->
+  <div id="main" typeof="schema:WebPage" about="<?php echo 'http://'.$server.$path.'/'.$id; ?>">
+  <div typeof="schema:ProfilePage" about="<?php echo 'http://'.$server.$path.'/'.$id; ?>" resource="<?php echo 'http://'.$server.$path.'/about/'.$id;?>">
+    <link rel="rdfa:usesVocabulary" href="http://schema.org/" resource="http://schema.org/" />
+    <meta property="schema:about" content="<?php echo 'http://'.$server.$path.'/about/'.$id; ?>" resource="<?php echo 'http://'.$server.$path.'/about/'.$id;?>" />
+    <meta property="schema:thumbnailUrl schema:primaryImageOfPage" content="<?php echo $staff_image; ?>" />
+  </div>
+  <h2 id="about"><?php echo $staff_name.' - '.$pageTitle; ?></h2>
+  <!--END OF CHANGE MAINHEADING ID -->
+  <div id="person" typeof="schema:Person" about="<?php echo 'http://'.$server.$path.'/about/'.$id; ?>">
+  <ul class="aboutList">
+    <li class="photo"><img property="schema:image" src="<?php echo $staff_image; ?>" alt="photo of <?php echo $staff_name; ?>" /></li>
+    <li class="infoContact">
+  <h3 property="schema:name"><?php echo $staff_name; ?></h3>
+<?php
+if (strlen($same_as) > 3 && strlen($same_as2) > 3) {
+?>
+  <link rel="schema:sameAs" href="<?php echo $same_as; ?>" resource="<?php echo $same_as; ?>" />
+  <link rel="schema:sameAs" href="<?php echo $same_as2; ?>" resource="<?php echo $same_as2; ?>" />
+<?php
+}
+?>
+<?php
+if (strlen($same_as) > 3 && strlen($same_as2) < 3) {
+?>
+  <link rel="schema:sameAs" href="<?php echo $same_as; ?>" resource="<?php echo $same_as; ?>" />
+<?php
+}
+?>
+<?php
+if (strlen($same_as2) > 3 && strlen($same_as) < 3) {
+?>
+  <link rel="schema:sameAs" href="<?php echo $same_as2; ?>" resource="<?php echo $same_as2; ?>" />
+<?php
+}
+?>
+  <p><span class="about-heading">Title </span><span property="schema:jobTitle"><?php echo $staff_title; ?></span></p>
+  <p><span class="about-heading">Department </span><a property="schema:workLocation" href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/search.php?team=<?php echo urlencode($staff_dept);?>"><?php echo $staff_dept; ?></a>, <span property="schema:affiliation schema:worksFor schema:memberOf">Montana State University (MSU)</span></p>
+  <span id="role" typeof="schema: Organization" about="<?php echo 'http://'.$server; ?>">
+    <meta property="schema:name" content="Montana State University (MSU) Library" />
+    <meta property="schema:sameAs" content="http://www.freebase.com/m/0j3y9r1" />
+    <meta property="schema:sameAs" content="https://www.worldcat.org/wcr/organization/data/56245" />
+    <span rel="schema:employee" typeof="schema:Role" resource="<?php echo 'http://'.$server.$path.'/about/'.$id;?>#role">
+      <meta property="schema:url" content="<?php echo 'http://'.$server.$path.'/about/'.$id;?>" />
+      <meta property="schema:name" content="<?php echo $staff_name; ?>" />
+      <meta property="schema:OrganizationRole" content="<?php echo $staff_title; ?>" />
+    </span>
+  </span>
+  <span id="knows" rel="schema:knows" resource="<?php echo 'http://'.$server.$path.'/about/'.$id; ?>#knows">
+<?php
+//get person's colleagues
+$query = "SELECT staff_id,givenName,familyName FROM libstaff.staff WHERE staff_status = 'a' AND staff_dept='$staff_dept'";
+$getColleagues = $connectLibstaff->query($query);
+if ($getColleagues->num_rows == 0) {
+?>
+  <meta property="schema:colleague" content="No colleagues assigned to this person." />
+<?php
+}
+while ($row = $getColleagues->fetch_object()) {
+  $staff_id = $row->staff_id;
+  $staff_name = stripslashes($row->givenName . ' ' . $row->familyName);
+  $colleagueURL = 'http://'.$server.$path.'/about/'.$staff_id;
+?>
+  <link property="schema:name" content="<?php echo $staff_name; ?>" rel="schema:colleague" href="<?php echo $colleagueURL; ?>" resource="<?php echo $colleagueURL; ?>" />
+<?php
+}
+?>
+  </span>
+  <p><span class="about-heading">Phone</span><span><a href="tel:<?php echo $staff_phone; ?>"><?php echo $staff_phone; ?></a></span></p>
+  <p><span class="about-heading">Email</span><span class="email-wrap" property="schema:email"><?php echo formatEmailLink($staff_email); ?></span></p>
+  <p property="schema:address"><span class="about-heading">Room</span><?php echo $staff_room; ?></p>
+<?php
+if (!empty($staff_libcal_id)) {
+?>
+  <p><span class="about-heading">Calendar</span>
+    <a href="http://calendar.lib.montana.edu/appointment/<?php echo $staff_libcal_id; ?>" onclick="javascript:void window.open('http://calendar.lib.montana.edu/appointment/<?php echo $staff_libcal_id; ?>','1364572273698','width=820,height=600');return false;">Schedule Appointment</a>
+  </p>
+<?php
+}
+if (!empty($staff_libguides_link)) {
+?>
+  <p><span class="about-heading">Guides</span>
+    <a href="<?php echo $staff_libguides_link; ?>">Subject and Course Help</a>
+  </p>
+<?php
+}
+?>
+  </li>
+  <li class="infoCode">
+  <dl class="liaison">
+    <dt class="about-heading">Liaison Role(s)</dt>
+<?php
+//get person's liaison topics
+$query = "SELECT *
+FROM libstaff.staff, libstaff.interact_action, libstaff.interact_action_match
+WHERE staff.staff_id = '$id'
+AND interact_action_match.interact_id = interact_action.interact_id
+AND interact_action_match.staff_id = '$id'
+AND staff.staff_status =  'a'";
+
+//echo $query;
+
+$getPersonLiaison = $connectLibstaff->query($query);
+if ($getPersonLiaison->num_rows == 0) {
+?>
+    <dd>No liaison role(s) for this person. <a href="/contact/">Suggest one?</a></dd>
+<?php
+}
+  //Display selected staff entry fields in a list
+  while ($row = $getPersonLiaison->fetch_object()) {
+    $object_id = $row->interact_id;
+    $object = $row->object;
+    $object_url = $row->object_uri;
+?>
+    <dd><a rel="schema:makesOffer" resource="<?php echo $object_url; ?>" href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/search.php?liaison=<?php echo urlencode($object);?>"><?php echo $object;?></a></dd>
+<?php
+}
+?>
+  </dl>
+  <dl class="expertise">
+  <dt class="about-heading">Expertise and Skill(s)</dt>
+<?php
+//get person's expertise topics
+$query = "SELECT *
+FROM libstaff.staff, libstaff.create_action, libstaff.create_action_match
+WHERE staff.staff_id = '$id'
+AND create_action_match.create_id = create_action.create_id
+AND create_action_match.staff_id = '$id'
+AND staff.staff_status =  'a'";
+
+//echo $query;
+
+$getPersonExpertise = $connectLibstaff->query($query);
+if ($getPersonExpertise->num_rows == 0) {
+?>
+    <dd>No expertise or skill(s) assigned to this person. <a href="/contact/">Suggest one?</a></dd>
+<?php
+}
+//Display selected staff entry fields in a list
+while ($row = $getPersonExpertise->fetch_object()) {
+  $object_id = $row->create_id;
+  $object = $row->object;
+  $object_url = $row->object_uri;
+  $url_term = basename($object_url);
+?>
+    <dd><a rel="schema:Specialty" resource="<?php echo $object_url; ?>" href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/search.php?expertise=<?php echo htmlentities($url_term); ?>"><?php echo $object;?></a></dd>
+<?php
+}
+?>
+  </dl>
+  </li>
+  <li class="infoLocation">
+  <dl class="more-information">
+<?php
+if (strlen($staff_vita) > 3) {
+?>
+    <dt class="about-heading">More Information</dt>
+    <dd><a class="vita" title="vita of <?php echo $staff_name_rdf; ?>" href="<?php echo $staff_vita; ?>">Vita</a></dd>
+<?php
+}
+?>
+<?php
+if (strlen($staff_web) > 3) {
+?>
+    <dd><a property="schema:url" resource="<?php echo $staff_web; ?>" class="homepage" title="homepage of <?php echo $staff_name_rdf; ?>" href="<?php echo $staff_web; ?>">Homepage</a></dd>
+<?php
+}
+if ($staff_privacy == 'n') {
+?>
+    <dd>
+    <form action="#" name="embedForm" id="embedForm">
+      <label class="embed" for="embed">Get QR Embed Code</label>
+      <input id="embed" name="embed" type="text" onClick="this.select();" onFocus="this.select();" readonly="readonly" value="&lt;img src=&quot;http://chart.apis.google.com/chart?chs=180x180&amp;cht=qr&amp;chld=|0&amp;chl=<?php echo $vcard; ?>&quot; alt=&quot;QR code to contact <?php echo $staff_name; ?>&quot; width=&quot;180&quot; height=&quot;180&quot; /&gt;" />
+    </form>
+    </dd>
+    <!--<p><img class="qr-code" src="http://chart.apis.google.com/chart?chs=200x200&cht=qr&chld=|0&chl=<?php echo $vcard; ?>" alt="QR code to contact <?php echo $staff_name; ?>" width="140" height="140" /></p>-->
+<?php
+}
+}//end while loop
+?>
+    <dd><a class="rdf" title="rdf representation of <?php echo $staff_name_rdf; ?>" href="<?php echo $protocol.$server.$path.'/'; ?>about.rdf?id=<?php echo $id; ?>">RDF</a></dd>
+  </dl>
+  </li>
+  </ul>
+  </div><!-- end typeof="schema:Person" -->
+  <p class="nav"><a class="bck" href="<?php echo $protocol.$server.$path.'/'; ?>index.html">Back to Staff Home page</a></p>
+  </div><!-- end main div -->
+  <script src="js/global.js"></script>
+<?php
+if ($customScript = (empty($customScript)) ? null : $customScript) {
+  $counted = count($customScript);
+  for ($i = 0; $i < $counted; $i++) {
+?>
+  <script type="text/javascript" src="<?php echo $customScript[$i]; ?>"></script>
+<?php
+  }
+}
+?>
+  <!-- Google Analytics: change UA-XXXXX-Y to be your site's ID. -->
+  <script>
+    window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
+    ga('create','UA-XXXXX-Y','auto');ga('send','pageview')
+  </script> 
+  <script async defer src="https://www.google-analytics.com/analytics.js"></script>
+</main>
+</body>
+</html>
