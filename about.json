@@ -69,7 +69,7 @@ while ($row = $getPerson->fetch_object()) {
     "name": "Staff Directory and Departments - Montana State University (MSU) Library"
   },
   "name": "About - <?php echo $staff_name; ?>",
-  "description": "Page describing <?php echo $staff_name; ?>",
+  "description": "Profile page describing <?php echo $staff_name; ?>",
   "publisher": {
     "@id": <?php echo json_encode($protocol.$server.$path.'/'.$id.'#organization'); ?>
   },
