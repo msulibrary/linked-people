@@ -60,7 +60,14 @@ while ($row = $getPerson->fetch_object()) {
   "@context": "http://schema.org/",
   "@id": <?php echo json_encode($protocol.$server.$path.'/'.$id); ?>,
   "@type": "ProfilePage",
-  "isPartOf": <?php echo json_encode($protocol.$server.$path.'/'); ?>,
+  "isPartOf": {
+    "@id": <?php echo json_encode($protocol.$server.$path.'/'); ?>,
+    "@type": [
+      "Website", 
+      "CollectionPage"
+    ], 
+    "name": "Staff Directory and Departments - Montana State University (MSU) Library"
+  },
   "name": "About - <?php echo $staff_name; ?>",
   "description": "Page describing <?php echo $staff_name; ?>",
   "publisher": {
