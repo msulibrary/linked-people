@@ -107,7 +107,7 @@ while ($row = $getPerson->fetch_object()) {
     "@type": "Person",
     "name": "<?php echo $staff_name; ?>",
     "jobTitle": "<?php echo $staff_title; ?>",
-    "workLocation": "<?php echo $staff_dept; ?>",
+    "memberOf": "<?php echo $staff_dept; ?>",
     "email": "<?php echo $staff_email; ?>",
     "image": <?php echo json_encode($staff_image); ?>,
     "telephone": "<?php echo $staff_phone; ?>",
@@ -129,7 +129,7 @@ if (strlen($staff_web) > 3) {
         <?php echo json_encode('https://www.wikidata.org/entity/Q15255419'); ?>,
         <?php echo json_encode('https://www.worldcat.org/wcr/organization/data/56245'); ?>
       ],
-      "member": {
+      "employee": {
         "@id": <?php echo json_encode($protocol.$server.$path.'/'.$id.'#member'); ?>,
         "@type": "OrganizationRole",
         "member": {
