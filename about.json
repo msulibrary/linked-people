@@ -129,7 +129,7 @@ if (strlen($staff_web) > 3) {
         <?php echo json_encode('https://www.wikidata.org/entity/Q15255419'); ?>,
         <?php echo json_encode('https://www.worldcat.org/wcr/organization/data/56245'); ?>
       ],
-      "employee": {
+      "member": {
         "@id": <?php echo json_encode($protocol.$server.$path.'/'.$id.'#member'); ?>,
         "@type": "OrganizationRole",
         "member": {
