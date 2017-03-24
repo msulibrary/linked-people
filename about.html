@@ -102,6 +102,7 @@ if ($fileName == 'about.php') {
 //end $fileName rel=canonical conditional
 }
 ?>
+  <link rel="alternate" href="<?php echo $protocol.$server.$path.'/'; ?>about.json?id=<?php echo $id; ?>" type="application/ld+json">  
   <link href="apple-touch-icon.png" rel="apple-touch-icon"><!-- Place favicon.ico in the root directory -->
   <link href='https://fonts.googleapis.com/css?family=Noto+Sans:400,700,400italic' rel='stylesheet' type='text/css'>
   <link rel="stylesheet" href="/meta/styles/global.css">
