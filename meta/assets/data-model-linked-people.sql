@@ -91,6 +91,6 @@ CREATE TABLE IF NOT EXISTS `person` (
   `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`person_id`),
   FULLTEXT KEY `full_index` (`givenName`,`familyName`,`jobTitle`,`person_dept`,`person_description`),
-  FULLTEXT KEY `staff_primary_liaison` (`staff_primary_liaison`)
+  FULLTEXT KEY `person_primary_liaison` (`person_primary_liaison`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
 
