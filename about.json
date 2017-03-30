@@ -57,7 +57,7 @@ while ($row = $getPerson->fetch_object()) {
   $staff_libguides_link = $row->staff_libguides_link;
 ?>
 {
-  "@context": "http://schema.org/",
+  "@context": "https://schema.org/",
   "@id": <?php echo json_encode($protocol.$server.$path.'/'.$id); ?>,
   "@type": "ProfilePage",
   "isPartOf": {
@@ -76,7 +76,7 @@ while ($row = $getPerson->fetch_object()) {
   "reviewedBy": {
     "@id": <?php echo json_encode($protocol.$server.$path.'/'.$id.'#organization'); ?>
   },
-  "license": "http://creativecommons.org/licenses/by-nc-sa/3.0/us/deed.en_US",
+  "license": "https://creativecommons.org/licenses/by-nc-sa/3.0/us/deed.en_US",
   "url": <?php echo json_encode($protocol.$server.$path.'/'.$id); ?>,
   "significantLink": <?php echo json_encode($protocol.$server.$path.'/'.$id); ?>,
   "breadcrumb": {
