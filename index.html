@@ -1,106 +1,91 @@
 <!DOCTYPE html>
-<html class="no-js" lang="en-US">
+<html lang="en-US">
 <head>
-  <meta charset="utf-8">
-  <meta content="ie=edge" http-equiv="x-ua-compatible">
-  <title>Linked People Prototype: Montana State University (MSU) Library</title>
-  <meta content="" name="description">
-  <meta content="width=device-width, initial-scale=1" name="viewport">
-  <link href="apple-touch-icon.png" rel="apple-touch-icon">
-  <!-- Place favicon.ico in the root directory -->
-  <link href="css/global.css" rel="stylesheet">
+<meta charset="utf-8"/>
+<meta http-equiv="x-ua-compatible" content="ie=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Linked People</title>
+<meta name="description" content="Code prototype for Linked People"/>
+<link rel="canonical" href="ADD-PREFERRED-PAGE-URL-HERE"/>
+<link rel="stylesheet prefetch" href="https://fonts.googleapis.com/css?family=Oswald"/>
+<style>
+* {margin:0;padding:0;}
+body {background-color:#eee;font-family:Oswald, sans-serif;}
+header {background-color:#002a61;color:#fff;line-height:70px;padding:0 70px;}
+h1 {display:inline-block;}
+nav {color:#828282;display:inline;font-size:.7em;padding:0 10px;}
+a {color:#002a61;transition:all .3s;}
+nav a {color:#828282;text-decoration:none;}
+nav a:hover {color:#bebebe;}
+main {padding:20px 40px;}
+.wrap {-moz-column-gap:40px;-moz-columns:300px;-webkit-column-gap:40px;-webkit-columns:300px;column-gap:40px;columns:300px;}
+h2 {color:#1a202c;font-weight:400;padding:10px 30px;}
+h3 {color:#828282;font-weight:400;margin-bottom:.4em;}
+p+p {margin-top:.7em;}
+section {-webkit-column-break-inside:avoid;background-color:#fff;break-inside:avoid;padding:30px;page-break-inside:avoid;}
+section+section {margin:20px 0;}
+</style>
 </head>
-<body id="collection" typeof="CollectionPage" resource="#collection">
-  <main>
-    <div id="intro">
-      <div id="browseSearch">
-        <form action="search.php" class="searchPeople" id="search-form" method="get" name="searchform">
-          <input class="text" id="q" maxlength="45" name="q" placeholder="Enter people or topics..." size="35" type="text"> <select name="facet">
-            <option id="keyword" name="keyword" selected value="keyword">
-              People
-            </option>
-            <option id="topic" name="topic" value="topic">
-              Topics
-            </option>
-          </select> <input alt="search" class="submit" id="submit" name="submit" src="meta/img/search-clear.png" type="image">
-        </form>
-        <p id="azlist"><strong>Browse by staff last name</strong><br>
-        <a href="./title.php#abc">A B C</a> | <a href="./title.php#def">D E F</a> | <a href="./title.php#ghi">G H I</a> | <a href="./title.php#jkl">J K L</a> | <a href="./title.php#mno">M N O</a> | <a href="./title.php#pqr">P Q R</a> | <a href="./title.php#stu">S T U</a> | <a href="./title.php#vwx">V W X</a> | <a href="./title.php#yz">Y Z</a> | <a href="./title.php#spec">Other</a></p>
-      </div><!-- end browseSearch div -->
-    </div>
-    <div class="liaison-block">
-      <p class="heading">Browse by Liaison Area</p>
-      <p class="block" style="margin-left: 1em;"><a href="liaisons.php">I want help with...</a></p>
+<body id="page" vocab="https://schema.org/" typeof="CollectionPage" resource="ADD-PREFERRED-PAGE-RESOURCE-URI-HERE">
+<header>
+  <h1>Linked People</h1><nav>by <a href="https://www.lib.montana.edu">MSU Library</a></nav>
+</header>
+<main>
+	<h2>Staff Directory</h2>
+  	<div class="wrap">
+		<section>
+		  <h3>Search</h3>
+			<form action="search.php" class="searchPeople" id="search-form" method="get" name="searchform">
+        <input class="text" id="q" maxlength="45" name="q" placeholder="Enter people or topics..." size="35" type="text"> 
+        <select name="facet">
+          <option id="keyword" name="keyword" selected value="keyword">People</option>
+          <option id="topic" name="topic" value="topic">Topics</option>
+        </select>
+        <button class="submit" id="submit" name="submit">Search</button>
+      </form>
+		</section>
+		<section>
+			<h3>A to Z List</h3>
+      <p><a href="./title.php#abc">A B C</a> | <a href="./title.php#def">D E F</a> | <a href="./title.php#ghi">G H I</a> | <a href="./title.php#jkl">J K L</a> | <a href="./title.php#mno">M N O</a> | <a href="./title.php#pqr">P Q R</a> | <a href="./title.php#stu">S T U</a> | <a href="./title.php#vwx">V W X</a> | <a href="./title.php#yz">Y Z</a> | <a href="./title.php#spec">Other</a></p>
+		</section>
+		<section>
+			<h3>Browse by Liaison Area</h3>
+			<p><a href="liaisons.php">I want help with...</a></p>
       <ul class="toggle" id="listColumns">
-        <li>
-          <a href="./search.php?liaison=ACE+Language+Institute">ACE Language Institute</a>
-        </li>
+        <li><a href="./search.php?liaison=ACE+Language+Institute">ACE Language Institute</a></li>
       </ul>
-    </div>
-    <div class="related-block">
-      <!--Related pages div !-->
-      <ul class="related">
-        <li>
-          <p class="heading">Related pages</p>
-        </li>
-        <li>
-          <a href="search.php?staff=all">Browse All Staff</a>
-        </li>
-        <li>
-          <a href="vitae.php">Browse All Faculty and Professional(s)</a>
-        </li>
-        <li>
-          <a href="/services/liaisons-by-department.html">Browse liaisons by department</a>
-        </li>
-        <li>
-          <a href="/contact.php">Contact Us</a>
-        </li>
-      </ul>
-    </div>
-    <div class="expertise-block">
-      <p class="heading">Browse by Expertise Topic</p>
+      </p>
+		</section>
+		<section>
+			<h3>Browse by Expertise Topic</h3>
       <p class="block"><a href="expertise.php">I want help with...</a></p>
       <ul class="toggle" id="listColumns">
         <li>
           <a href="./search.php?expertise=Accessibility">Accessibility</a>
         </li>
       </ul>
-    </div>
-    <div class="department-block">
-      <ul class="department">
-        <li>
-          <p class="heading">Browse by Department</p>
-        </li>
-        <li>
-          <a href="./search.php?team=" title="view all team members"></a>
-        </li>
-        <li>
-          <a href="./search.php?team=Administration" title="view all Administration team members">Administration</a>
-        </li>
-        <li>
-          <a href="./search.php?team=Collection+Development" title="view all Collection Development team members">Collection Development</a>
-        </li>
-        <li>
-          <a href="./search.php?team=Learning+and+Research+Services" title="view all Learning and Research Services team members">Learning and Research Services</a>
-        </li>
-        <li>
-          <a href="./search.php?team=Library+Informatics+and+Computing" title="view all Library Informatics and Computing team members">Library Informatics and Computing</a>
-        </li>
-        <li>
-          <a href="./search.php?team=Resource+Description+and+Metadata+Services" title="view all Resource Description and Metadata Services team members">Resource Description and Metadata Services</a>
-        </li>
-        <li>
-          <a href="./search.php?team=Special+Collections+and+Archives" title="view all Special Collections and Archives team members">Special Collections and Archives</a>
-        </li>
+		</section>
+		<section>
+			<h3>Browse by Department</h3>
+			<ul class="department">
+        <li><a href="./search.php?team=Administration" title="view all Administration team members">Administration</a></li>
+        <li><a href="./search.php?team=Collection+Development" title="view all Collection Development team members">Collection Development</a></li>
+        <li><a href="./search.php?team=Learning+and+Research+Services" title="view all Learning and Research Services team members">Learning and Research Services</a></li>
+        <li><a href="./search.php?team=Library+Informatics+and+Computing" title="view all Library Informatics and Computing team members">Library Informatics and Computing</a></li>
+        <li><a href="./search.php?team=Resource+Description+and+Metadata+Services" title="view all Resource Description and Metadata Services team members">Resource Description and Metadata Services</a></li>
+        <li><a href="./search.php?team=Special+Collections+and+Archives" title="view all Special Collections and Archives team members">Special Collections and Archives</a></li>
       </ul>
-    </div><!-- Google Analytics: change UA-XXXXX-Y to be your site's ID. -->
-    <script>
-        window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
-        ga('create','UA-XXXXX-Y','auto');ga('send','pageview')
-    </script> 
-    <script async defer src="https://www.google-analytics.com/analytics.js">
-    </script>
-  </main>
+		</section>
+		<section>
+			<h3>Related pages</h3>
+			<ul class="related">
+        <li><a href="search.php?staff=all">Browse All Staff</a></li>
+        <li><a href="vitae.php">Browse All Faculty and Professional(s)</a></li>
+        <li><a href="/services/liaisons-by-department.html">Browse liaisons by department</a></li>
+        <li><a href="/contact.php">Contact Us</a></li>
+      </ul>
+		</section>
+	</div>
+</main> 
 </body>
 </html>
-
