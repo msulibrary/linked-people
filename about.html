@@ -117,11 +117,11 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
 }
 ?>
 </head>
-<body>
+<body id="page" vocab="https://schema.org/" typeof="WebPage" resource="#page">
   <main>
   <a id="mainContent"></a>
   <!-- Add your site or application content here -->
-  <div id="main" typeof="schema:WebPage" about="<?php echo 'http://'.$server.$path.'/'.$id; ?>">
+  <div id="main" typeof="schema:WebPage" about="<?php echo 'http://'.$server.$path.'/'.$id; ?>" resource="#profile">
   <div typeof="schema:ProfilePage" about="<?php echo 'http://'.$server.$path.'/'.$id; ?>" resource="<?php echo 'http://'.$server.$path.'/about/'.$id;?>">
     <link rel="rdfa:usesVocabulary" href="http://schema.org/" resource="http://schema.org/" />
     <meta property="schema:about" content="<?php echo 'http://'.$server.$path.'/about/'.$id; ?>" resource="<?php echo 'http://'.$server.$path.'/about/'.$id;?>" />
