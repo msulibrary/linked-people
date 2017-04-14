@@ -13,18 +13,24 @@ html {-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;box-sizing:border-
 *,:before,:after {box-sizing:inherit;}
 html,body {-webkit-font-smoothing:antialiased;background-color:#eee;color:#333;font-family:Oswald,Helvetica,arial,sans-serif;font-size:100%;font-stretch:normal;font-style:normal;font-variant:normal;font-weight:400;height:100%;line-height:1.5;margin:0;padding:0;width:100%;}
 header {background-color:#002a61;color:#fff;line-height:70px;padding:0 70px;}
-h1 {display:inline-block;}
 nav {color:#828282;display:inline;font-size:.7em;padding:0 10px;}
 a {color:#002a61;transition:all .3s;}
 nav a {color:#828282;text-decoration:none;}
 nav a:hover {color:#bebebe;}
+header .nav a,footer .nav a {font-size:14px;vertical-align:middle;}
+header .nav a:not(:last-child),footer .nav a:not(:last-child) {border-right:.0725em solid #c4c4c4;margin-right:5px;padding-right:10px;}
 main {/*height:100vh;*/min-height:396px;padding:20px 40px;}
 .content {-moz-column-gap:40px;-moz-columns:300px;-webkit-column-gap:40px;-webkit-columns:300px;column-gap:40px;columns:300px;}
-h2 {color:#1a202c;font-weight:normal;padding:10px 30px;}
-h3 {color:#5d5d5d;font-weight:normal;margin-bottom:.4em;}
-p+p {margin-top:.7em;}
 section {-webkit-column-break-inside:avoid;background-color:#fff;break-inside:avoid;padding:30px;page-break-inside:avoid;}
 section+section {margin:20px 0;}
+header h1 {color:#fff;display:inline-block;font-size:2em;font-weight:bold;margin:10px 0;padding:0;}
+h1 {color:#1a202c;font-size:1.5em;font-weight:normal;padding:10px 30px;}
+h2 {color:#5d5d5d;font-size:1.17em;font-weight:normal;margin-bottom:.4em;}
+p+p {margin-top:.7em;}
+hr {border:0;border-bottom:0 solid #fff;border-top:.0725em solid #c4c4c4;box-sizing:content-box;height:0;margin:2em auto 1em;}
+.border-ftr {width:90%;}
+.center {text-align:center;}
+.copyright {font-size:12px;}
 </style>
 </head>
 <body id="page" vocab="https://schema.org/" typeof="CollectionPage" resource="ADD-PREFERRED-PAGE-RESOURCE-URI-HERE">
@@ -32,10 +38,10 @@ section+section {margin:20px 0;}
   <h1>Linked People</h1><nav>by <a href="https://www.lib.montana.edu">MSU Library</a></nav>
 </header>
 <main>
-	<h2>Staff Directory</h2>
+	<h1>Staff Directory</h1>
   	<div class="content">
 		<section>
-		  <h3>Search</h3>
+		  <h2>Search</h2>
 			<form action="search.php" class="searchPeople" id="search-form" method="get" name="searchform">
         <input class="text" id="q" maxlength="45" name="q" placeholder="Enter people or topics..." size="35" type="text"> 
         <select name="facet">
@@ -46,11 +52,11 @@ section+section {margin:20px 0;}
       </form>
 		</section>
 		<section>
-			<h3>A to Z List</h3>
+			<h2>A to Z List</h2>
       <p><a href="./title.php#abc">A B C</a> | <a href="./title.php#def">D E F</a> | <a href="./title.php#ghi">G H I</a> | <a href="./title.php#jkl">J K L</a> | <a href="./title.php#mno">M N O</a> | <a href="./title.php#pqr">P Q R</a> | <a href="./title.php#stu">S T U</a> | <a href="./title.php#vwx">V W X</a> | <a href="./title.php#yz">Y Z</a> | <a href="./title.php#spec">Other</a></p>
 		</section>
 		<section>
-			<h3>Browse by Liaison Area</h3>
+			<h2>Browse by Liaison Area</h2>
 			<p><a href="liaisons.php">I want help with...</a></p>
       <ul class="toggle" id="listColumns">
         <li><a href="./search.php?liaison=ACE+Language+Institute">ACE Language Institute</a></li>
@@ -58,7 +64,7 @@ section+section {margin:20px 0;}
       </p>
 		</section>
 		<section>
-			<h3>Browse by Expertise Topic</h3>
+			<h2>Browse by Expertise Topic</h2>
       <p class="block"><a href="expertise.php">I want help with...</a></p>
       <ul class="toggle" id="listColumns">
         <li>
@@ -67,7 +73,7 @@ section+section {margin:20px 0;}
       </ul>
 		</section>
 		<section>
-			<h3>Browse by Department</h3>
+			<h2>Browse by Department</h2>
 			<ul class="department">
         <li><a href="./search.php?team=Administration" title="view all Administration team members">Administration</a></li>
         <li><a href="./search.php?team=Collection+Development" title="view all Collection Development team members">Collection Development</a></li>
@@ -78,7 +84,7 @@ section+section {margin:20px 0;}
       </ul>
 		</section>
 		<section>
-			<h3>Related pages</h3>
+			<h2>Related pages</h2>
 			<ul class="related">
         <li><a href="search.php?staff=all">Browse All Staff</a></li>
         <li><a href="vitae.php">Browse All Faculty and Professional(s)</a></li>
