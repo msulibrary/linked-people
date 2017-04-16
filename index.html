@@ -12,7 +12,7 @@
 html {-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;box-sizing:border-box;}
 *,:before,:after {box-sizing:inherit;}
 html,body {-webkit-font-smoothing:antialiased;background-color:#eee;color:#333;font-family:Oswald,Helvetica,arial,sans-serif;font-size:100%;font-stretch:normal;font-style:normal;font-variant:normal;font-weight:400;height:100%;line-height:1.5;margin:0;padding:0;width:100%;}
-header {background-color:#002a61;color:#fff;line-height:70px;padding:0 70px;}
+header {background-color:#002a61;color:#fff;line-height:70px;padding:0 70px;width:100%;}
 nav {color:#828282;display:inline;font-size:.7em;padding:0 10px;}
 a {color:#002a61;transition:all .3s;}
 nav a {color:#828282;text-decoration:none;}
@@ -20,9 +20,15 @@ nav a:hover {color:#bebebe;}
 header .nav a,footer .nav a {font-size:14px;vertical-align:middle;}
 header .nav a:not(:last-child),footer .nav a:not(:last-child) {border-right:.0725em solid #c4c4c4;margin-right:5px;padding-right:10px;}
 main {/*height:100vh;*/min-height:396px;padding:20px 40px;}
-.content {-moz-column-gap:40px;-moz-columns:300px;-webkit-column-gap:40px;-webkit-columns:300px;column-gap:40px;columns:300px;}
+.content {column-gap:40px;column-width:300px;}
+.content {display:grid;grid-gap:40px;grid-template-columns:repeat(3, 31%);}
 section {-webkit-column-break-inside:avoid;background-color:#fff;break-inside:avoid;padding:30px;page-break-inside:avoid;}
-section+section {margin:20px 0;}
+@supports (column-width:300px;) {
+  section+section {margin:20px 0;}  
+}
+@supports (display:grid) {
+  section+section {margin:0;}   
+}
 header h1 {color:#fff;display:inline-block;font-size:2em;font-weight:bold;margin:10px 0;padding:0;}
 h1 {color:#1a202c;font-size:1.5em;font-weight:normal;padding:10px 30px;}
 h2 {color:#5d5d5d;font-size:1.17em;font-weight:normal;margin-bottom:.4em;}
@@ -31,6 +37,14 @@ hr {border:0;border-bottom:0 solid #fff;border-top:.0725em solid #c4c4c4;box-siz
 .border-ftr {width:90%;}
 .center {text-align:center;}
 .copyright {font-size:12px;}
+/*medium screen view < 1030px (based on 16px browser default)*/
+@media all and (max-width:64.375em) {
+  .content {grid-template-columns: repeat(2, 48%);}
+}
+/*small screen view < 801px (based on 16px browser default)*/
+@media all and (max-width:50.063em) {
+  .content {grid-template-columns: repeat(1, 100%);}
+}
 </style>
 </head>
 <body id="page" vocab="https://schema.org/" typeof="CollectionPage" resource="ADD-PREFERRED-PAGE-RESOURCE-URI-HERE">
