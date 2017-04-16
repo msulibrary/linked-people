@@ -20,13 +20,8 @@ nav a:hover {color:#bebebe;}
 header .nav a,footer .nav a {font-size:14px;vertical-align:middle;}
 header .nav a:not(:last-child),footer .nav a:not(:last-child) {border-right:.0725em solid #c4c4c4;margin-right:5px;padding-right:10px;}
 main {/*height:100vh;*/min-height:396px;padding:20px 40px;}
-.content {
-column-gap:40px;column-width:300px;
-/*-moz-column-gap:40px;-moz-columns:300px;-webkit-column-gap:40px;-webkit-columns:300px;column-gap:40px;columns:300px;*/
-}
-.content {  
-display:grid;grid-gap:40px;grid-template-columns:repeat(3, 31%);
-}
+.content {column-gap:40px;column-width:300px;}
+.content {display:grid;grid-gap:40px;grid-template-columns:repeat(3, 31%);}
 section {-webkit-column-break-inside:avoid;background-color:#fff;break-inside:avoid;padding:30px;page-break-inside:avoid;}
 @supports (column-width:300px;) {
   section+section {margin:20px 0;}  
@@ -42,7 +37,7 @@ hr {border:0;border-bottom:0 solid #fff;border-top:.0725em solid #c4c4c4;box-siz
 .border-ftr {width:90%;}
 .center {text-align:center;}
 .copyright {font-size:12px;}
-/*medium screen view < 1029px (based on 16px browser default)*/
+/*medium screen view < 1030px (based on 16px browser default)*/
 @media all and (max-width:64.375em) {
   .content {grid-template-columns: repeat(2, 48%);}
   /*.content {grid-template-columns: repeat(2, 500px);}*/
