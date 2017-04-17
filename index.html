@@ -58,7 +58,7 @@ hr {border:0;border-bottom:0 solid #fff;border-top:.0725em solid #c4c4c4;box-siz
   	<div class="content">
 		<section>
 		  <h2>Search</h2>
-			<form action="search.php" class="searchPeople" id="search-form" method="get" name="searchform">
+			<form action="search.html" class="searchPeople" id="search-form" method="get" name="searchform">
         <input class="text" id="q" maxlength="45" name="q" placeholder="Enter people or topics..." size="35" type="text"> 
         <select name="facet">
           <option id="keyword" name="keyword" selected value="keyword">People</option>
@@ -69,43 +69,41 @@ hr {border:0;border-bottom:0 solid #fff;border-top:.0725em solid #c4c4c4;box-siz
 		</section>
 		<section>
 			<h2>A to Z List</h2>
-      <p><a href="./title.php#abc">A B C</a> | <a href="./title.php#def">D E F</a> | <a href="./title.php#ghi">G H I</a> | <a href="./title.php#jkl">J K L</a> | <a href="./title.php#mno">M N O</a> | <a href="./title.php#pqr">P Q R</a> | <a href="./title.php#stu">S T U</a> | <a href="./title.php#vwx">V W X</a> | <a href="./title.php#yz">Y Z</a> | <a href="./title.php#spec">Other</a></p>
+      <p><a href="./browse-name.html#abc">A B C</a> | <a href="./browse-name.html#def">D E F</a> | <a href="./browse-name.html#ghi">G H I</a> | <a href="./browse-name.html#jkl">J K L</a> | <a href="./browse-name.html#mno">M N O</a> | <a href="./browse-name.html#pqr">P Q R</a> | <a href="./browse-name.html#stu">S T U</a> | <a href="./browse-name.html#vwx">V W X</a> | <a href="./browse-name.html#yz">Y Z</a> | <a href="./browse-name.html#spec">Other</a></p>
 		</section>
 		<section>
 			<h2>Browse by Liaison Area</h2>
-			<p><a href="liaisons.php">I want help with...</a></p>
-      <ul class="toggle" id="listColumns">
-        <li><a href="./search.php?liaison=ACE+Language+Institute">ACE Language Institute</a></li>
+			<p><a href="">I want help with...</a></p>
+      <ul class="toggle">
+        <li class="example">Examples: <a href="./search.html?liaison=Biochemistry">Biochemistry</a>, <a href="./search.html?liaison=History">History</a>, <a href="./search.html?liaison=Physics">Physics</a>, etc.</li>
       </ul>
       </p>
 		</section>
 		<section>
 			<h2>Browse by Expertise Topic</h2>
-      <p class="block"><a href="expertise.php">I want help with...</a></p>
-      <ul class="toggle" id="listColumns">
-        <li>
-          <a href="./search.php?expertise=Accessibility">Accessibility</a>
-        </li>
+      <p><a href="browse-expertise.html">I want help with...</a></p>
+      <ul class="toggle">
+        <li>Examples: <a href="./search.html?expertise=Accessibility">Accessibility</a>, <a href="./search.html?expertise=User_interface_design">Interface Design</a>, <a href="./search.html?expertise=Metadata">Metadata</a>, etc.</li>
       </ul>
 		</section>
 		<section>
 			<h2>Browse by Department</h2>
 			<ul class="department">
-        <li><a href="./search.php?team=Administration" title="view all Administration team members">Administration</a></li>
-        <li><a href="./search.php?team=Collection+Development" title="view all Collection Development team members">Collection Development</a></li>
-        <li><a href="./search.php?team=Learning+and+Research+Services" title="view all Learning and Research Services team members">Learning and Research Services</a></li>
-        <li><a href="./search.php?team=Library+Informatics+and+Computing" title="view all Library Informatics and Computing team members">Library Informatics and Computing</a></li>
-        <li><a href="./search.php?team=Resource+Description+and+Metadata+Services" title="view all Resource Description and Metadata Services team members">Resource Description and Metadata Services</a></li>
-        <li><a href="./search.php?team=Special+Collections+and+Archives" title="view all Special Collections and Archives team members">Special Collections and Archives</a></li>
+        <li><a href="./search.html?team=Administration" title="view all Administration team members">Administration</a></li>
+        <li><a href="./search.html?team=Collection+Development" title="view all Collection Development team members">Collection Development</a></li>
+        <li><a href="./search.html?team=Learning+and+Research+Services" title="view all Learning and Research Services team members">Learning and Research Services</a></li>
+        <li><a href="./search.html?team=Library+Informatics+and+Computing" title="view all Library Informatics and Computing team members">Library Informatics and Computing</a></li>
+        <li><a href="./search.html?team=Resource+Description+and+Metadata+Services" title="view all Resource Description and Metadata Services team members">Resource Description and Metadata Services</a></li>
+        <li><a href="./search.html?team=Special+Collections+and+Archives" title="view all Special Collections and Archives team members">Special Collections and Archives</a></li>
       </ul>
 		</section>
 		<section>
 			<h2>Related pages</h2>
 			<ul class="related">
-        <li><a href="search.php?staff=all">Browse All Staff</a></li>
-        <li><a href="vitae.php">Browse All Faculty and Professional(s)</a></li>
-        <li><a href="/services/liaisons-by-department.html">Browse liaisons by department</a></li>
-        <li><a href="/contact.php">Contact Us</a></li>
+        <li><a href="search.html?staff=all">Browse All Staff</a></li>
+        <li><a href="https://www.lib.montana.edu/people/vitae.php">Browse All Faculty and Professional(s)</a></li>
+        <li><a href="https://www.lib.montana.edu/services/liaisons-by-department.html">Browse liaisons by department</a></li>
+        <li><a href="https://www.lib.montana.edu/contact/">Contact Us</a></li>
       </ul>
 		</section>
 	</div>
