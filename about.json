@@ -3,7 +3,7 @@
 header('Content-Type: application/json');
 
 //pass database parameters and connect to database
-include_once './meta/assets/dbconnect.inc';
+include_once './meta/assets/database-params.inc';
 //bring special functions and utilities onto page
 include './meta/inc/utilities.php';
 
