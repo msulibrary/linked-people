@@ -1,0 +1,337 @@
+<?php
+//assign value for title of page
+$pageTitle = 'Linked People (Demo) - Alphabetical List of People';
+//declare filename and filepath for screen/projection stylesheet variable - "none"
+$customCSS = 'none';
+//pass database parameters and connect to database
+include_once './meta/assets/dbconnect.inc';
+//create an array with filepaths for multiple page scripts - default is "none"
+$customScript[0] = 'none';
+?>
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8"/>
+<meta http-equiv="x-ua-compatible" content="ie=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title><?php echo($pageTitle); ?>: Montana State University (MSU) Library</title>
+<meta name="description" content="Code prototype for Linked People"/>
+<link rel="canonical" href="ADD-PREFERRED-PAGE-URL-HERE"/>
+<link rel="stylesheet prefetch" href="https://fonts.googleapis.com/css?family=Oswald"/>
+<style>
+html {-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;box-sizing:border-box;}
+*,:before,:after {box-sizing:inherit;}
+html,body {-webkit-font-smoothing:antialiased;background-color:#eee;color:#333;font-family:Oswald,Helvetica,arial,sans-serif;font-size:100%;font-stretch:normal;font-style:normal;font-variant:normal;font-weight:400;height:100%;line-height:1.5;margin:0;padding:0;width:100%;}
+header {background-color:#002a61;color:#fff;line-height:70px;padding:0 70px;width:100%;}
+nav {color:#828282;display:inline;font-size:.7em;padding:0 10px;}
+a {color:#002a61;transition:all .3s;}
+nav a {color:#828282;text-decoration:none;}
+nav a:hover {color:#bebebe;}
+header .nav a,footer .nav a {font-size:14px;vertical-align:middle;}
+header .nav a:not(:last-child),footer .nav a:not(:last-child) {border-right:.0725em solid #c4c4c4;margin-right:5px;padding-right:10px;}
+main {/*height:100vh;*/min-height:396px;padding:20px 40px;}
+.content {column-gap:40px;column-width:300px;}
+.content {display:grid;grid-gap:40px;grid-template-columns:repeat(1, 100%);}
+section {-webkit-column-break-inside:avoid;background-color:#fff;break-inside:avoid;padding:30px;page-break-inside:avoid;}
+@supports (column-width:300px;) {
+  section+section {margin:20px 0;}  
+}
+@supports (display:grid) {
+  section+section {margin:0;}   
+}
+header h1 {color:#fff;display:inline-block;font-size:2em;font-weight:bold;margin:10px 0;padding:0;}
+h1 {color:#1a202c;font-size:1.5em;font-weight:normal;padding:10px 30px;}
+h2 {color:#5d5d5d;font-size:1.17em;font-weight:normal;margin-bottom:.4em;}
+p+p {margin-top:.7em;}
+hr {border:0;border-bottom:0 solid #fff;border-top:.0725em solid #c4c4c4;box-sizing:content-box;height:0;margin:2em auto 1em;}
+.border-ftr {width:90%;}
+.center {text-align:center;}
+.copyright {font-size:12px;}
+/*medium screen view < 1030px (based on 16px browser default)*/
+@media all and (max-width:64.375em) {
+  /*.content {grid-template-columns: repeat(2, 48%);}*/
+}
+/*small screen view < 801px (based on 16px browser default)*/
+@media all and (max-width:50.063em) {
+  header {padding:0 45px;}
+  main {padding-left:15px;padding-right:15px;}
+  .content {grid-template-columns: repeat(1, 100%);}
+}
+</style>
+<?php
+if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
+  $countedCSS = count($customCSS);
+  for ($i = 0; $i < $countedCSS; $i++) {
+?>
+<link rel="stylesheet" href="<?php echo $customCSS[$i]; ?>">
+<?php
+  }
+}
+?>
+</head> 
+<body id="page" vocab="https://schema.org/" typeof="AboutPage" resource="ADD-PREFERRED-PAGE-RESOURCE-URI-HERE">
+<header>
+  <h1>Linked People</h1><nav>by <a href="https://www.lib.montana.edu">MSU Library</a></nav>
+</header>
+<main>
+  <h1>Browse Alphabetical List of People</h1>
+    <div class="content">
+    <section>
+    <form name="searchform" action="view.php" method="get" class="searchPeople" id="search-form">
+	<input class="text" type="text" name="q" id="q" maxlength="45" size="35" placeholder="Enter people or topics..."/>
+		<select name="facet">
+			<option name="keyword" id="keyword" value="keyword" selected>People</option>
+			<option name="topic" id="topic" value="topic">Topics</option>
+		</select>
+	<input class="submit" type="image" src="meta/img/search-clear.png" alt="search" id="submit" name="submit"  />
+    </form>
+
+    <p id="azlist"><strong>Browse by staff last name</strong><br /><a href="./title.php#abc">A B C</a> | <a href="./title.php#def">D E F </a> | <a href="./title.php#ghi">G H I </a> | <a href="./title.php#jkl">J K L</a> | <a href="./title.php#mno">M N O</a> |
+    <a href="./title.php#pqr">P Q R</a> | <a href="./title.php#stu">S T U</a> | <a href="./title.php#vwx">V W X</a> | <a href="./title.php#yz">Y Z</a> | <a href="./title.php#spec">Other</a></p>
+
+    <h2><a name="abc"></a>A B C <a href="#maincont">[^]</a></h2>
+    <ul>
+	<?php
+	//Request staff with letters "ABC" in last name
+	$query = "SELECT staff_id, familyName, givenName, jobTitle, staff_status FROM libstaff.staff WHERE familyName >='a' AND familyName <='d' AND staff_status = 'a'  ORDER BY familyName ASC";
+	$getpeopleAtoC = $connectLibstaff->query($query);
+	if (!$getpeopleAtoC) {
+	  die('<p>Error retrieving staff data from database!<br />'.
+		  'Error: ' . $connectLibstaff->error() . '</p>');
+	}
+	//Display selected staff entry fields in a list
+	while ($row = $getpeopleAtoC->fetch_object()) {		  
+		$staff_id = stripslashes($row->staff_id);
+		$staff_name = html_entity_decode(stripslashes($row->givenName  . ' ' . $row->familyName));
+		$jobTitle = stripslashes($row->jobTitle);
+		echo '<dl><dt><a href="./about.php?id='.$staff_id.'">'.$staff_name.'</a></dt>'."\n";
+		echo '<dd>'.$jobTitle.'</dd>'."\n";
+		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.php?id='.$staff_id.'">Learn more...</a></dd></dl>'."\n";
+		echo '<hr size="1" />'."\n";
+	}
+	?>
+    </ul>
+    <h2><a name="def"></a>D E F <a href="#maincont">[^]</a></h2>
+    <ul>
+	<?php
+	//Request staff with letters "DEF" in last name
+	$query = "SELECT staff_id, familyName, givenName, jobTitle, staff_status  FROM libstaff.staff WHERE familyName >='d' AND familyName <='g' AND staff_status = 'a' ORDER BY familyName ASC";
+	$getpeopleDtoF = $connectLibstaff->query($query);
+	if (!$getpeopleDtoF) {
+	  die('<p>Error retrieving staff data from database!<br />'.
+		  'Error: ' . $connectLibstaff->error() . '</p>');
+	}
+	//Display selected staff entry fields in a list
+	while ($row = $getpeopleDtoF->fetch_object()) {		  
+		$staff_id = stripslashes($row->staff_id);
+		$staff_name = html_entity_decode(stripslashes($row->givenName  . ' ' . $row->familyName));
+		$jobTitle = stripslashes($row->jobTitle);
+		echo '<dl><dt><a href="./about.php?id='.$staff_id.'">'.$staff_name.'</a></dt>'."\n";
+		echo '<dd>'.$jobTitle.'</dd>'."\n";
+		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.php?id='.$staff_id.'">Learn more...</a></dd></dl>'."\n";
+		echo '<hr size="1" />'."\n";
+	}
+	?>
+    </ul>
+    <h2><a name="ghi"></a>G H I <a href="#maincont">[^]</a></h2>
+    <ul>
+	<?php
+	//Request staff with letters "GHI" in last name
+	$query = "SELECT staff_id, familyName, givenName, jobTitle, staff_status FROM libstaff.staff WHERE familyName >='g' AND familyName <='j' AND staff_status = 'a' ORDER BY familyName ASC";
+	$getpeopleGtoI = $connectLibstaff->query($query);
+	if (!$getpeopleGtoI) {
+	  die('<p>Error retrieving staff data from database!<br />'.
+		  'Error: ' . $connectLibstaff->error() . '</p>');
+	}
+	//Display selected staff entry fields in a list
+	while ($row = $getpeopleGtoI->fetch_object()) {		  
+		$staff_id = stripslashes($row->staff_id);
+		$staff_name = html_entity_decode(stripslashes($row->givenName  . ' ' . $row->familyName));
+		$jobTitle = stripslashes($row->jobTitle);
+		echo '<dl><dt><a href="./about.php?id='.$staff_id.'">'.$staff_name.'</a></dt>'."\n";
+		echo '<dd>'.$jobTitle.'</dd>'."\n";
+		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.php?id='.$staff_id.'">Learn more...</a></dd></dl>'."\n";
+		echo '<hr size="1" />'."\n";
+	}
+	?>
+    </ul>
+    <h2><a name="jkl"></a>J K L <a href="#maincont">[^]</a></h2>
+    <ul>
+	<?php
+	//Request staff with letters "JKL" in last name
+	$query = "SELECT staff_id, familyName, givenName, jobTitle, staff_status FROM libstaff.staff WHERE familyName >='j' AND familyName <='m' AND staff_status = 'a' ORDER BY familyName ASC";
+	$getpeopleJtoL = $connectLibstaff->query($query);
+	if (!$getpeopleJtoL) {
+	  die('<p>Error retrieving staff data from database!<br />'.
+		  'Error: ' . $connectLibstaff->error() . '</p>');
+	}
+	//Display selected staff entry fields in a list
+	while ($row = $getpeopleJtoL->fetch_object()) {		  
+		$staff_id = stripslashes($row->staff_id);
+		$staff_name = html_entity_decode(stripslashes($row->givenName  . ' ' . $row->familyName));
+		$jobTitle = stripslashes($row->jobTitle);
+		echo '<dl><dt><a href="./about.php?id='.$staff_id.'">'.$staff_name.'</a></dt>'."\n";
+		echo '<dd>'.$jobTitle.'</dd>'."\n";
+		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.php?id='.$staff_id.'">Learn more...</a></dd></dl>'."\n";
+		echo '<hr size="1" />'."\n";
+	}
+	?>
+    </ul>
+    <h2><a name="mno"></a>M N O <a href="#maincont">[^]</a></h2>
+    <ul>
+	<?php
+	//Request staff with letters "MNO" in last name
+	$query = "SELECT staff_id, familyName, givenName, jobTitle, staff_status FROM libstaff.staff WHERE familyName >='m' AND familyName <='p' AND staff_status = 'a' ORDER BY familyName ASC"; 
+	$getpeopleMtoO = $connectLibstaff->query($query);
+	if (!$getpeopleMtoO) {
+	  die('<p>Error retrieving staff data from database!<br />'.
+		  'Error: ' . $connectLibstaff->error() . '</p>');
+	}
+	//Display selected staff entry fields in a list
+	while ($row = $getpeopleMtoO->fetch_object()) {		  
+		$staff_id = stripslashes($row->staff_id);
+		$staff_name = html_entity_decode(stripslashes($row->givenName  . ' ' . $row->familyName));
+		$jobTitle = stripslashes($row->jobTitle);
+		echo '<dl><dt><a href="./about.php?id='.$staff_id.'">'.$staff_name.'</a></dt>'."\n";
+		echo '<dd>'.$jobTitle.'</dd>'."\n";
+		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.php?id='.$staff_id.'">Learn more...</a></dd></dl>'."\n";
+		echo '<hr size="1" />'."\n";
+	}
+	?>
+    </ul>
+    <h2><a name="pqr"></a>P Q R <a href="#maincont">[^]</a></h2>
+    <ul>
+	<?php
+	//Request staff with letters "PQR" in last name
+	$query = "SELECT staff_id, familyName, givenName, jobTitle, staff_status FROM libstaff.staff WHERE familyName >='p' AND familyName <='s' AND staff_status = 'a' ORDER BY familyName ASC";
+	$getpeoplePtoR = $connectLibstaff->query($query);
+	if (!$getpeoplePtoR) {
+	  die('<p>Error retrieving staff data from database!<br />'.
+		  'Error: ' . $connectLibstaff->error() . '</p>');
+	}
+	//Display selected staff entry fields in a list
+	while ($row = $getpeoplePtoR->fetch_object()) {		  
+		$staff_id = stripslashes($row->staff_id);
+		$staff_name = html_entity_decode(stripslashes($row->givenName  . ' ' . $row->familyName));
+		$jobTitle = stripslashes($row->jobTitle);
+		echo '<dl><dt><a href="./about.php?id='.$staff_id.'">'.$staff_name.'</a></dt>'."\n";
+		echo '<dd>'.$jobTitle.'</dd>'."\n";
+		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.php?id='.$staff_id.'">Learn more...</a></dd></dl>'."\n";
+		echo '<hr size="1" />'."\n";
+	}
+	?>
+    </ul>
+    <h2><a name="stu"></a>S T U <a href="#maincont">[^]</a></h2>
+    <ul>
+	<?php
+	//Request staff with letters "STU" in last name
+	$query = "SELECT staff_id, familyName, givenName, jobTitle, staff_status FROM libstaff.staff WHERE familyName >='s' AND familyName <='v' AND staff_status = 'a' ORDER BY familyName ASC";
+	$getpeopleStoU = $connectLibstaff->query($query);
+	if (!$getpeopleStoU) {
+	  die('<p>Error retrieving staff data from database!<br />'.
+		  'Error: ' . $connectLibstaff->error() . '</p>');
+	}
+	//Display selected staff entry fields in a list
+	while ($row = $getpeopleStoU->fetch_object()) {		  
+		$staff_id = stripslashes($row->staff_id);
+		$staff_name = html_entity_decode(stripslashes($row->givenName  . ' ' . $row->familyName));
+		$jobTitle = stripslashes($row->jobTitle);
+		echo '<dl><dt><a href="./about.php?id='.$staff_id.'">'.$staff_name.'</a></dt>'."\n";
+		echo '<dd>'.$jobTitle.'</dd>'."\n";
+		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.php?id='.$staff_id.'">Learn more...</a></dd></dl>'."\n";
+		echo '<hr size="1" />'."\n";
+	}
+	?>
+    </ul>
+    <h2><a name="vwx"></a>V W X <a href="#maincont">[^]</a></h2>
+    <ul>
+	<?php
+	//Request staff with letters "VWX" in last name
+	$query = "SELECT staff_id, familyName, givenName, jobTitle, staff_status FROM libstaff.staff WHERE familyName >='v' AND familyName <='y' AND staff_status = 'a'  ORDER BY familyName ASC";
+	$getpeopleVtoX = $connectLibstaff->query($query);
+	if (!$getpeopleVtoX) {
+	  die('<p>Error retrieving staff data from database!<br />'.
+		  'Error: ' . $connectLibstaff->error() . '</p>');
+	}
+	//Display selected staff entry fields in a list
+	while ($row = $getpeopleVtoX->fetch_object()) {		  
+		$staff_id = stripslashes($row->staff_id);
+		$staff_name = html_entity_decode(stripslashes($row->givenName  . ' ' . $row->familyName));
+		$jobTitle = stripslashes($row->jobTitle);
+		echo '<dl><dt><a href="./about.php?id='.$staff_id.'">'.$staff_name.'</a></dt>'."\n";
+		echo '<dd>'.$jobTitle.'</dd>'."\n";
+		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.php?id='.$staff_id.'">Learn more...</a></dd></dl>'."\n";
+		echo '<hr size="1" />'."\n";
+	}
+	?>
+    </ul>
+    <h2><a name="yz"></a>Y Z <a href="#maincont">[^]</a></h2>
+    <ul>
+	<?php
+	//Request staff with letters "VWX" in last name
+	$query = "SELECT staff_id, familyName, givenName, jobTitle, staff_status FROM libstaff.staff WHERE familyName >='y' AND staff_status = 'a' ORDER BY familyName ASC";
+	$getpeopleYtoZ = $connectLibstaff->query($query);
+	if (!$getpeopleYtoZ) {
+	  die('<p>Error retrieving staff data from database!<br />'.
+		  'Error: ' . $connectLibstaff->error() . '</p>');
+	}
+	//Display selected staff entry fields in a list
+	while ($row = $getpeopleYtoZ->fetch_object()) {		  
+		$staff_id = stripslashes($row->staff_id);
+		$staff_name = html_entity_decode(stripslashes($row->givenName  . ' ' . $row->familyName));
+		$jobTitle = stripslashes($row->jobTitle);
+		echo '<dl><dt><a href="./about.php?id='.$staff_id.'">'.$staff_name.'</a></dt>'."\n";
+		echo '<dd>'.$jobTitle.'</dd>'."\n";
+		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.php?id='.$staff_id.'">Learn more...</a></dd></dl>'."\n";
+		echo '<hr size="1" />'."\n";
+	}
+	?>
+    </ul>
+    <h2><a name="spec"></a>Other <a href="#maincont">[^]</a></h2>
+    <ul>
+	<?php
+	//Request staff with letters "VWX" in last name
+	$query = "SELECT staff_id, familyName, givenName, jobTitle, staff_status FROM libstaff.staff WHERE familyName <='a' AND staff_status = 'a' ORDER BY familyName ASC";
+	$getpeopleYtoZ = $connectLibstaff->query($query);
+	if (!$getpeopleYtoZ) {
+	  die('<p>Error retrieving staff data from database!<br />'.
+		  'Error: ' . $connectLibstaff->error() . '</p>');
+	}
+	//Display selected staff entry fields in a list
+	while ($row = $getpeopleYtoZ->fetch_object()) {		  
+		$staff_id = stripslashes($row->staff_id);
+		$staff_name = html_entity_decode(stripslashes($row->givenName  . ' ' . $row->familyName));
+		$jobTitle = stripslashes($row->jobTitle);
+		echo '<dl><dt><a href="./about.php?id='.$staff_id.'">'.$staff_name.'</a></dt>'."\n";
+		echo '<dd>'.$jobTitle.'</dd>'."\n";
+		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.php?id='.$staff_id.'">Learn more...</a></dd></dl>'."\n";
+		echo '<hr size="1" />'."\n";
+	}
+	?>
+    </ul>
+    </section>
+  </div>
+</main>
+<footer>
+  <hr class="border-ftr">
+  <p class="nav center">
+    <a property="relatedLink" href="https://github.com/msulibrary/linked-people">GitHub</a>
+    <a property="relatedLink" href="http://journal.code4lib.org/articles/12320">Article</a>
+    <a property="relatedLink" href="https://www.lib.montana.edu/">Library</a>
+  </p>
+  <p class="copyright center">
+    &copy; <a property="author creator copyrightHolder reviewedBy" rel="author" href="https://www.wikidata.org/wiki/Q15255419">Montana State University (MSU) Library</a>  <time property="dateModified lastReviewed" datetime="2017-04-17T18:57:03-07:00" title="published 2017-04-17T18:57:03-07:00">2017</time>
+  </p>
+</footer>
+<?php
+if ($customScript = (empty($customScript)) ? null : $customScript) {
+  $counted = count($customScript);
+  for ($i = 0; $i < $counted; $i++) {
+?>
+<script type="text/javascript" src="<?php echo $customScript[$i]; ?>"></script>
+<?php
+  }
+}
+?>
+</body>
+</html>
