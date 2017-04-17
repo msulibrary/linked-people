@@ -1,0 +1,131 @@
+<?php
+//assign value for title of page
+$pageTitle = 'Linked People (Demo) - Expertise';
+//declare filename for additional stylesheet variable - default is "none"
+$customCSS = 'none';
+//bring special functions and utilities onto page
+include './meta/inc/utilities.php';
+//pass database parameters and connect to database
+include_once './meta/assets/dbconnect.inc';
+//create an array with filepaths for multiple page scripts - default is "none"
+$customScript[0] = 'none';
+?>
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8"/>
+<meta http-equiv="x-ua-compatible" content="ie=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title><?php echo($pageTitle); ?>: Montana State University (MSU) Library</title>
+<meta name="description" content="Code prototype for Linked People"/>
+<link rel="canonical" href="ADD-PREFERRED-PAGE-URL-HERE"/>
+<link rel="stylesheet prefetch" href="https://fonts.googleapis.com/css?family=Oswald"/>
+<style>
+html {-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;box-sizing:border-box;}
+*,:before,:after {box-sizing:inherit;}
+html,body {-webkit-font-smoothing:antialiased;background-color:#eee;color:#333;font-family:Oswald,Helvetica,arial,sans-serif;font-size:100%;font-stretch:normal;font-style:normal;font-variant:normal;font-weight:400;height:100%;line-height:1.5;margin:0;padding:0;width:100%;}
+header {background-color:#002a61;color:#fff;line-height:70px;padding:0 70px;width:100%;}
+nav {color:#828282;display:inline;font-size:.7em;padding:0 10px;}
+a {color:#002a61;transition:all .3s;}
+nav a {color:#828282;text-decoration:none;}
+nav a:hover {color:#bebebe;}
+header .nav a,footer .nav a {font-size:14px;vertical-align:middle;}
+header .nav a:not(:last-child),footer .nav a:not(:last-child) {border-right:.0725em solid #c4c4c4;margin-right:5px;padding-right:10px;}
+main {/*height:100vh;*/min-height:396px;padding:20px 40px;}
+.content {column-gap:40px;column-width:300px;}
+.content {display:grid;grid-gap:40px;grid-template-columns:repeat(1, 100%);}
+section {-webkit-column-break-inside:avoid;background-color:#fff;break-inside:avoid;padding:30px;page-break-inside:avoid;}
+@supports (column-width:300px;) {
+  section+section {margin:20px 0;}  
+}
+@supports (display:grid) {
+  section+section {margin:0;}   
+}
+header h1 {color:#fff;display:inline-block;font-size:2em;font-weight:bold;margin:10px 0;padding:0;}
+h1 {color:#1a202c;font-size:1.5em;font-weight:normal;padding:10px 30px;}
+h2 {color:#5d5d5d;font-size:1.17em;font-weight:normal;margin-bottom:.4em;}
+p+p {margin-top:.7em;}
+hr {border:0;border-bottom:0 solid #fff;border-top:.0725em solid #c4c4c4;box-sizing:content-box;height:0;margin:2em auto 1em;}
+.border-ftr {width:90%;}
+.center {text-align:center;}
+.copyright {font-size:12px;}
+/*medium screen view < 1030px (based on 16px browser default)*/
+@media all and (max-width:64.375em) {
+  /*.content {grid-template-columns: repeat(2, 48%);}*/
+}
+/*small screen view < 801px (based on 16px browser default)*/
+@media all and (max-width:50.063em) {
+  header {padding:0 45px;}
+  main {padding-left:15px;padding-right:15px;}
+  .content {grid-template-columns: repeat(1, 100%);}
+}
+</style>
+<?php
+if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
+  $countedCSS = count($customCSS);
+  for ($i = 0; $i < $countedCSS; $i++) {
+?>
+<link rel="stylesheet" href="<?php echo $customCSS[$i]; ?>">
+<?php
+  }
+}
+?>
+</head> 
+<body id="page" vocab="https://schema.org/" typeof="AboutPage" resource="ADD-PREFERRED-PAGE-RESOURCE-URI-HERE">
+<header>
+  <h1>Linked People</h1><nav>by <a href="https://www.lib.montana.edu">MSU Library</a></nav>
+</header>
+<main>
+  <h1>Browse People Expertise</h1>
+    <div class="content">
+    <section>
+      <h2>By Topic</h2>
+      <ul>
+      <?php
+      //run and hold query data from type table for formats
+      $query = 'SELECT create_id, object, object_uri FROM libstaff.create_action ORDER BY object ASC';
+      $getExpertiseTopics =  $connectLibstaff->query($query) or die("Error retrieving data from database.");
+
+      //display list of liasion topics for view on public pages
+      while ($row = $getExpertiseTopics->fetch_object()) {
+        $object_id = $row->create_id;
+        $object = $row->object;
+        $object_url = $row->object_uri;
+        $url_term = basename($object_url);
+        if ($getExpertiseTopics->num_rows) {
+?>
+        <li><a href="./search.php?expertise=<?php echo urlencode($url_term);?>"><?php echo $object; ?></a></li>
+<?php
+        } else {
+?>
+        <li>There are no liaision topics assigned to the databases.</li>
+<?php
+        }
+      }
+?>
+    </ul>
+    </section>
+</main>
+<footer>
+  <hr class="border-ftr">
+  <p class="nav center">
+    <a property="relatedLink" href="https://github.com/msulibrary/linked-people">GitHub</a>
+    <a property="relatedLink" href="http://journal.code4lib.org/articles/12320">Article</a>
+    <a property="relatedLink" href="https://www.lib.montana.edu/">Library</a>
+  </p>
+  <p class="copyright center">
+    &copy; <a property="author creator copyrightHolder reviewedBy" rel="author" href="https://www.wikidata.org/wiki/Q15255419">Montana State University (MSU) Library</a>  <time property="dateModified lastReviewed" datetime="2017-04-17T18:57:03-07:00" title="published 2017-04-17T18:57:03-07:00">2017</time>
+  </p>
+</footer>
+<?php
+if ($customScript = (empty($customScript)) ? null : $customScript) {
+  $counted = count($customScript);
+  for ($i = 0; $i < $counted; $i++) {
+?>
+<script type="text/javascript" src="<?php echo $customScript[$i]; ?>"></script>
+<?php
+  }
+}
+?>
+</body>
+</html>
