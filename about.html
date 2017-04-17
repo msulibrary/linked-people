@@ -9,7 +9,7 @@ $fileNameURI = isset($_SERVER['REQUEST_URI']) ? htmlentities(strip_tags($_SERVER
 $fileExtension = isset($_SERVER['PATH_INFO']) ? pathinfo($fileName, PATHINFO_EXTENSION) : null;
 
 //assign value for title of page
-$pageTitle = 'People at Your Library';
+$pageTitle = 'Linked People (Demo) at Your Library';
 
 //declare filename for additional stylesheet variable - default is "none"
 $customCSS[0] = 'none';
@@ -368,11 +368,5 @@ if ($customScript = (empty($customScript)) ? null : $customScript) {
   }
 }
 ?>
-<!-- Google Analytics: change UA-XXXXX-Y to be your site's ID. -->
-<script>
-  window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
-  ga('create','UA-XXXXX-Y','auto');ga('send','pageview')
-</script> 
-<script async defer src="https://www.google-analytics.com/analytics.js"></script>
 </body>
 </html>
