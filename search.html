@@ -1,0 +1,970 @@
+<?php
+// purpose: This code searches the database for the user specified search terms and displays matching items
+
+//get and set url protocol
+$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? 'https://' : 'http://';
+//set and sanitize global variables for URL construction
+$server = isset($_SERVER['SERVER_NAME']) ? htmlentities(strip_tags($_SERVER['SERVER_NAME'])) : null;
+$path = isset($_SERVER['PHP_SELF']) ? htmlentities(strip_tags(dirname($_SERVER['PHP_SELF']))) : null;
+$fileName = isset($_SERVER['SCRIPT_NAME']) ? htmlentities(strip_tags(basename($_SERVER['SCRIPT_NAME']))) : null;
+$fileNameURI = isset($_SERVER['REQUEST_URI']) ? htmlentities(strip_tags($_SERVER['REQUEST_URI'])) : null;
+$fileExtension = isset($_SERVER['PATH_INFO']) ? pathinfo($fileName, PATHINFO_EXTENSION) : null;
+
+//set title, description, and keywords
+$pageTitle = 'Linked People (Demo) - Search Results';
+$pageDescription = 'Search results for searching within the Linked People database.';
+
+//declare filname for additional css - default is "none"
+$customCSS = 'people.css';
+
+//get database parameters and connect to database
+include_once './meta/assets/dbconnect.inc';
+
+//create an array with filepaths for multiple page scipts - default is "none"
+$customScript[0] = 'none';
+
+?>
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8"/>
+<meta http-equiv="x-ua-compatible" content="ie=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title><?php echo($pageTitle); ?>: Montana State University (MSU) Library</title>
+<meta name="description" content="Code prototype for Linked People"/>
+<link rel="canonical" href="ADD-PREFERRED-PAGE-URL-HERE"/>
+<link rel="stylesheet prefetch" href="https://fonts.googleapis.com/css?family=Oswald"/>
+<style>
+html {-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;box-sizing:border-box;}
+*,:before,:after {box-sizing:inherit;}
+html,body {-webkit-font-smoothing:antialiased;background-color:#eee;color:#333;font-family:Oswald,Helvetica,arial,sans-serif;font-size:100%;font-stretch:normal;font-style:normal;font-variant:normal;font-weight:400;height:100%;line-height:1.5;margin:0;padding:0;width:100%;}
+header {background-color:#002a61;color:#fff;line-height:70px;padding:0 70px;width:100%;}
+nav {color:#828282;display:inline;font-size:.7em;padding:0 10px;}
+a {color:#002a61;transition:all .3s;}
+nav a {color:#828282;text-decoration:none;}
+nav a:hover {color:#bebebe;}
+header .nav a,footer .nav a {font-size:14px;vertical-align:middle;}
+header .nav a:not(:last-child),footer .nav a:not(:last-child) {border-right:.0725em solid #c4c4c4;margin-right:5px;padding-right:10px;}
+main {/*height:100vh;*/min-height:396px;padding:20px 40px;}
+.content {column-gap:40px;column-width:300px;}
+.content {display:grid;grid-gap:40px;grid-template-columns:repeat(1, 100%);}
+section {-webkit-column-break-inside:avoid;background-color:#fff;break-inside:avoid;padding:30px;page-break-inside:avoid;}
+@supports (column-width:300px;) {
+  section+section {margin:20px 0;}  
+}
+@supports (display:grid) {
+  section+section {margin:0;}   
+}
+header h1 {color:#fff;display:inline-block;font-size:2em;font-weight:bold;margin:10px 0;padding:0;}
+h1 {color:#1a202c;font-size:1.5em;font-weight:normal;padding:10px 30px;}
+h2 {color:#5d5d5d;font-size:1.17em;font-weight:normal;margin-bottom:.4em;}
+p+p {margin-top:.7em;}
+hr {border:0;border-bottom:0 solid #fff;border-top:.0725em solid #c4c4c4;box-sizing:content-box;height:0;margin:2em auto 1em;}
+.border-ftr {width:90%;}
+.center {text-align:center;}
+.copyright {font-size:12px;}
+/*medium screen view < 1030px (based on 16px browser default)*/
+@media all and (max-width:64.375em) {
+  /*.content {grid-template-columns: repeat(2, 48%);}*/
+}
+/*small screen view < 801px (based on 16px browser default)*/
+@media all and (max-width:50.063em) {
+  header {padding:0 45px;}
+  main {padding-left:15px;padding-right:15px;}
+  .content {grid-template-columns: repeat(1, 100%);}
+}
+</style>
+<?php
+if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
+  $countedCSS = count($customCSS);
+  for ($i = 0; $i < $countedCSS; $i++) {
+?>
+<link rel="stylesheet" href="<?php echo $customCSS[$i]; ?>">
+<?php
+  }
+}
+?>
+</head>
+<?php
+
+//number of records to display per page
+$recordsPerPage = 15;
+
+//maximum length of description to be displayed
+$maxLengthDescription = 150;
+
+/**
+ * Mapping of possible query elements to their corresponding mods fields
+ *
+ * Note: To add a new query element type, simply add another line to this array.
+ *       Each query element type can map to one or more comma-separated mods fields.
+ */
+$queryToModsMap = array (
+	"q"         => "",
+	"facet"    	=> "",
+	"team"      => "",
+	"staff"    	=> "",
+	"liaison"  	=> "",
+	"expertise" => ""
+);
+// QueryData Class
+class QueryData
+{
+	// Mapping of query elements to mods fields
+	protected $queryToModsMap;
+
+	// Number of records to display per page
+	protected $recordsPerPage;
+
+	// Array that holds the query elements and corresponding values
+	protected $queryArray = Array();
+
+	// Array that holds exploded (separated) mods fields and their
+	// corresponding query values used to highlight matched query values
+	protected $highlightArray;
+
+	// Starting record to pull on the next query
+	protected $start;
+
+	// Number of records to pull on the next query
+	protected $limit;
+
+	// Database connection
+	protected $connectLibstaff;
+
+	// Facet if set
+	protected $facet;
+
+	/**
+	 * QueryData Constructor
+	 *
+	 * Parameters:
+	 *  $queryToModsMap - mapping of query elements to mods fields
+	 *  $recordsPerPage - number of records to display per page
+	 */
+	public function __construct($queryToModsMap, $recordsPerPage, $connectLibstaff)
+	{
+		$this->queryToModsMap 	= $queryToModsMap;
+		$this->recordsPerPage 	= $recordsPerPage;
+		$this->connectLibstaff 	= $connectLibstaff;
+	}
+
+	/**
+	 * add - Add query element and corresponding query value to QueryData object
+	 *
+	 * Parameters:
+	 *  $element - element from query string
+	 *  $value - corresponding value from query string
+	 */
+	function add($element, $value)
+	{
+		// Save value in queryArray
+		if (!isset($this->queryArray[$element])) 
+		{
+			$this->queryArray[$element] = $value;
+		}
+		else 
+		{
+			$this->queryArray[$element] .= " $value";
+		}
+
+		// Separate comma-separated mods fields into individual mods fields
+		$modsFields = explode(",", $this->queryToModsMap[$element]);
+
+		// Save query value for each mods field
+		foreach ($modsFields as $field) 
+		{
+			// Remove quote marks and leading + or -
+			$value = preg_replace("/(?:[\"\'])|(?:^[-+])/", "", $value);
+
+			// Save value for highlighting
+			$this->highlightArray[trim($field)][] = $value;
+		}
+	}
+
+	/**
+	 * setFacet - set value of facet
+	 *
+	 * Parameter:
+	 * 	$facet - value of the facet parameter
+	 */
+	public function setFacet($facet)
+	{
+		$this->facet = $facet;	
+	}
+
+	/**
+	 * setStart - Set value of start property
+	 *
+	 * Parameter:
+	 *   $start - value for start property
+	 */
+	public function setStart($start)
+	{
+		// Check for valid starting row variable
+		if (is_numeric($start)) 
+		{
+			// Escape it for mysql
+			$start = $this->connectLibstaff->real_escape_string((int)$start);
+
+			if ($start < 0) {
+				// Use default
+				$start = 0;
+			}
+		}
+		else 
+		{
+			// Default value
+			$start = '0';
+		}
+
+		// Store in class property
+		$this->start = $start;
+	}
+
+	/**
+	 * getStart - Get value of start property
+	 *
+	 * Returns:
+	 *   start property value
+	 */
+	public function getStart()
+	{
+		return $this->start;
+	}
+
+	/**
+	 * setLimit - Set value of limit property
+	 *
+	 * Parameter:
+	 *   $limit - value for limit property
+	 */
+	public function setLimit($limit)
+	{
+		// Check for valid limit result set variable
+		if (is_numeric($limit)) 
+		{
+			// Escape it for mysql
+			$limit = $this->connectLibstaff->real_escape_string((int)$limit);
+
+			if ($limit <= 0) 
+			{
+				// Use default
+				$limit = $this->recordsPerPage;
+			}
+		}
+		else 
+		{
+			// Default value
+			$limit = $this->recordsPerPage;
+		}
+
+		// Store in class property
+		$this->limit = $limit;
+	}
+
+	/**
+	 * getLimit - Get value of limit property
+	 *
+	 * Returns:
+	 *   limit property value
+	 */
+	public function getLimit()
+	{
+		return $this->limit;
+	}
+
+	/**
+	 * getSqlQueryString - Get the sql query string
+	 *
+	 * Returns:
+	 *   sql query string
+	 */
+	function getSqlQueryString()
+	{
+		$scoreCounter = 0;
+
+		$useLike = TRUE;
+		foreach ($this->queryArray as $element => $value)
+		{
+			
+			// Get mods field(s) that correspond(s) to search element
+			$modsField = $this->queryToModsMap[$element];
+
+			// Explode value into multiple values and then check length of each item
+			$newValue = str_replace(array(" ", ",", ".", "-", "|", ":", "\"", "'"), "-", $value);
+			$explodedValues = explode("-", $newValue);
+			foreach ($explodedValues as $explodedValue)
+			{
+				if (strlen($explodedValue) > 2)
+				{
+					// If length of any item is greater than 2, use MATCH.  Otherwise use LIKE.
+					$useLike = FALSE;
+					break;
+				}
+			}
+		}
+
+		$queryString = 'SELECT 	staff.staff_id, jobTitle, givenName, familyName, staff_dept, staff_room, staff_phone, staff_email, staff_vita, staff_web, staff_image, staff_privacy, staff_libcal_id	';
+
+		
+		if ($this->facet === "topic")
+		{
+			$queryString .= " FROM staff, interact_action, interact_action_match, create_action, create_action_match";
+		}
+		else if ($element === "liaison")
+		{
+			$queryString .= " FROM staff, interact_action, interact_action_match ";	
+		}
+		else if ($element === "expertise")
+		{
+			$queryString .= " FROM staff, create_action, create_action_match ";	
+		}
+		else
+		{
+			$queryString .= " FROM staff ";
+		}
+
+
+		$queryString .= " WHERE staff.staff_status = 'a' ";
+
+		foreach ($this->queryArray as $element => $value) 
+		{
+			// Get mods field(s) that correspond(s) to search element
+			$modsField = $this->queryToModsMap[$element];
+
+			if ($modsField === "")
+			{
+				if ($element === "q" && $this->facet === "keyword")
+				{
+					$value = $this->connectLibstaff->real_escape_string($value);
+
+					$queryString .= "AND MATCH (givenName, familyName, jobTitle, staff_dept) AGAINST ('+$value*' IN BOOLEAN MODE)";
+				}
+				else if ($element === "q" && $this->facet === "topic")
+				{
+					$value = $this->connectLibstaff->real_escape_string($value);
+
+					$queryString .= "
+							AND MATCH (create_action.object) AGAINST ('+$value*' IN BOOLEAN MODE)
+							AND create_action_match.create_id = create_action.create_id
+							AND create_action_match.staff_id = staff.staff_id
+
+						OR MATCH (interact_action.object) AGAINST ('+$value*' IN BOOLEAN MODE)
+							AND interact_action_match.interact_id = interact_action.interact_id
+							AND interact_action_match.staff_id = staff.staff_id
+							AND staff_status='a'
+					";
+				}
+				else if ($element === "team")
+				{
+					$value = $this->connectLibstaff->real_escape_string($value);
+
+					$queryString .= " AND staff_dept LIKE '$value' ";
+				}
+				else if ($element === "liaison")
+				{
+					$value = $this->connectLibstaff->real_escape_string($value);
+				
+					$queryString .= "
+						AND interact_action.object = '$value'
+						AND interact_action_match.interact_id = interact_action.interact_id
+						AND interact_action_match.staff_id = staff.staff_id
+					";
+				}
+				else if ($element === "expertise")
+				{
+					$value = $this->connectLibstaff->real_escape_string($value);
+					$value_url = "http://dbpedia.org/resource/" . urldecode($value);
+
+					$queryString .= "
+						AND create_action.object_uri = '$value_url'
+						AND create_action_match.create_id = create_action.create_id
+						AND create_action_match.staff_id = staff.staff_id
+					";
+				}
+			}
+			else
+			{
+				// Remove enclosing double quotes if present and prepare value for use by mysql
+				$value = $this->connectLibstaff->real_escape_string(trim($value, '"'));
+				$queryString .= "AND (";
+
+				$explodedFields = explode(",", $modsField);
+
+				$continuation = "";
+				foreach ($explodedFields as $explodedField)
+				{
+					if ($useLike)
+					{
+						$queryString .= "$continuation$explodedField LIKE '%$value%' ";
+					}
+						else
+					{
+						$queryString .= "$continuation$explodedField = '$value' ";
+					}
+					$continuation = "OR ";
+				}
+				$queryString .= ") ";
+			}
+		}
+
+		$queryString .= "GROUP BY staff.staff_id ORDER BY staff.familyName ASC";
+			
+		$queryString .= " LIMIT $this->start, $this->limit;";
+			
+		return $queryString;
+	}
+
+	/**
+	 * getSqlQueryCountString - Get the sql query count string
+	 *
+	 * Returns:
+	 *   sql query count string
+	 */
+	function getSqlQueryCountString()
+	{
+		
+		
+		foreach ($this->queryArray as $element => $value)
+		{
+			
+			// Get mods field(s) that correspond(s) to search element
+			$modsField = $this->queryToModsMap[$element];
+
+			// Explode value into multiple values and then check length of each item
+			$newValue = str_replace(array(" ", ",", ".", "-", "|", ":", "\"", "'"), "-", $value);
+			$explodedValues = explode("-", $newValue);
+			foreach ($explodedValues as $explodedValue)
+			{
+				if (strlen($explodedValue) > 2)
+				{
+					// If length of any item is greater than 2, use MATCH.  Otherwise use LIKE.
+					$useLike = FALSE;
+					break;
+				}
+			}
+		}
+		
+		if ($this->facet === "topic")
+		{
+			$queryCountString = "SELECT COUNT(t.staff_id) as matchCount";
+		}
+		else
+		{
+			$queryCountString = "SELECT COUNT(*) AS matchCount";
+		}
+
+		if ($this->facet === "topic")
+	    {
+			$queryCountString .= " 
+				FROM 
+				(SELECT staff.staff_id 
+				 FROM staff
+				 INNER JOIN create_action_match ON staff.staff_id = create_action_match.staff_id
+				 INNER JOIN create_action ON create_action_match.create_id = create_action.create_id
+				 LEFT JOIN interact_action_match ON interact_action_match.staff_id = staff.staff_id
+				 LEFT JOIN interact_action ON interact_action_match.interact_id = interact_action.interact_id
+			";
+	    }
+	    else if ($element === "liaison")
+	    {
+	        $queryCountString .= " FROM staff, interact_action, interact_action_match ";
+	    }
+	    else if ($element === "expertise")
+	    {
+	        $queryCountString .= " FROM staff, create_action, create_action_match ";
+	    }
+		else
+		{
+			$queryCountString .= " FROM staff";
+		}
+		
+		
+		$queryCountString .= " WHERE staff_status = 'a' ";
+		
+
+		$useLike = TRUE;
+		
+		foreach ($this->queryArray as $element => $value) 
+		{
+			// Get mods field(s) that correspond(s) to search element
+			$modsField = $this->queryToModsMap[$element];
+
+			if ($modsField === "")
+            {
+				if ($element === "q" && $this->facet === "keyword")
+				{
+					$value = $this->connectLibstaff->real_escape_string($value);
+                    $queryCountString .= "AND MATCH (givenName, familyName, jobTitle, staff_dept) AGAINST ('+$value*' IN BOOLEAN MODE)";
+                }
+                else if ($element === "q" && $this->facet === "topic")
+                {
+	                $value = $this->connectLibstaff->real_escape_string($value);
+                    $queryCountString .= "
+	                    	AND MATCH (create_action.object) AGAINST ('+$value*' IN BOOLEAN MODE)
+							OR MATCH (interact_action.object) AGAINST ('+$value*' IN BOOLEAN MODE)
+							GROUP BY staff.staff_id
+							ORDER BY staff.familyName
+							) as t
+					";
+                }
+                else if ($element === "team")
+                {
+	                $value = $this->connectLibstaff->real_escape_string($value);
+                    $queryCountString .= " AND staff_dept LIKE '$value' ";
+                }
+                else if ($element === "liaison")
+                {
+                    $value = $this->connectLibstaff->real_escape_string($value);
+                    $queryCountString .= "
+                        AND interact_action.object = '$value'
+                        AND interact_action_match.interact_id = interact_action.interact_id
+                        AND interact_action_match.staff_id = staff.staff_id
+                    ";
+                }
+                else if ($element === "expertise")
+                {
+                    $value = $this->connectLibstaff->real_escape_string($value);
+                    $value_url = "http://dbpedia.org/resource/" . urldecode($value);
+                    $queryCountString .= "
+                        AND create_action.object_uri = '$value_url'
+                        AND create_action_match.create_id = create_action.create_id
+                        AND create_action_match.staff_id = staff.staff_id
+                    ";
+	            }
+			}
+			else
+			{
+				// Explode value into multiple values and then check length of each item
+				$newValue = str_replace(array(" ", ",", ".", "-", "|", ":", "\"", "'"), "-", $value);
+				$explodedValues = explode("-", $newValue);
+				foreach ($explodedValues as $explodedValue)
+				{
+					if (strlen($explodedValue) > 2)
+					{
+						// If length of any item is greater than 2, use MATCH.  Otherwise use LIKE.
+						$useLike = FALSE;
+						break;
+					}
+				}
+
+				// Remove enclosing double quotes if present and prepare value for use by mysql
+				$value = $this->connectLibstaff->real_escape_string(trim($value, '"'));
+				$queryCountString .= "AND (";
+
+				$explodedFields = explode(",", $modsField);
+
+				$continuation = "";
+				foreach ($explodedFields as $explodedField)
+				{
+					if ($useLike)
+					{
+						$queryCountString .= "$continuation$explodedField LIKE '%$value%' ";
+					}
+				else
+			       {
+				               $queryCountString .= " FROM staff";
+							           }
+									   
+									   {
+						$queryCountString .= "$continuation$explodedField = '$value' ";
+					}
+					$continuation = "OR ";
+				}
+				$queryCountString .= ") ";
+			}
+
+
+			// Finish the query count string
+			$queryCountString .= ";";
+
+			return $queryCountString;
+		}
+	}
+
+		/**
+	 * getQueryString - Get the query string for previous and next links
+	 *
+	 * Returns:
+	 *   query string used by previous and next links
+	 */
+	function getQueryString()
+	{
+		$queryString = "";
+		$continuation = "";
+
+		foreach ($this->queryArray as $element => $value) 
+		{
+			$queryString .= "$continuation$element=" . urlencode($value);
+			$continuation = "&amp;";
+		}
+
+		return $queryString;
+	}
+
+	/**
+	 * getSearchTerms - Gets the search terms
+	 *
+	 * Returns:
+	 *   string of search terms
+	 */
+	function getSearchTerms()
+	{
+		$searchTerms = "";
+		$continuation = "";
+
+		foreach ($this->queryArray as $element => $value) 
+		{
+			$searchTerms .= $continuation . (($element != "q") ? ($element . " ") : "") . "<strong>$value</strong>";
+			$continuation = " and ";
+		}
+
+		return $searchTerms;
+	}
+
+	/**
+	 * getFieldWithHighlight - Gets field value and highlights matching query values
+	 *
+	 * Parameters:
+	 *   $record - mysql record
+	 *   $modsField - mods field to extract from the record
+	 *
+	 * Returns:
+	 *   highlighted field value
+	 */
+	function getFieldWithHighlight($record, $modsField)
+	{
+		// Get the field value
+		$fieldValue = $record->{$modsField};
+
+		// Check if search includes value(s) for this mods field
+		if (isset($this->highlightArray[$modsField]))
+		{
+			foreach ($this->highlightArray[$modsField] as $matchValue)
+			{
+				// Quote regular expression characters that appear in matchValue
+				$matchValue = preg_quote($matchValue, "/");
+
+				// Add the span class around all matches that occur outside of html tags
+				$fieldValue = preg_replace("/(?![^<]+>)$matchValue/i", "<span class=\"match\">$0</span>", $fieldValue);
+			}
+		}
+		return $fieldValue;
+	}
+} //end QueryData class
+?>
+
+<body id="page" vocab="https://schema.org/" typeof="SearchResultsPage" resource="ADD-PREFERRED-PAGE-RESOURCE-URI-HERE">
+<header>
+  <h1>Linked People</h1><nav>by <a href="https://www.lib.montana.edu">MSU Library</a></nav>
+</header>
+<main>
+	<h1>Search Results</h1>
+  	<div class="content">
+		<section>
+
+<?php
+
+		function formatEmailLink() {
+
+			// If they supplied no e-mail address, return nothing.
+			if(func_num_args() == 0) { return ""; }
+
+			// Get the e-mail address.
+			$staff_email = func_get_arg(0);
+
+			// Bounce back if the e-mail address is missing the @ sign.
+			if(!preg_match("/@/", $staff_email)) { return $staff_email; }
+
+			// Break the address into two pieces, removing any single quotes.
+			$piece = explode("@", preg_replace("/'/", "\\'", $staff_email));
+
+			// If they supplied a name get that too.
+			if(func_num_args() == 2) 
+			{
+				$name = func_get_arg(1);
+				$name = preg_replace("/'/", "\\'", $name);
+			} 
+			else 
+			{
+				$name = "' + a + '@' + b + '";
+			}
+
+			// Assemble the javascript
+			$javaScript = '<script type="text/javascript">' . "
+				a = '" . $piece[0] . "';
+				b = '" . $piece[1] . "';
+				document.write('<a href=\"mailto:' + a + '@' + b + '\">" . $name . "</a>');
+				</script>";
+
+			return $javaScript;
+		}
+
+		// True if validation fails
+		$validationFailure = FALSE;
+
+		// Create the QueryData object
+		$queryData = new QueryData($queryToModsMap, $recordsPerPage, $connectLibstaff);
+
+		foreach ($_REQUEST as $queryElement => $queryValue) 
+		{
+			if (!isset($facet) && $queryElement === "facet" && $queryValue === "topic")
+			{
+				$facet = "topic";
+				$queryData->setFacet($facet);
+			}
+			else if (!isset($facet) && $queryElement === "facet" && $queryValue === "keyword")
+			{
+				$facet = "keyword";	
+				$queryData->setFacet($facet);
+			}
+			else
+			{
+				// Check for valid query element
+				if (isset($queryToModsMap[$queryElement])) {
+
+					// String of allowed symbols
+					// Don't allow <, &#60, \u003c or >, &#62, \u003e
+					$allowedSymbols = preg_quote("\"',.?&:;_+-()[]/", "/");
+					// Add additional special characters to whitelist
+					$allowedSymbols .= "\x{e0}";
+
+					// Check for invalid characters
+					if ($invalidCount = preg_match_all("/[^a-z0-9 $allowedSymbols]/i", $queryValue, $matches)) 
+					{
+
+						$queryValue = htmlspecialchars($queryValue);
+
+						foreach ($matches[0] as $invalid) 
+						{
+							$invalid = htmlspecialchars($invalid);
+							if (!isset($replaced[$invalid])) 
+							{
+								$queryValue = str_replace("$invalid", "<strong>$invalid</strong>", $queryValue);
+								$replaced[$invalid] = TRUE;
+							}
+						}
+
+						$validationFailure = TRUE;
+						break;
+					}
+
+					// Separate the search entries -- keep quoted text together
+					preg_match_all("/\"[^\"]+\"|[^\" ]+/", $queryValue, $separatedValuesArray);
+
+	/*
+	 *				// Filter out commas
+	 *				$queryValuesArray = preg_replace("/[,]/", "", $separatedValuesArray[0]);
+	 */
+
+					// Trim results and remove empty values
+					foreach($separatedValuesArray[0] as $queryValue) 
+					{
+						$queryValue = trim($queryValue);
+						if ($queryValue != "") 
+						{
+							// Add queryValue to the queryData object
+							$queryData->add($queryElement, $queryValue);
+						}
+					}
+				}
+			}
+		}
+
+		if ($validationFailure) 
+		{
+			// Invalid characters detected
+			echo "<h2><strong>Your search contains " . (($invalidCount == 1) ? "an " : "") . 
+				"invalid character" . (($invalidCount == 1) ? "" : "s") . "</strong></h2>";
+			echo "<hr />";
+			echo "<h3>The search string \"$queryValue\" contains " . (($invalidCount == 1) ? "an " : "") .
+				"invalid character" . (($invalidCount == 1) ? "" : "s") . ".<br/><br/>
+				Please use your browser's <strong>BACK</strong> button and fix the error. Then resubmit your request.</h3>";
+		}
+		elseif ($queryData->getQueryString() == "") 
+		{
+			// No search element found
+			echo "<h2><strong>There is missing information in your request.</strong></h2>";
+			echo "<hr />";
+			echo "<h3>Please enter a value for which to search.<br />";
+			echo "<br />Use your browsers <strong>BACK</strong> button and enter the missing information.</h3>";
+		}
+		else 
+		{
+			// Valid request
+
+			// Set the start and limit parameters
+			$queryData->setStart(isSet($_REQUEST['start']) ? $_REQUEST['start'] : 0);
+			$queryData->setLimit(isSet($_REQUEST['limit']) ? $_REQUEST['limit'] : $recordsPerPage);
+
+			// Perform the query and queryCount
+//echo $queryData->getSqlQueryString() . "\n";
+//echo "</br>";
+//echo $queryData->getSqlQueryCountString() . "\n";
+			$result = $connectLibstaff->query($queryData->getSqlQueryString()) or die("Data query error");
+			$countResult = $connectLibstaff->query($queryData->getSqlQueryCountString()) or die("Count query error");
+			$count = $countResult->fetch_object();
+			$numRecords = $count->matchCount;
+
+			if ($numRecords == 0) 
+			{
+				echo "<h2><strong>There are no resulting matches</strong></h2>\n";
+				echo "<hr />\n";
+				echo "<h3>There are no items in the database that match your search value(s): " . $queryData->getSearchTerms() .
+				     "<br /><br />Please try again!!!</h3>\n";
+			}
+			else 
+			{
+				echo "<h2>Your search for " . $queryData->getSearchTerms() .
+					" resulted in <strong>$numRecords</strong> item" .
+					(($numRecords == 1) ? "" : "s") . ".</h2>\n";
+				echo "<p class=\"nav\"><a class=\"bck\" href=\"./index.php\">Back to Homepage</a></p>";
+
+				$start = $queryData->getStart();
+				$limit = $queryData->getLimit();
+
+				// Create links to more items if there are more than $limit items
+				$prevLink = "";
+				$nextLink = "";
+				if ($numRecords > $limit) 
+				{
+					// Create a link to the previous items if there are previous items to display
+					if ($start > 0) 
+					{
+						$prevStart = $start - $limit;
+						$prevGroup = $limit;
+
+						if ($prevStart < 0) 
+						{
+							// This condition should only be hit if the url is altered manually
+							$prevGroup += $prevStart;
+							$prevStart = 0;
+						}
+
+						$prevLink = "<a class=\"bck\" href=\"./search.php?{$queryData->getQueryString()}&start=$prevStart&limit=$prevGroup\">" .
+									"View previous $prevGroup result" . (($prevGroup == 1) ? "" : "s") . "</a>&nbsp;&nbsp;&nbsp;";
+					}
+
+					// Create a link to the next items if there are more items to display
+					$nextStart = $start + $limit;
+					if ($nextStart < $numRecords) 
+					{
+						$remainingRecords = $numRecords - $nextStart;
+						$nextGroup = ($remainingRecords < $limit) ? $remainingRecords : $limit;
+						$nextLink = "<a class=\"fwd\" href=\"./search.php?{$queryData->getQueryString()}&start=$nextStart&limit=$limit\">" .
+								"View next $nextGroup result" . (($nextGroup == 1) ? "" : "s") . "</a>";
+					}
+				}
+				else 
+				{
+					// Set the max number of items to the number of records if less than $limit
+					$limit = $numRecords;
+				}
+
+				// Display links to more items at top of results page if there are more than $limit items
+				if ($prevLink != "" || $nextLink != "") 
+				{
+					echo "<p class=\"nav\">";
+					echo "$prevLink$nextLink";
+					echo "</p>";
+				}
+
+				// Display all summary information about matching item(s)
+				while ($record = $result->fetch_object()) 
+				{
+//					echo "In fetch object while loop.\n";
+					$staff_id = $record->staff_id;
+				//	$identifier = $record->identifier;
+					$staff_title = stripslashes($record->jobTitle);
+					$staff_name = html_entity_decode(stripslashes($record->givenName . ' ' . $record->familyName));
+					$staff_dept = stripslashes($record->staff_dept);
+					$staff_room = $record->staff_room;
+					$staff_phone = $record->staff_phone;
+					$staff_email = $record->staff_email;
+					$staff_vita = $record->staff_vita;
+					$staff_web = $record->staff_web;
+					$staff_image = 'http://' . $_SERVER['SERVER_NAME'] . dirname($_SERVER['PHP_SELF']) . '/meta/img/photos/' . $record->staff_image;
+					$staff_privacy = $record->staff_privacy;
+					$staff_libcal_id = $record->staff_libcal_id;
+
+					// Get object number
+				//	$path = explode('/', $record->identifier);
+				//	$filename = $path[count($path)-1];
+				//	$object = strtok($filename, ".");
+
+					// Display the info to the user
+					echo "<ul class='aboutList'>\n";
+					echo "<li class='photo'><a href=\"./about.php?id=$staff_id\"><img alt=\"photo of $staff_name\" src=\"$staff_image\"/></a></li>\n";
+					echo "<li class='infoContact'>\n";
+					echo '<h3><a href="./about.php?id=' . $staff_id . '">' . $staff_name . '</a></h3>' . "\n";
+					echo '<p><span class="about-heading"><strong>Title: </strong></span>' .  $staff_title . '</p>' . "\n";
+					echo '<p><span class="about-heading"><strong>Department: </strong></span>' .  $staff_dept . '</p>' . "\n";
+					echo '<p><span class="about-heading"><strong>Phone: </strong></span>' . $staff_phone . '</p>' . "\n";
+					echo '<p><span class="about-heading"><strong>Email: </strong></span>' .  formatEmailLink($staff_email) . '</p>' . "\n";
+					if (!empty($staff_libcal_id)) {
+?>
+					<p>
+						<span class="about-heading"><strong>Calendar: </strong></span>
+						<a href="http://calendar.lib.montana.edu/appointment/<?php echo $staff_libcal_id; ?>" onclick="javascript:void window.open('http://calendar.lib.montana.edu/appointment/<?php echo $staff_libcal_id; ?>','1364572273698','width=820,height=600');return false;">Schedule Appointment</a>
+					</p>
+<?php
+					}
+
+					echo "</li>\n";
+					echo '<li class="infoLocation">' . "\n";
+					echo '<p><span class="about-heading"><strong>Room: </strong></span>' .  $staff_room . '</p>' . "\n";
+					if (strlen($staff_vita) > 3) {
+						echo '<p><a class="vita" title="vita of ' . $staff_name . '" href="' . $staff_vita . '">Vita</a></p>' . "\n";
+					}
+					if(strlen($staff_web) > 3) {
+						echo '<p><a class="homepage" title="homepage of ' . $staff_name . '" href="' . $staff_web . '">Homepage</a></p>' . "\n";
+					}
+					if($staff_privacy == 'n') {
+						echo '<p><a class="code" title="QR code for ' . $staff_name . '" href="./about.php?id=' . $staff_id . '">Get QR code</a></p>' . "\n";
+					}
+					echo "</li>\n";
+					echo "</ul>\n";
+				}
+
+				// Display links to more items at bottom of results page if there are more than $limit items
+				if ($prevLink != "" || $nextLink != "") {
+					echo "<p class=\"nav\">";
+					echo "$prevLink$nextLink";
+					echo "</p>";
+				}
+
+			} // End - if ($numRecords == 0) else
+
+			echo "<p class=\"nav\"><a class=\"bck\" href=\"./index.php\">Back to Homepage</a></p>\n";
+
+
+		} // End - else // Valid request
+?>
+
+    </section>
+  </div>
+</main>
+<footer>
+  <hr class="border-ftr">
+  <p class="nav center">
+    <a property="relatedLink" href="https://github.com/msulibrary/linked-people">GitHub</a>
+    <a property="relatedLink" href="http://journal.code4lib.org/articles/12320">Article</a>
+    <a property="relatedLink" href="https://www.lib.montana.edu/">Library</a>
+  </p>
+  <p class="copyright center">
+    &copy; <a property="author creator copyrightHolder reviewedBy" rel="author" href="https://www.wikidata.org/wiki/Q15255419">Montana State University (MSU) Library</a>  <time property="dateModified lastReviewed" datetime="2017-04-17T18:57:03-07:00" title="published 2017-04-17T18:57:03-07:00">2017</time>
+  </p>
+</footer>
+<?php
+if ($customScript = (empty($customScript)) ? null : $customScript) {
+  $counted = count($customScript);
+  for ($i = 0; $i < $counted; $i++) {
+?>
+<script type="text/javascript" src="<?php echo $customScript[$i]; ?>"></script>
+<?php
+  }
+}
+?>
+</body>
+</html>
