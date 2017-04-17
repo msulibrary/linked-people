@@ -14,7 +14,7 @@ echo ("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
 </url>
 <?php
 //pass database parameters and connect to database
-include_once './meta/assets/dbconnect.inc';
+include_once './meta/assets/database-params.inc';
 
 // retrieve items from database
 $query = "SELECT staff_id,updated FROM libstaff.staff GROUP BY staff_id ORDER BY staff_id ASC";
