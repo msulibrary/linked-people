@@ -85,7 +85,6 @@ CREATE TABLE IF NOT EXISTS `person` (
   `sameAs2` varchar(255) DEFAULT NULL,
   `person_image` varchar(255) DEFAULT NULL,
   `person_description` text,
-  `person_password` varchar(16) DEFAULT NULL,
   `person_privacy` varchar(10) DEFAULT 'n',
   `person_status` varchar(10) NOT NULL DEFAULT 'a',
   `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
