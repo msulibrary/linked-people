@@ -83,7 +83,7 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
 			<option name="keyword" id="keyword" value="keyword" selected>People</option>
 			<option name="topic" id="topic" value="topic">Topics</option>
 		</select>
-	<input class="submit" type="image" src="meta/img/search-clear.png" alt="search" id="submit" name="submit"  />
+	<button class="submit" id="submit" name="submit">Search</button>
     </form>
 
     <p id="azlist"><strong>Browse by staff last name</strong><br /><a href="./title.php#abc">A B C</a> | <a href="./title.php#def">D E F </a> | <a href="./title.php#ghi">G H I </a> | <a href="./title.php#jkl">J K L</a> | <a href="./title.php#mno">M N O</a> |
@@ -104,7 +104,7 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
 		$staff_id = stripslashes($row->staff_id);
 		$staff_name = html_entity_decode(stripslashes($row->givenName  . ' ' . $row->familyName));
 		$jobTitle = stripslashes($row->jobTitle);
-		echo '<dl><dt><a href="./about.php?id='.$staff_id.'">'.$staff_name.'</a></dt>'."\n";
+		echo '<dl><dt><a href="./about.html?id='.$staff_id.'">'.$staff_name.'</a></dt>'."\n";
 		echo '<dd>'.$jobTitle.'</dd>'."\n";
 		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.php?id='.$staff_id.'">Learn more...</a></dd></dl>'."\n";
 		echo '<hr size="1" />'."\n";
@@ -126,7 +126,7 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
 		$staff_id = stripslashes($row->staff_id);
 		$staff_name = html_entity_decode(stripslashes($row->givenName  . ' ' . $row->familyName));
 		$jobTitle = stripslashes($row->jobTitle);
-		echo '<dl><dt><a href="./about.php?id='.$staff_id.'">'.$staff_name.'</a></dt>'."\n";
+		echo '<dl><dt><a href="./about.html?id='.$staff_id.'">'.$staff_name.'</a></dt>'."\n";
 		echo '<dd>'.$jobTitle.'</dd>'."\n";
 		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.php?id='.$staff_id.'">Learn more...</a></dd></dl>'."\n";
 		echo '<hr size="1" />'."\n";
@@ -148,7 +148,7 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
 		$staff_id = stripslashes($row->staff_id);
 		$staff_name = html_entity_decode(stripslashes($row->givenName  . ' ' . $row->familyName));
 		$jobTitle = stripslashes($row->jobTitle);
-		echo '<dl><dt><a href="./about.php?id='.$staff_id.'">'.$staff_name.'</a></dt>'."\n";
+		echo '<dl><dt><a href="./about.html?id='.$staff_id.'">'.$staff_name.'</a></dt>'."\n";
 		echo '<dd>'.$jobTitle.'</dd>'."\n";
 		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.php?id='.$staff_id.'">Learn more...</a></dd></dl>'."\n";
 		echo '<hr size="1" />'."\n";
@@ -170,7 +170,7 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
 		$staff_id = stripslashes($row->staff_id);
 		$staff_name = html_entity_decode(stripslashes($row->givenName  . ' ' . $row->familyName));
 		$jobTitle = stripslashes($row->jobTitle);
-		echo '<dl><dt><a href="./about.php?id='.$staff_id.'">'.$staff_name.'</a></dt>'."\n";
+		echo '<dl><dt><a href="./about.html?id='.$staff_id.'">'.$staff_name.'</a></dt>'."\n";
 		echo '<dd>'.$jobTitle.'</dd>'."\n";
 		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.php?id='.$staff_id.'">Learn more...</a></dd></dl>'."\n";
 		echo '<hr size="1" />'."\n";
@@ -192,7 +192,7 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
 		$staff_id = stripslashes($row->staff_id);
 		$staff_name = html_entity_decode(stripslashes($row->givenName  . ' ' . $row->familyName));
 		$jobTitle = stripslashes($row->jobTitle);
-		echo '<dl><dt><a href="./about.php?id='.$staff_id.'">'.$staff_name.'</a></dt>'."\n";
+		echo '<dl><dt><a href="./about.html?id='.$staff_id.'">'.$staff_name.'</a></dt>'."\n";
 		echo '<dd>'.$jobTitle.'</dd>'."\n";
 		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.php?id='.$staff_id.'">Learn more...</a></dd></dl>'."\n";
 		echo '<hr size="1" />'."\n";
@@ -214,7 +214,7 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
 		$staff_id = stripslashes($row->staff_id);
 		$staff_name = html_entity_decode(stripslashes($row->givenName  . ' ' . $row->familyName));
 		$jobTitle = stripslashes($row->jobTitle);
-		echo '<dl><dt><a href="./about.php?id='.$staff_id.'">'.$staff_name.'</a></dt>'."\n";
+		echo '<dl><dt><a href="./about.html?id='.$staff_id.'">'.$staff_name.'</a></dt>'."\n";
 		echo '<dd>'.$jobTitle.'</dd>'."\n";
 		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.php?id='.$staff_id.'">Learn more...</a></dd></dl>'."\n";
 		echo '<hr size="1" />'."\n";
@@ -236,7 +236,7 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
 		$staff_id = stripslashes($row->staff_id);
 		$staff_name = html_entity_decode(stripslashes($row->givenName  . ' ' . $row->familyName));
 		$jobTitle = stripslashes($row->jobTitle);
-		echo '<dl><dt><a href="./about.php?id='.$staff_id.'">'.$staff_name.'</a></dt>'."\n";
+		echo '<dl><dt><a href="./about.html?id='.$staff_id.'">'.$staff_name.'</a></dt>'."\n";
 		echo '<dd>'.$jobTitle.'</dd>'."\n";
 		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.php?id='.$staff_id.'">Learn more...</a></dd></dl>'."\n";
 		echo '<hr size="1" />'."\n";
@@ -258,7 +258,7 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
 		$staff_id = stripslashes($row->staff_id);
 		$staff_name = html_entity_decode(stripslashes($row->givenName  . ' ' . $row->familyName));
 		$jobTitle = stripslashes($row->jobTitle);
-		echo '<dl><dt><a href="./about.php?id='.$staff_id.'">'.$staff_name.'</a></dt>'."\n";
+		echo '<dl><dt><a href="./about.html?id='.$staff_id.'">'.$staff_name.'</a></dt>'."\n";
 		echo '<dd>'.$jobTitle.'</dd>'."\n";
 		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.php?id='.$staff_id.'">Learn more...</a></dd></dl>'."\n";
 		echo '<hr size="1" />'."\n";
@@ -280,7 +280,7 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
 		$staff_id = stripslashes($row->staff_id);
 		$staff_name = html_entity_decode(stripslashes($row->givenName  . ' ' . $row->familyName));
 		$jobTitle = stripslashes($row->jobTitle);
-		echo '<dl><dt><a href="./about.php?id='.$staff_id.'">'.$staff_name.'</a></dt>'."\n";
+		echo '<dl><dt><a href="./about.html?id='.$staff_id.'">'.$staff_name.'</a></dt>'."\n";
 		echo '<dd>'.$jobTitle.'</dd>'."\n";
 		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.php?id='.$staff_id.'">Learn more...</a></dd></dl>'."\n";
 		echo '<hr size="1" />'."\n";
@@ -302,7 +302,7 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
 		$staff_id = stripslashes($row->staff_id);
 		$staff_name = html_entity_decode(stripslashes($row->givenName  . ' ' . $row->familyName));
 		$jobTitle = stripslashes($row->jobTitle);
-		echo '<dl><dt><a href="./about.php?id='.$staff_id.'">'.$staff_name.'</a></dt>'."\n";
+		echo '<dl><dt><a href="./about.html?id='.$staff_id.'">'.$staff_name.'</a></dt>'."\n";
 		echo '<dd>'.$jobTitle.'</dd>'."\n";
 		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.php?id='.$staff_id.'">Learn more...</a></dd></dl>'."\n";
 		echo '<hr size="1" />'."\n";
