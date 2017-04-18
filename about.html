@@ -196,7 +196,7 @@ if (strlen($same_as2) > 3 && strlen($same_as) < 3) {
 }
 ?>
   <p><span class="about-heading">Title </span><span property="jobTitle"><?php echo $staff_title; ?></span></p>
-  <p><span class="about-heading">Department </span><a property="workLocation" href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/search.php?team=<?php echo urlencode($staff_dept);?>"><?php echo $staff_dept; ?></a>, <span property="affiliation worksFor memberOf">Montana State University (MSU)</span></p>
+  <p><span class="about-heading">Department </span><a property="workLocation" href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/search.html?team=<?php echo urlencode($staff_dept);?>"><?php echo $staff_dept; ?></a>, <span property="affiliation worksFor memberOf">Montana State University (MSU)</span></p>
   <span id="role" typeof="Organization" about="<?php echo 'http://'.$server; ?>">
     <meta property="name" content="Montana State University (MSU) Library" />
     <meta property="sameAs" content="http://www.freebase.com/m/0j3y9r1" />
@@ -273,7 +273,7 @@ if ($getPersonLiaison->num_rows == 0) {
     $object = $row->object;
     $object_url = $row->object_uri;
 ?>
-    <dd><a rel="makesOffer" resource="<?php echo $object_url; ?>" href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/search.php?liaison=<?php echo urlencode($object);?>"><?php echo $object;?></a></dd>
+    <dd><a rel="makesOffer" resource="<?php echo $object_url; ?>" href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/search.html?liaison=<?php echo urlencode($object);?>"><?php echo $object;?></a></dd>
 <?php
 }
 ?>
@@ -304,7 +304,7 @@ while ($row = $getPersonExpertise->fetch_object()) {
   $object_url = $row->object_uri;
   $url_term = basename($object_url);
 ?>
-    <dd><a rel="Specialty" resource="<?php echo $object_url; ?>" href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/search.php?expertise=<?php echo htmlentities($url_term); ?>"><?php echo $object;?></a></dd>
+    <dd><a rel="Specialty" resource="<?php echo $object_url; ?>" href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/search.html?expertise=<?php echo htmlentities($url_term); ?>"><?php echo $object;?></a></dd>
 <?php
 }
 ?>
