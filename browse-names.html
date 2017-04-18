@@ -86,7 +86,8 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
 	<button class="submit" id="submit" name="submit">Search</button>
     </form>
 
-    <p id="azlist"><strong>Browse by staff last name</strong><br /><a href="./title.php#abc">A B C</a> | <a href="./title.php#def">D E F </a> | <a href="./title.php#ghi">G H I </a> | <a href="./title.php#jkl">J K L</a> | <a href="./title.php#mno">M N O</a> |
+    <h2>Browse by staff last name</h2>
+    <p id="azlist"><a href="./title.php#abc">A B C</a> | <a href="./title.php#def">D E F </a> | <a href="./title.php#ghi">G H I </a> | <a href="./title.php#jkl">J K L</a> | <a href="./title.php#mno">M N O</a> |
     <a href="./title.php#pqr">P Q R</a> | <a href="./title.php#stu">S T U</a> | <a href="./title.php#vwx">V W X</a> | <a href="./title.php#yz">Y Z</a> | <a href="./title.php#spec">Other</a></p>
 
     <h2><a name="abc"></a>A B C <a href="#maincont">[^]</a></h2>
@@ -106,7 +107,7 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
 		$jobTitle = stripslashes($row->jobTitle);
 		echo '<dl><dt><a href="./about.html?id='.$staff_id.'">'.$staff_name.'</a></dt>'."\n";
 		echo '<dd>'.$jobTitle.'</dd>'."\n";
-		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.php?id='.$staff_id.'">Learn more...</a></dd></dl>'."\n";
+		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.html?id='.$staff_id.'">Learn more...</a></dd></dl>'."\n";
 		echo '<hr size="1" />'."\n";
 	}
 	?>
@@ -128,7 +129,7 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
 		$jobTitle = stripslashes($row->jobTitle);
 		echo '<dl><dt><a href="./about.html?id='.$staff_id.'">'.$staff_name.'</a></dt>'."\n";
 		echo '<dd>'.$jobTitle.'</dd>'."\n";
-		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.php?id='.$staff_id.'">Learn more...</a></dd></dl>'."\n";
+		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.html?id='.$staff_id.'">Learn more...</a></dd></dl>'."\n";
 		echo '<hr size="1" />'."\n";
 	}
 	?>
@@ -150,7 +151,7 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
 		$jobTitle = stripslashes($row->jobTitle);
 		echo '<dl><dt><a href="./about.html?id='.$staff_id.'">'.$staff_name.'</a></dt>'."\n";
 		echo '<dd>'.$jobTitle.'</dd>'."\n";
-		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.php?id='.$staff_id.'">Learn more...</a></dd></dl>'."\n";
+		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.html?id='.$staff_id.'">Learn more...</a></dd></dl>'."\n";
 		echo '<hr size="1" />'."\n";
 	}
 	?>
@@ -172,7 +173,7 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
 		$jobTitle = stripslashes($row->jobTitle);
 		echo '<dl><dt><a href="./about.html?id='.$staff_id.'">'.$staff_name.'</a></dt>'."\n";
 		echo '<dd>'.$jobTitle.'</dd>'."\n";
-		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.php?id='.$staff_id.'">Learn more...</a></dd></dl>'."\n";
+		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.html?id='.$staff_id.'">Learn more...</a></dd></dl>'."\n";
 		echo '<hr size="1" />'."\n";
 	}
 	?>
@@ -194,7 +195,7 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
 		$jobTitle = stripslashes($row->jobTitle);
 		echo '<dl><dt><a href="./about.html?id='.$staff_id.'">'.$staff_name.'</a></dt>'."\n";
 		echo '<dd>'.$jobTitle.'</dd>'."\n";
-		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.php?id='.$staff_id.'">Learn more...</a></dd></dl>'."\n";
+		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.html?id='.$staff_id.'">Learn more...</a></dd></dl>'."\n";
 		echo '<hr size="1" />'."\n";
 	}
 	?>
@@ -216,7 +217,7 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
 		$jobTitle = stripslashes($row->jobTitle);
 		echo '<dl><dt><a href="./about.html?id='.$staff_id.'">'.$staff_name.'</a></dt>'."\n";
 		echo '<dd>'.$jobTitle.'</dd>'."\n";
-		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.php?id='.$staff_id.'">Learn more...</a></dd></dl>'."\n";
+		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.html?id='.$staff_id.'">Learn more...</a></dd></dl>'."\n";
 		echo '<hr size="1" />'."\n";
 	}
 	?>
@@ -238,7 +239,7 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
 		$jobTitle = stripslashes($row->jobTitle);
 		echo '<dl><dt><a href="./about.html?id='.$staff_id.'">'.$staff_name.'</a></dt>'."\n";
 		echo '<dd>'.$jobTitle.'</dd>'."\n";
-		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.php?id='.$staff_id.'">Learn more...</a></dd></dl>'."\n";
+		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.html?id='.$staff_id.'">Learn more...</a></dd></dl>'."\n";
 		echo '<hr size="1" />'."\n";
 	}
 	?>
@@ -260,7 +261,7 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
 		$jobTitle = stripslashes($row->jobTitle);
 		echo '<dl><dt><a href="./about.html?id='.$staff_id.'">'.$staff_name.'</a></dt>'."\n";
 		echo '<dd>'.$jobTitle.'</dd>'."\n";
-		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.php?id='.$staff_id.'">Learn more...</a></dd></dl>'."\n";
+		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.html?id='.$staff_id.'">Learn more...</a></dd></dl>'."\n";
 		echo '<hr size="1" />'."\n";
 	}
 	?>
@@ -282,7 +283,7 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
 		$jobTitle = stripslashes($row->jobTitle);
 		echo '<dl><dt><a href="./about.html?id='.$staff_id.'">'.$staff_name.'</a></dt>'."\n";
 		echo '<dd>'.$jobTitle.'</dd>'."\n";
-		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.php?id='.$staff_id.'">Learn more...</a></dd></dl>'."\n";
+		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.html?id='.$staff_id.'">Learn more...</a></dd></dl>'."\n";
 		echo '<hr size="1" />'."\n";
 	}
 	?>
@@ -304,7 +305,7 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
 		$jobTitle = stripslashes($row->jobTitle);
 		echo '<dl><dt><a href="./about.html?id='.$staff_id.'">'.$staff_name.'</a></dt>'."\n";
 		echo '<dd>'.$jobTitle.'</dd>'."\n";
-		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.php?id='.$staff_id.'">Learn more...</a></dd></dl>'."\n";
+		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.html?id='.$staff_id.'">Learn more...</a></dd></dl>'."\n";
 		echo '<hr size="1" />'."\n";
 	}
 	?>
