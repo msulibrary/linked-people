@@ -892,9 +892,9 @@ class QueryData
 
 					// Display the info to the user
 					echo "<ul class='aboutList'>\n";
-					echo "<li class='photo'><a href=\"./about.php?id=$staff_id\"><img alt=\"photo of $staff_name\" src=\"$staff_image\"/></a></li>\n";
+					echo "<li class='photo'><a href=\"./about.html?id=$staff_id\"><img alt=\"photo of $staff_name\" src=\"$staff_image\"/></a></li>\n";
 					echo "<li class='infoContact'>\n";
-					echo '<h3><a href="./about.php?id=' . $staff_id . '">' . $staff_name . '</a></h3>' . "\n";
+					echo '<h3><a href="./about.html?id=' . $staff_id . '">' . $staff_name . '</a></h3>' . "\n";
 					echo '<p><span class="about-heading"><strong>Title: </strong></span>' .  $staff_title . '</p>' . "\n";
 					echo '<p><span class="about-heading"><strong>Department: </strong></span>' .  $staff_dept . '</p>' . "\n";
 					echo '<p><span class="about-heading"><strong>Phone: </strong></span>' . $staff_phone . '</p>' . "\n";
@@ -918,7 +918,7 @@ class QueryData
 						echo '<p><a class="homepage" title="homepage of ' . $staff_name . '" href="' . $staff_web . '">Homepage</a></p>' . "\n";
 					}
 					if($staff_privacy == 'n') {
-						echo '<p><a class="code" title="QR code for ' . $staff_name . '" href="./about.php?id=' . $staff_id . '">Get QR code</a></p>' . "\n";
+						echo '<p><a class="code" title="QR code for ' . $staff_name . '" href="./about.html?id=' . $staff_id . '">Get QR code</a></p>' . "\n";
 					}
 					echo "</li>\n";
 					echo "</ul>\n";
