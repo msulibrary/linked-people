@@ -11,11 +11,11 @@ USE `linked_people`;
 --
 
 CREATE TABLE IF NOT EXISTS `create_action` (
-  `action_id` int(6) NOT NULL AUTO_INCREMENT,
+  `create_id` int(6) NOT NULL AUTO_INCREMENT,
   `object` varchar(255) DEFAULT NULL COMMENT 'expertise label',
   `object_uri` varchar(255) DEFAULT NULL COMMENT 'expertise linked data URI',
   `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`action_id`),
+  PRIMARY KEY (`create_id`),
   FULLTEXT KEY `create_index` (`object`,`object_uri`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=43 ;
 
@@ -27,8 +27,8 @@ CREATE TABLE IF NOT EXISTS `create_action` (
 
 CREATE TABLE IF NOT EXISTS `create_action_match` (
   `person_id` int(8) NOT NULL DEFAULT '0',
-  `action_id` int(8) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`person_id`,`action_id`)
+  `create_id` int(8) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`person_id`,`create_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -38,11 +38,11 @@ CREATE TABLE IF NOT EXISTS `create_action_match` (
 --
 
 CREATE TABLE IF NOT EXISTS `interact_action` (
-  `action_id` int(6) NOT NULL AUTO_INCREMENT,
+  `interact_id` int(6) NOT NULL AUTO_INCREMENT,
   `object` varchar(255) DEFAULT NULL COMMENT 'liaison role label',
   `object_uri` varchar(255) DEFAULT NULL COMMENT 'liaison role linked data URI',
   `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`action_id`),
+  PRIMARY KEY (`interact_id`),
   FULLTEXT KEY `interact_index` (`object`,`object_uri`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
 
@@ -54,8 +54,8 @@ CREATE TABLE IF NOT EXISTS `interact_action` (
 
 CREATE TABLE IF NOT EXISTS `interact_action_match` (
   `person_id` int(8) NOT NULL DEFAULT '0',
-  `action_id` int(8) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`person_id`,`action_id`)
+  `interact_id` int(8) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`person_id`,`interact_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
