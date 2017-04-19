@@ -60,9 +60,9 @@ RewriteEngine On
 RewriteCond %{ENV:REDIRECT_STATUS} 200
 RewriteRule .* - [L]
 
-#change www.lib.montana.edu/people/about.php?id=5 to www.lib.montana.edu/people/about/5
-#RewriteBase /people/
-#RewriteRule about/([0-9]+) about.php?id=$1 [L,QSA]
+#change www.lib.montana.edu/linked-people/about.html?id=5 to www.lib.montana.edu/linked-people/about/5
+RewriteBase /linked-people/
+RewriteRule about/([0-9]+) about.html?id=$1 [L,QSA]
 
 #change www.lib.montana.edu/people/about.php?id=5 to www.lib.montana.edu/people/5
 #RewriteRule ^([0-9]+)$ about.php?id=$1 [QSA]
