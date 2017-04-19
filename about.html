@@ -75,32 +75,19 @@ while ($row = $getPerson->fetch_object()) {
 
 ?>
 <!DOCTYPE html>
-<html class="no-js" lang="en-US">
+<html lang="en-US">
 <head>
-<meta charset="utf-8">
-<meta content="ie=edge" http-equiv="x-ua-compatible">
+<meta charset="utf-8"/>
+<meta content="ie=edge" http-equiv="x-ua-compatible"/>
 <title><?php (empty($staff_name)) ? null : $staff_name; if (strlen($staff_name) < 3 ) { echo $pageTitle; } else { echo $staff_name.' - '.$staff_title.', '.$staff_dept; } ?> - Montana State University (MSU) Library</title>
-<meta content="<?php echo $staff_name.' - '.$pageTitle; ?>" name="description">
-<meta content="width=device-width, initial-scale=1" name="viewport">
+<meta content="<?php echo $staff_name.' - '.$pageTitle; ?>" name="description"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
 <?php
 //get default value for id for setting rel=canonical URL
 $fileID = isset($_GET['id']) ? strip_tags((int)$_GET['id']) : null;
-if ($fileName == 'about.php') {
 ?>
-<link rel="canonical" href="<?php echo 'http://'.$_SERVER['SERVER_NAME'].dirname($_SERVER['PHP_SELF']).'/about/'.$fileID; ?>" />
-<?php
-} elseif ($fileName == 'index.php') {
-?>
-<link rel="canonical" href="<?php echo 'http://'.$_SERVER['SERVER_NAME'].dirname($_SERVER['PHP_SELF']).'/'; ?>" />
-<?php
-} else {
-?>
-<link rel="canonical" href="<?php echo 'http://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']; ?>" />
-<?php
-//end $fileName rel=canonical conditional
-}
-?>
-<link rel="alternate" href="<?php echo $protocol.$server.$path.'/'; ?>about.json?id=<?php echo $id; ?>" type="application/ld+json">
+<link rel="canonical" href="<?php echo $protocol.$server.$path; ?>/about/<?php echo $fileID; ?>"/>
+<link rel="alternate" href="<?php echo $protocol.$server.$path.'/'; ?>about.json?id=<?php echo $id; ?>" type="application/ld+json"/>
 <link rel="stylesheet prefetch" href="https://fonts.googleapis.com/css?family=Oswald"/>
 <style>
 html {-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;box-sizing:border-box;}
