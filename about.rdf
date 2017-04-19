@@ -33,7 +33,7 @@ if (isset($_GET['id']) and is_numeric($_GET['id'])) {
 >
 <?php
 //request selected staff data fields
-$query = "SELECT * FROM libstaff.staff WHERE staff_status = 'a' AND staff_id='$id'";
+$query = "SELECT * FROM linked_people.person WHERE staff_status = 'a' AND person_id='$id'";
 $getPerson = $connectLibstaff->query($query);
 if ($getPerson->num_rows == 0) {
   header("HTTP/1.0 404 Not Found", true, 404);
@@ -44,7 +44,7 @@ if ($getPerson->num_rows == 0) {
 
 // store items in array, strip out html tags, generate valid date stamp
 while ($row = $getPerson->fetch_object()) {
-	$staff_id = stripslashes($row->staff_id);
+	$person_id = stripslashes($row->person_id);
 	$staff_fname = stripslashes($row->givenName);
 	$staff_lname = stripslashes($row->familyName);
 	$staff_name = stripslashes($row->givenName . ' ' . $row->familyName);
@@ -87,14 +87,14 @@ if (strlen($staff_web) > 3) {
     <schema:primaryImageOfPage rdf:resource="<?php echo $staff_image; ?>"/>
 <?php
     //request selected staff data fields
-		$query = "SELECT staff_id FROM libstaff.staff WHERE staff_status = 'a' AND staff_dept='$staff_dept'";
+		$query = "SELECT person_id FROM linked_people.person WHERE staff_status = 'a' AND staff_dept='$staff_dept'";
     $getColleagues = $connectLibstaff->query($query);
 		if ($getColleagues->num_rows == 0) {
-	  	die('<p>Error retrieving staff collegues data from database!<br />'.
+	  	die('<p>Error retrieving colleagues data from database!<br />'.
 		  'Error: ' . mysql_error() . '</p>');
 		}
     while ($row = $getColleagues->fetch_object()) {
-        $colleague_id = stripslashes($row->staff_id);
+        $colleague_id = stripslashes($row->person_id);
 ?>
     <schema:colleague rdf:resource="<?php echo 'http://'.$server.$path; ?>/<?php echo $colleague_id; ?>"/>
 <?php
@@ -103,11 +103,11 @@ if (strlen($staff_web) > 3) {
 <?php
 		//get person's expertise topics
 		$query = "SELECT *
-		FROM libstaff.staff, libstaff.create_action, libstaff.create_action_match
-		WHERE staff.staff_id = '$id'
-		AND create_action_match.action_id = create_action.action_id
+		FROM linked_people.person, linked_people.create_action, linked_people.create_action_match
+		WHERE person.person_id = '$id'
+		AND create_action_match.create_id = create_action.create_id
 		AND create_action_match.person_id = '$id'
-		AND staff.staff_status =  'a'";
+		AND person.staff_status =  'a'";
 
     echo $query;
 
@@ -119,7 +119,7 @@ if (strlen($staff_web) > 3) {
 <?php
 		}
     while ($row = $getPersonExpertise->fetch_object()) {
-			$object_id = $row->action_id;
+			$object_id = $row->create_id;
 			$object = $row->object;
 			$object_url = $row->object_uri;
 ?>
