@@ -28,7 +28,7 @@ if (isset($_GET['id']) and is_numeric($_GET['id'])) {
 }
 
 //request selected staff data fields
-$query = "SELECT * FROM linked_people.person WHERE staff_status = 'a' AND staff_id='$id'";
+$query = "SELECT * FROM linked_people.person WHERE staff_status = 'a' AND person_id='$id'";
 $getPerson = $connectLibstaff->query($query);
 if ($getPerson->num_rows == 0) {
   header("HTTP/1.0 404 Not Found", true, 404);
@@ -37,7 +37,7 @@ if ($getPerson->num_rows == 0) {
 }
 //Display selected staff entry fields in a list
 while ($row = $getPerson->fetch_object()) {
-  $staff_id = stripslashes($row->staff_id);
+  $person_id = stripslashes($row->person_id);
   $staff_fname = stripslashes($row->givenName);
   $staff_lname = stripslashes($row->familyName);
   $staff_name = stripslashes($row->givenName . ' ' . $row->familyName);
@@ -195,7 +195,7 @@ if (strlen($same_as2) > 3 && strlen($same_as) < 3) {
   <span id="knows" rel="knows" resource="<?php echo 'http://'.$server.$path.'/about/'.$id; ?>#knows">
 <?php
 //get person's colleagues
-$query = "SELECT staff_id,givenName,familyName FROM linked_people.person WHERE staff_status = 'a' AND staff_dept='$staff_dept'";
+$query = "SELECT person_id,givenName,familyName FROM linked_people.person WHERE staff_status = 'a' AND staff_dept='$staff_dept'";
 $getColleagues = $connectLibstaff->query($query);
 if ($getColleagues->num_rows == 0) {
 ?>
@@ -203,11 +203,11 @@ if ($getColleagues->num_rows == 0) {
 <?php
 }
 while ($row = $getColleagues->fetch_object()) {
-  $staff_id = $row->staff_id;
-  $staff_name = stripslashes($row->givenName . ' ' . $row->familyName);
-  $colleagueURL = 'http://'.$server.$path.'/about/'.$staff_id;
+  $colleague_id = $row->person_id;
+  $colleague_name = stripslashes($row->givenName . ' ' . $row->familyName);
+  $colleague_url = 'http://'.$server.$path.'/about/'.$colleague_id;
 ?>
-  <link property="name" content="<?php echo $staff_name; ?>" rel="colleague" href="<?php echo $colleagueURL; ?>" resource="<?php echo $colleagueURL; ?>" />
+  <link property="name" content="<?php echo $colleague_name; ?>" rel="colleague" href="<?php echo $colleague_url; ?>" resource="<?php echo $colleague_url; ?>" />
 <?php
 }
 ?>
@@ -239,9 +239,9 @@ if (!empty($staff_libguides_link)) {
 //get person's liaison topics
 $query = "SELECT *
 FROM linked_people.person, linked_people.interact_action, linked_people.interact_action_match
-WHERE person.staff_id = '$id'
+WHERE person.person_id = '$id'
 AND interact_action_match.interact_id = interact_action.interact_id
-AND interact_action_match.staff_id = '$id'
+AND interact_action_match.person_id = '$id'
 AND person.staff_status =  'a'";
 
 //echo $query;
@@ -269,9 +269,9 @@ if ($getPersonLiaison->num_rows == 0) {
 //get person's expertise topics
 $query = "SELECT *
 FROM linked_people.person, linked_people.create_action, linked_people.create_action_match
-WHERE person.staff_id = '$id'
+WHERE person.person_id = '$id'
 AND create_action_match.create_id = create_action.create_id
-AND create_action_match.staff_id = '$id'
+AND create_action_match.person_id = '$id'
 AND person.staff_status =  'a'";
 
 //echo $query;
