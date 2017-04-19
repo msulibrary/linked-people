@@ -77,7 +77,7 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
   <h1>Browse Alphabetical List of People</h1>
     <div class="content">
     <section>
-    <form name="searchform" action="view.php" method="get" class="searchPeople" id="search-form">
+    <form name="searchform" action="search.html" method="get" class="searchPeople" id="search-form">
 	<input class="text" type="text" name="q" id="q" maxlength="45" size="35" placeholder="Enter people or topics..."/>
 		<select name="facet">
 			<option name="keyword" id="keyword" value="keyword" selected>People</option>
@@ -93,7 +93,7 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
     <ul>
 	<?php
 	//Request staff with letters "ABC" in last name
-	$query = "SELECT staff_id, familyName, givenName, jobTitle, staff_status FROM libstaff.staff WHERE familyName >='a' AND familyName <='d' AND staff_status = 'a'  ORDER BY familyName ASC";
+	$query = "SELECT person_id, familyName, givenName, jobTitle, staff_status FROM linked_people.person WHERE familyName >='a' AND familyName <='d' AND staff_status = 'a'  ORDER BY familyName ASC";
 	$getpeopleAtoC = $connectLibstaff->query($query);
 	if (!$getpeopleAtoC) {
 	  die('<p>Error retrieving staff data from database!<br />'.
@@ -101,12 +101,12 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
 	}
 	//Display selected staff entry fields in a list
 	while ($row = $getpeopleAtoC->fetch_object()) {		  
-		$staff_id = stripslashes($row->staff_id);
+		$person_id = stripslashes($row->person_id);
 		$staff_name = html_entity_decode(stripslashes($row->givenName  . ' ' . $row->familyName));
 		$jobTitle = stripslashes($row->jobTitle);
-		echo '<dl><dt><a href="./about.html?id='.$staff_id.'">'.$staff_name.'</a></dt>'."\n";
+		echo '<dl><dt><a href="./about.html?id='.$person_id.'">'.$staff_name.'</a></dt>'."\n";
 		echo '<dd>'.$jobTitle.'</dd>'."\n";
-		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.html?id='.$staff_id.'">Learn more...</a></dd></dl>'."\n";
+		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.html?id='.$person_id.'">Learn more...</a></dd></dl>'."\n";
 		echo '<hr size="1" />'."\n";
 	}
 	?>
@@ -115,7 +115,7 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
     <ul>
 	<?php
 	//Request staff with letters "DEF" in last name
-	$query = "SELECT staff_id, familyName, givenName, jobTitle, staff_status  FROM libstaff.staff WHERE familyName >='d' AND familyName <='g' AND staff_status = 'a' ORDER BY familyName ASC";
+	$query = "SELECT person_id, familyName, givenName, jobTitle, staff_status  FROM linked_people.person WHERE familyName >='d' AND familyName <='g' AND staff_status = 'a' ORDER BY familyName ASC";
 	$getpeopleDtoF = $connectLibstaff->query($query);
 	if (!$getpeopleDtoF) {
 	  die('<p>Error retrieving staff data from database!<br />'.
@@ -123,12 +123,12 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
 	}
 	//Display selected staff entry fields in a list
 	while ($row = $getpeopleDtoF->fetch_object()) {		  
-		$staff_id = stripslashes($row->staff_id);
+		$person_id = stripslashes($row->person_id);
 		$staff_name = html_entity_decode(stripslashes($row->givenName  . ' ' . $row->familyName));
 		$jobTitle = stripslashes($row->jobTitle);
-		echo '<dl><dt><a href="./about.html?id='.$staff_id.'">'.$staff_name.'</a></dt>'."\n";
+		echo '<dl><dt><a href="./about.html?id='.$person_id.'">'.$staff_name.'</a></dt>'."\n";
 		echo '<dd>'.$jobTitle.'</dd>'."\n";
-		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.html?id='.$staff_id.'">Learn more...</a></dd></dl>'."\n";
+		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.html?id='.$person_id.'">Learn more...</a></dd></dl>'."\n";
 		echo '<hr size="1" />'."\n";
 	}
 	?>
@@ -137,7 +137,7 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
     <ul>
 	<?php
 	//Request staff with letters "GHI" in last name
-	$query = "SELECT staff_id, familyName, givenName, jobTitle, staff_status FROM libstaff.staff WHERE familyName >='g' AND familyName <='j' AND staff_status = 'a' ORDER BY familyName ASC";
+	$query = "SELECT person_id, familyName, givenName, jobTitle, staff_status FROM linked_people.person WHERE familyName >='g' AND familyName <='j' AND staff_status = 'a' ORDER BY familyName ASC";
 	$getpeopleGtoI = $connectLibstaff->query($query);
 	if (!$getpeopleGtoI) {
 	  die('<p>Error retrieving staff data from database!<br />'.
@@ -145,12 +145,12 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
 	}
 	//Display selected staff entry fields in a list
 	while ($row = $getpeopleGtoI->fetch_object()) {		  
-		$staff_id = stripslashes($row->staff_id);
+		$person_id = stripslashes($row->person_id);
 		$staff_name = html_entity_decode(stripslashes($row->givenName  . ' ' . $row->familyName));
 		$jobTitle = stripslashes($row->jobTitle);
-		echo '<dl><dt><a href="./about.html?id='.$staff_id.'">'.$staff_name.'</a></dt>'."\n";
+		echo '<dl><dt><a href="./about.html?id='.$person_id.'">'.$staff_name.'</a></dt>'."\n";
 		echo '<dd>'.$jobTitle.'</dd>'."\n";
-		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.html?id='.$staff_id.'">Learn more...</a></dd></dl>'."\n";
+		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.html?id='.$person_id.'">Learn more...</a></dd></dl>'."\n";
 		echo '<hr size="1" />'."\n";
 	}
 	?>
@@ -159,7 +159,7 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
     <ul>
 	<?php
 	//Request staff with letters "JKL" in last name
-	$query = "SELECT staff_id, familyName, givenName, jobTitle, staff_status FROM libstaff.staff WHERE familyName >='j' AND familyName <='m' AND staff_status = 'a' ORDER BY familyName ASC";
+	$query = "SELECT person_id, familyName, givenName, jobTitle, staff_status FROM linked_people.person WHERE familyName >='j' AND familyName <='m' AND staff_status = 'a' ORDER BY familyName ASC";
 	$getpeopleJtoL = $connectLibstaff->query($query);
 	if (!$getpeopleJtoL) {
 	  die('<p>Error retrieving staff data from database!<br />'.
@@ -167,12 +167,12 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
 	}
 	//Display selected staff entry fields in a list
 	while ($row = $getpeopleJtoL->fetch_object()) {		  
-		$staff_id = stripslashes($row->staff_id);
+		$person_id = stripslashes($row->person_id);
 		$staff_name = html_entity_decode(stripslashes($row->givenName  . ' ' . $row->familyName));
 		$jobTitle = stripslashes($row->jobTitle);
-		echo '<dl><dt><a href="./about.html?id='.$staff_id.'">'.$staff_name.'</a></dt>'."\n";
+		echo '<dl><dt><a href="./about.html?id='.$person_id.'">'.$staff_name.'</a></dt>'."\n";
 		echo '<dd>'.$jobTitle.'</dd>'."\n";
-		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.html?id='.$staff_id.'">Learn more...</a></dd></dl>'."\n";
+		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.html?id='.$person_id.'">Learn more...</a></dd></dl>'."\n";
 		echo '<hr size="1" />'."\n";
 	}
 	?>
@@ -181,7 +181,7 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
     <ul>
 	<?php
 	//Request staff with letters "MNO" in last name
-	$query = "SELECT staff_id, familyName, givenName, jobTitle, staff_status FROM libstaff.staff WHERE familyName >='m' AND familyName <='p' AND staff_status = 'a' ORDER BY familyName ASC"; 
+	$query = "SELECT person_id, familyName, givenName, jobTitle, staff_status FROM linked_people.person WHERE familyName >='m' AND familyName <='p' AND staff_status = 'a' ORDER BY familyName ASC"; 
 	$getpeopleMtoO = $connectLibstaff->query($query);
 	if (!$getpeopleMtoO) {
 	  die('<p>Error retrieving staff data from database!<br />'.
@@ -189,12 +189,12 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
 	}
 	//Display selected staff entry fields in a list
 	while ($row = $getpeopleMtoO->fetch_object()) {		  
-		$staff_id = stripslashes($row->staff_id);
+		$person_id = stripslashes($row->person_id);
 		$staff_name = html_entity_decode(stripslashes($row->givenName  . ' ' . $row->familyName));
 		$jobTitle = stripslashes($row->jobTitle);
-		echo '<dl><dt><a href="./about.html?id='.$staff_id.'">'.$staff_name.'</a></dt>'."\n";
+		echo '<dl><dt><a href="./about.html?id='.$person_id.'">'.$staff_name.'</a></dt>'."\n";
 		echo '<dd>'.$jobTitle.'</dd>'."\n";
-		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.html?id='.$staff_id.'">Learn more...</a></dd></dl>'."\n";
+		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.html?id='.$person_id.'">Learn more...</a></dd></dl>'."\n";
 		echo '<hr size="1" />'."\n";
 	}
 	?>
@@ -203,7 +203,7 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
     <ul>
 	<?php
 	//Request staff with letters "PQR" in last name
-	$query = "SELECT staff_id, familyName, givenName, jobTitle, staff_status FROM libstaff.staff WHERE familyName >='p' AND familyName <='s' AND staff_status = 'a' ORDER BY familyName ASC";
+	$query = "SELECT person_id, familyName, givenName, jobTitle, staff_status FROM linked_people.person WHERE familyName >='p' AND familyName <='s' AND staff_status = 'a' ORDER BY familyName ASC";
 	$getpeoplePtoR = $connectLibstaff->query($query);
 	if (!$getpeoplePtoR) {
 	  die('<p>Error retrieving staff data from database!<br />'.
@@ -211,12 +211,12 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
 	}
 	//Display selected staff entry fields in a list
 	while ($row = $getpeoplePtoR->fetch_object()) {		  
-		$staff_id = stripslashes($row->staff_id);
+		$person_id = stripslashes($row->person_id);
 		$staff_name = html_entity_decode(stripslashes($row->givenName  . ' ' . $row->familyName));
 		$jobTitle = stripslashes($row->jobTitle);
-		echo '<dl><dt><a href="./about.html?id='.$staff_id.'">'.$staff_name.'</a></dt>'."\n";
+		echo '<dl><dt><a href="./about.html?id='.$person_id.'">'.$staff_name.'</a></dt>'."\n";
 		echo '<dd>'.$jobTitle.'</dd>'."\n";
-		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.html?id='.$staff_id.'">Learn more...</a></dd></dl>'."\n";
+		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.html?id='.$person_id.'">Learn more...</a></dd></dl>'."\n";
 		echo '<hr size="1" />'."\n";
 	}
 	?>
@@ -225,7 +225,7 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
     <ul>
 	<?php
 	//Request staff with letters "STU" in last name
-	$query = "SELECT staff_id, familyName, givenName, jobTitle, staff_status FROM libstaff.staff WHERE familyName >='s' AND familyName <='v' AND staff_status = 'a' ORDER BY familyName ASC";
+	$query = "SELECT person_id, familyName, givenName, jobTitle, staff_status FROM linked_people.person WHERE familyName >='s' AND familyName <='v' AND staff_status = 'a' ORDER BY familyName ASC";
 	$getpeopleStoU = $connectLibstaff->query($query);
 	if (!$getpeopleStoU) {
 	  die('<p>Error retrieving staff data from database!<br />'.
@@ -233,12 +233,12 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
 	}
 	//Display selected staff entry fields in a list
 	while ($row = $getpeopleStoU->fetch_object()) {		  
-		$staff_id = stripslashes($row->staff_id);
+		$person_id = stripslashes($row->person_id);
 		$staff_name = html_entity_decode(stripslashes($row->givenName  . ' ' . $row->familyName));
 		$jobTitle = stripslashes($row->jobTitle);
-		echo '<dl><dt><a href="./about.html?id='.$staff_id.'">'.$staff_name.'</a></dt>'."\n";
+		echo '<dl><dt><a href="./about.html?id='.$person_id.'">'.$staff_name.'</a></dt>'."\n";
 		echo '<dd>'.$jobTitle.'</dd>'."\n";
-		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.html?id='.$staff_id.'">Learn more...</a></dd></dl>'."\n";
+		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.html?id='.$person_id.'">Learn more...</a></dd></dl>'."\n";
 		echo '<hr size="1" />'."\n";
 	}
 	?>
@@ -247,7 +247,7 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
     <ul>
 	<?php
 	//Request staff with letters "VWX" in last name
-	$query = "SELECT staff_id, familyName, givenName, jobTitle, staff_status FROM libstaff.staff WHERE familyName >='v' AND familyName <='y' AND staff_status = 'a'  ORDER BY familyName ASC";
+	$query = "SELECT person_id, familyName, givenName, jobTitle, staff_status FROM linked_people.person WHERE familyName >='v' AND familyName <='y' AND staff_status = 'a'  ORDER BY familyName ASC";
 	$getpeopleVtoX = $connectLibstaff->query($query);
 	if (!$getpeopleVtoX) {
 	  die('<p>Error retrieving staff data from database!<br />'.
@@ -255,12 +255,12 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
 	}
 	//Display selected staff entry fields in a list
 	while ($row = $getpeopleVtoX->fetch_object()) {		  
-		$staff_id = stripslashes($row->staff_id);
+		$person_id = stripslashes($row->person_id);
 		$staff_name = html_entity_decode(stripslashes($row->givenName  . ' ' . $row->familyName));
 		$jobTitle = stripslashes($row->jobTitle);
-		echo '<dl><dt><a href="./about.html?id='.$staff_id.'">'.$staff_name.'</a></dt>'."\n";
+		echo '<dl><dt><a href="./about.html?id='.$person_id.'">'.$staff_name.'</a></dt>'."\n";
 		echo '<dd>'.$jobTitle.'</dd>'."\n";
-		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.html?id='.$staff_id.'">Learn more...</a></dd></dl>'."\n";
+		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.html?id='.$person_id.'">Learn more...</a></dd></dl>'."\n";
 		echo '<hr size="1" />'."\n";
 	}
 	?>
@@ -269,7 +269,7 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
     <ul>
 	<?php
 	//Request staff with letters "VWX" in last name
-	$query = "SELECT staff_id, familyName, givenName, jobTitle, staff_status FROM libstaff.staff WHERE familyName >='y' AND staff_status = 'a' ORDER BY familyName ASC";
+	$query = "SELECT person_id, familyName, givenName, jobTitle, staff_status FROM linked_people.person WHERE familyName >='y' AND staff_status = 'a' ORDER BY familyName ASC";
 	$getpeopleYtoZ = $connectLibstaff->query($query);
 	if (!$getpeopleYtoZ) {
 	  die('<p>Error retrieving staff data from database!<br />'.
@@ -277,12 +277,12 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
 	}
 	//Display selected staff entry fields in a list
 	while ($row = $getpeopleYtoZ->fetch_object()) {		  
-		$staff_id = stripslashes($row->staff_id);
+		$person_id = stripslashes($row->person_id);
 		$staff_name = html_entity_decode(stripslashes($row->givenName  . ' ' . $row->familyName));
 		$jobTitle = stripslashes($row->jobTitle);
-		echo '<dl><dt><a href="./about.html?id='.$staff_id.'">'.$staff_name.'</a></dt>'."\n";
+		echo '<dl><dt><a href="./about.html?id='.$person_id.'">'.$staff_name.'</a></dt>'."\n";
 		echo '<dd>'.$jobTitle.'</dd>'."\n";
-		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.html?id='.$staff_id.'">Learn more...</a></dd></dl>'."\n";
+		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.html?id='.$person_id.'">Learn more...</a></dd></dl>'."\n";
 		echo '<hr size="1" />'."\n";
 	}
 	?>
@@ -291,7 +291,7 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
     <ul>
 	<?php
 	//Request staff with letters "VWX" in last name
-	$query = "SELECT staff_id, familyName, givenName, jobTitle, staff_status FROM libstaff.staff WHERE familyName <='a' AND staff_status = 'a' ORDER BY familyName ASC";
+	$query = "SELECT person_id, familyName, givenName, jobTitle, staff_status FROM linked_people.person WHERE familyName <='a' AND staff_status = 'a' ORDER BY familyName ASC";
 	$getpeopleYtoZ = $connectLibstaff->query($query);
 	if (!$getpeopleYtoZ) {
 	  die('<p>Error retrieving staff data from database!<br />'.
@@ -299,12 +299,12 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
 	}
 	//Display selected staff entry fields in a list
 	while ($row = $getpeopleYtoZ->fetch_object()) {		  
-		$staff_id = stripslashes($row->staff_id);
+		$person_id = stripslashes($row->person_id);
 		$staff_name = html_entity_decode(stripslashes($row->givenName  . ' ' . $row->familyName));
 		$jobTitle = stripslashes($row->jobTitle);
-		echo '<dl><dt><a href="./about.html?id='.$staff_id.'">'.$staff_name.'</a></dt>'."\n";
+		echo '<dl><dt><a href="./about.html?id='.$person_id.'">'.$staff_name.'</a></dt>'."\n";
 		echo '<dd>'.$jobTitle.'</dd>'."\n";
-		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.html?id='.$staff_id.'">Learn more...</a></dd></dl>'."\n";
+		echo '<dd><a class="expand" title="Learn more about '.$staff_name.'" href="./about.html?id='.$person_id.'">Learn more...</a></dd></dl>'."\n";
 		echo '<hr size="1" />'."\n";
 	}
 	?>
