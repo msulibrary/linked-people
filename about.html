@@ -51,7 +51,7 @@ while ($row = $getPerson->fetch_object()) {
   $staff_emailHidden = stripslashes(formatEmailLink($row->staff_email));
   $staff_vita = stripslashes($row->staff_vita);
   $staff_web = stripslashes($row->staff_web);
-  $staff_image = 'http://' . $_SERVER['SERVER_NAME'] . dirname($_SERVER['PHP_SELF']) . '/meta/img/photos/' . stripslashes($row->staff_image);
+  $staff_image = 'https://' . $_SERVER['SERVER_NAME'] . dirname($_SERVER['PHP_SELF']) . '/meta/img/photos/' . stripslashes($row->staff_image);
   $same_as = stripslashes(htmlentities($row->sameAs));
   $same_as2 = stripslashes(htmlentities($row->sameAs2));
   $staff_privacy = $row->staff_privacy;
@@ -146,14 +146,12 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
 </header>
 <main>
   <section>
-  <div typeof="ProfilePage" about="<?php echo 'http://'.$server.$path.'/'.$id; ?>" resource="<?php echo 'http://'.$server.$path.'/about/'.$id;?>">
-    <link rel="rdfa:usesVocabulary" href="http://schema.org/" resource="http://schema.org/" />
-    <meta property="about" content="<?php echo 'http://'.$server.$path.'/about/'.$id; ?>" resource="<?php echo 'http://'.$server.$path.'/about/'.$id;?>" />
+  <div typeof="ProfilePage" about="<?php echo $protocol.$server.$path.'/'.$id; ?>" resource="<?php echo $protocol.$server.$path.'/about/'.$id;?>">
+    <meta property="mainEntity" content="<?php echo $protocol.$server.$path.'/about/'.$id; ?>" resource="<?php echo $protocol.$server.$path.'/about/'.$id;?>" />
     <meta property="thumbnailUrl primaryImageOfPage" content="<?php echo $staff_image; ?>" />
   </div>
   <h2 id="about"><?php echo $staff_name.' - '.$pageTitle; ?></h2>
-  <!--END OF CHANGE MAINHEADING ID -->
-  <div id="person" typeof="Person" about="<?php echo 'http://'.$server.$path.'/about/'.$id; ?>">
+  <div id="person" typeof="Person" about="<?php echo $protocol.$server.$path.'/about/'.$id; ?>">
   <ul class="aboutList">
     <li class="photo"><img property="image" src="<?php echo $staff_image; ?>" alt="photo of <?php echo $staff_name; ?>" /></li>
     <li class="infoContact">
@@ -186,13 +184,13 @@ if (strlen($same_as2) > 3 && strlen($same_as) < 3) {
     <meta property="name" content="Montana State University (MSU) Library" />
     <meta property="sameAs" content="http://www.freebase.com/m/0j3y9r1" />
     <meta property="sameAs" content="https://www.worldcat.org/wcr/organization/data/56245" />
-    <span rel="employee" typeof="schema:Role" resource="<?php echo 'http://'.$server.$path.'/about/'.$id;?>#role">
-      <meta property="url" content="<?php echo 'http://'.$server.$path.'/about/'.$id;?>" />
+    <span property="member employee" typeof="OrganizationRole" resource="<?php echo $protocol.$server.$path.'/about/'.$id;?>#role">
+      <meta property="url" content="<?php echo $protocol.$server.$path.'/about/'.$id;?>" />
       <meta property="name" content="<?php echo $staff_name; ?>" />
-      <meta property="OrganizationRole" content="<?php echo $staff_title; ?>" />
+      <meta property="roleName" content="<?php echo $staff_title; ?>" />
     </span>
   </span>
-  <span id="knows" rel="knows" resource="<?php echo 'http://'.$server.$path.'/about/'.$id; ?>#knows">
+  <span id="knows" rel="knows" resource="<?php echo $protocol.$server.$path.'/about/'.$id; ?>#knows">
 <?php
 //get person's colleagues
 $query = "SELECT person_id,givenName,familyName FROM linked_people.person WHERE staff_status = 'a' AND staff_dept='$staff_dept'";
@@ -258,7 +256,7 @@ if ($getPersonLiaison->num_rows == 0) {
     $object = $row->object;
     $object_url = $row->object_uri;
 ?>
-    <dd><a rel="makesOffer" resource="<?php echo $object_url; ?>" href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/search.html?liaison=<?php echo urlencode($object);?>"><?php echo $object;?></a></dd>
+    <dd><a property="makesOffer" typeof="Offer" resource="<?php echo $object_url; ?>" href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/search.html?liaison=<?php echo urlencode($object);?>"><?php echo $object;?></a></dd>
 <?php
 }
 ?>
@@ -289,7 +287,7 @@ while ($row = $getPersonExpertise->fetch_object()) {
   $object_url = $row->object_uri;
   $url_term = basename($object_url);
 ?>
-    <dd><a rel="Specialty" resource="<?php echo $object_url; ?>" href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/search.html?expertise=<?php echo htmlentities($url_term); ?>"><?php echo $object;?></a></dd>
+    <dd><a property="makesOffer" typeof="Offer" resource="<?php echo $object_url; ?>" href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/search.html?expertise=<?php echo htmlentities($url_term); ?>"><?php echo $object;?></a></dd>
 <?php
 }
 ?>
