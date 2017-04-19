@@ -25,7 +25,7 @@ $fileNameURI = isset($_SERVER['REQUEST_URI']) ? htmlentities(strip_tags($_SERVER
 $fileExtension = isset($_SERVER['PATH_INFO']) ? pathinfo($fileName, PATHINFO_EXTENSION) : null;
 
 //request selected staff data fields
-$query = "SELECT * FROM libstaff.staff WHERE staff_status = 'a' AND staff_id='$id'";
+$query = "SELECT * FROM linked_people.person WHERE staff_status = 'a' AND person_id='$id'";
 $getPerson = $connectLibstaff->query($query);
 
 if ($getPerson->num_rows == 0) {
@@ -35,7 +35,7 @@ if ($getPerson->num_rows == 0) {
 }
 //Display selected staff entry fields in a list
 while ($row = $getPerson->fetch_object()) {
-  $staff_id = stripslashes($row->staff_id);
+  $person_id = stripslashes($row->person_id);
   $staff_fname = stripslashes($row->givenName);
   $staff_lname = stripslashes($row->familyName);
   $staff_name = stripslashes($row->givenName . ' ' . $row->familyName);
@@ -132,11 +132,9 @@ if (strlen($staff_web) > 3) {
       "member": {
         "@id": <?php echo json_encode($protocol.$server.$path.'/'.$id.'#member'); ?>,
         "@type": "OrganizationRole",
-        "member": {
-          "@type": "Person",
-          "@id": <?php echo json_encode($protocol.$server.$path.'/'.$id.'#person'); ?>,
-          "name": "<?php echo $staff_name; ?>"
-        }
+        "sameAs": <?php echo json_encode($protocol.$server.$path.'/'.$id.'#person'); ?>,
+        "name": "<?php echo $staff_name; ?>",
+        "roleName": "<?php echo $staff_title; ?>"
       }
     },
     "address": {
@@ -153,7 +151,7 @@ if (strlen($staff_web) > 3) {
       "colleague": [
 <?php
 //get person's colleagues
-$query = "SELECT staff_id FROM libstaff.staff WHERE staff_status = 'a' AND staff_dept='$staff_dept'";
+$query = "SELECT person_id FROM linked_people.person WHERE staff_status = 'a' AND staff_dept='$staff_dept'";
 $getColleagues = $connectLibstaff->query($query);
 if ($getColleagues->num_rows == 0) {
 ?>
@@ -162,10 +160,10 @@ if ($getColleagues->num_rows == 0) {
 }
 $separator = "";
 while ($row = $getColleagues->fetch_object()) {
-  $staff_id = $row->staff_id;
-  $colleagueURL = json_encode($protocol.$server.$path.'/'.$staff_id);
+  $colleague_id = $row->person_id;
+  $colleague_url = json_encode($protocol.$server.$path.'/'.$colleague_id);
   //print list of colleagues
-  echo $separator.$colleagueURL;
+  echo $separator.$colleague_url;
   $separator = ",\n";
 }
 ?>
@@ -178,11 +176,11 @@ while ($row = $getColleagues->fetch_object()) {
 <?php
 //get person's expertise topics
 $query = "SELECT *
-FROM libstaff.staff, libstaff.create_action, libstaff.create_action_match
-WHERE staff.staff_id = '$id'
+FROM linked_people.person, linked_people.create_action, linked_people.create_action_match
+WHERE person.person_id = '$id'
 AND create_action_match.create_id = create_action.create_id
-AND create_action_match.staff_id = '$id'
-AND staff.staff_status =  'a'";
+AND create_action_match.person_id = '$id'
+AND person.staff_status =  'a'";
 
 $getPersonExpertise = $connectLibstaff->query($query);
 if ($getPersonExpertise->num_rows == 0) {
