@@ -83,10 +83,10 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
       <ul>
       <?php
       //run and hold query data from type table for formats
-      $query = 'SELECT create_id, object, object_uri FROM libstaff.create_action ORDER BY object ASC';
+      $query = 'SELECT create_id, object, object_uri FROM linked_people.create_action ORDER BY object ASC';
       $getExpertiseTopics =  $connectLibstaff->query($query) or die("Error retrieving data from database.");
 
-      //display list of liasion topics for view on public pages
+      //display list of expertise topics for view on public pages
       while ($row = $getExpertiseTopics->fetch_object()) {
         $object_id = $row->create_id;
         $object = $row->object;
@@ -98,7 +98,7 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
 <?php
         } else {
 ?>
-        <li>There are no liaision topics assigned to the databases.</li>
+        <li>There are no expertise topics assigned to the databases.</li>
 <?php
         }
       }
