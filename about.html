@@ -28,7 +28,7 @@ if (isset($_GET['id']) and is_numeric($_GET['id'])) {
 }
 
 //request selected staff data fields
-$query = "SELECT * FROM libstaff.staff WHERE staff_status = 'a' AND staff_id='$id'";
+$query = "SELECT * FROM linked_people.person WHERE staff_status = 'a' AND staff_id='$id'";
 $getPerson = $connectLibstaff->query($query);
 if ($getPerson->num_rows == 0) {
   header("HTTP/1.0 404 Not Found", true, 404);
@@ -208,7 +208,7 @@ if (strlen($same_as2) > 3 && strlen($same_as) < 3) {
   <span id="knows" rel="knows" resource="<?php echo 'http://'.$server.$path.'/about/'.$id; ?>#knows">
 <?php
 //get person's colleagues
-$query = "SELECT staff_id,givenName,familyName FROM libstaff.staff WHERE staff_status = 'a' AND staff_dept='$staff_dept'";
+$query = "SELECT staff_id,givenName,familyName FROM linked_people.person WHERE staff_status = 'a' AND staff_dept='$staff_dept'";
 $getColleagues = $connectLibstaff->query($query);
 if ($getColleagues->num_rows == 0) {
 ?>
@@ -251,11 +251,11 @@ if (!empty($staff_libguides_link)) {
 <?php
 //get person's liaison topics
 $query = "SELECT *
-FROM libstaff.staff, libstaff.interact_action, libstaff.interact_action_match
-WHERE staff.staff_id = '$id'
+FROM linked_people.person, linked_people.interact_action, linked_people.interact_action_match
+WHERE person.staff_id = '$id'
 AND interact_action_match.interact_id = interact_action.interact_id
 AND interact_action_match.staff_id = '$id'
-AND staff.staff_status =  'a'";
+AND person.staff_status =  'a'";
 
 //echo $query;
 
@@ -281,11 +281,11 @@ if ($getPersonLiaison->num_rows == 0) {
 <?php
 //get person's expertise topics
 $query = "SELECT *
-FROM libstaff.staff, libstaff.create_action, libstaff.create_action_match
-WHERE staff.staff_id = '$id'
+FROM linked_people.person, linked_people.create_action, linked_people.create_action_match
+WHERE person.staff_id = '$id'
 AND create_action_match.create_id = create_action.create_id
 AND create_action_match.staff_id = '$id'
-AND staff.staff_status =  'a'";
+AND person.staff_status =  'a'";
 
 //echo $query;
 
