@@ -158,9 +158,7 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
   <h1>Linked People</h1><nav>by <a href="https://www.lib.montana.edu">MSU Library</a></nav>
 </header>
 <main>
-  <a id="mainContent"></a>
-  <!-- Add your site or application content here -->
-  <div id="main">
+  <section>
   <div typeof="ProfilePage" about="<?php echo 'http://'.$server.$path.'/'.$id; ?>" resource="<?php echo 'http://'.$server.$path.'/about/'.$id;?>">
     <link rel="rdfa:usesVocabulary" href="http://schema.org/" resource="http://schema.org/" />
     <meta property="about" content="<?php echo 'http://'.$server.$path.'/about/'.$id; ?>" resource="<?php echo 'http://'.$server.$path.'/about/'.$id;?>" />
@@ -345,7 +343,7 @@ if ($staff_privacy == 'n') {
   </ul>
   </div><!-- end typeof="schema:Person" -->
   <p class="nav"><a class="bck" href="<?php echo $protocol.$server.$path.'/'; ?>index.html">Back to Staff Home page</a></p>
-  </div><!-- end main div -->
+  </section>
 </main>
 <footer>
   <hr class="border-ftr">
