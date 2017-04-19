@@ -6,7 +6,7 @@ echo ("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
 ?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
 <url>
-<?php $indexFile = '/usr/local/apache2/htdocs/linked_people/index.html'; ?>
+<?php $indexFile = '/usr/local/apache2/htdocs/linked-people/index.html'; ?>
         <loc><?php echo 'https://'.$_SERVER['SERVER_NAME'].dirname($_SERVER['PHP_SELF']).'/index.html'; ?></loc>
         <lastmod><?php echo date("Y-m-d\TH:i:sP", filemtime($indexFile)); ?></lastmod>
         <changefreq>monthly</changefreq>
