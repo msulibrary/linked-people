@@ -132,8 +132,8 @@ if (strlen($staff_web) > 3) {
       "member": {
         "@id": <?php echo json_encode($protocol.$server.$path.'/'.$id.'#member'); ?>,
         "@type": "OrganizationRole",
-        "sameAs": <?php echo json_encode($protocol.$server.$path.'/'.$id.'#person'); ?>,
         "name": "<?php echo $staff_name; ?>",
+        "sameAs": <?php echo json_encode($protocol.$server.$path.'/'.$id.'#person'); ?>,
         "roleName": "<?php echo $staff_title; ?>"
       }
     },
