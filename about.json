@@ -25,7 +25,7 @@ $fileNameURI = isset($_SERVER['REQUEST_URI']) ? htmlentities(strip_tags($_SERVER
 $fileExtension = isset($_SERVER['PATH_INFO']) ? pathinfo($fileName, PATHINFO_EXTENSION) : null;
 
 //request selected staff data fields
-$query = "SELECT * FROM linked_people.person WHERE staff_status = 'a' AND person_id='$id'";
+$query = "SELECT * FROM linked_people.person WHERE person_status = 'a' AND person_id='$id'";
 $getPerson = $connectLibstaff->query($query);
 
 if ($getPerson->num_rows == 0) {
@@ -36,25 +36,23 @@ if ($getPerson->num_rows == 0) {
 //Display selected staff entry fields in a list
 while ($row = $getPerson->fetch_object()) {
   $person_id = stripslashes($row->person_id);
-  $staff_fname = stripslashes($row->givenName);
-  $staff_lname = stripslashes($row->familyName);
-  $staff_name = stripslashes($row->givenName . ' ' . $row->familyName);
-  $staff_name_rdf = stripslashes($row->givenName . ' ' . $row->familyName);
-  $staff_title = stripslashes($row->jobTitle);
-  $staff_dept = stripslashes($row->staff_dept);
-  $affiliation = stripslashes($row->affiliation);
-  $staff_room = stripslashes($row->staff_room);
-  $staff_phone = stripslashes($row->staff_phone);
-  $staff_email = stripslashes($row->staff_email);
-  $staff_emailHidden = stripslashes(formatEmailLink($row->staff_email));
-  $staff_vita = stripslashes($row->staff_vita);
-  $staff_web = stripslashes($row->staff_web);
-  $staff_image = $protocol.$server.$path.'/meta/img/photos/'.stripslashes($row->staff_image);
-  $same_as = stripslashes(htmlentities($row->sameAs));
-  $same_as2 = stripslashes(htmlentities($row->sameAs2));
-  $staff_privacy = $row->staff_privacy;
-  $staff_libcal_id = $row->staff_libcal_id;
-  $staff_libguides_link = $row->staff_libguides_link;
+  $person_fname = stripslashes($row->givenName);
+  $person_lname = stripslashes($row->familyName);
+  $person_name = stripslashes($row->givenName . ' ' . $row->familyName);
+  $person_name_rdf = stripslashes($row->givenName . ' ' . $row->familyName);
+  $person_title = stripslashes($row->jobTitle);
+  $person_dept = stripslashes($row->memberOf);
+  $person_affiliation = stripslashes($row->affiliation);
+  $person_room = stripslashes($row->workLocation);
+  $person_phone = stripslashes($row->telephone);
+  $person_email = stripslashes($row->email);
+  $person_emailHidden = stripslashes(formatEmailLink($row->email));
+  $person_vita = stripslashes($row->person_vita);
+  $person_web = stripslashes($row->url);
+  $person_image = $protocol.$server.$path.'/meta/img/photos/'.stripslashes($row->image);
+  $person_identifier = stripslashes(htmlentities($row->identifier));
+  $person_same_as = stripslashes(htmlentities($row->sameAs));
+  $person_privacy = $row->person_privacy;
 ?>
 {
   "@context": "https://schema.org/",
@@ -68,8 +66,8 @@ while ($row = $getPerson->fetch_object()) {
     ], 
     "name": "Staff Directory and Departments - Montana State University (MSU) Library"
   },
-  "name": "About - <?php echo $staff_name; ?>",
-  "description": "Profile page describing <?php echo $staff_name; ?>",
+  "name": "About - <?php echo $person_name; ?>",
+  "description": "Profile page describing <?php echo $person_name; ?>",
   "publisher": {
     "@id": <?php echo json_encode($protocol.$server.$path.'/'.$id.'#organization'); ?>
   },
@@ -105,24 +103,24 @@ while ($row = $getPerson->fetch_object()) {
   "mainEntity": {
     "@id": <?php echo json_encode($protocol.$server.$path.'/'.$id.'#person'); ?>,
     "@type": "Person",
-    "name": "<?php echo $staff_name; ?>",
-    "jobTitle": "<?php echo $staff_title; ?>",
-    "memberOf": "<?php echo $staff_dept; ?>",
-    "email": "<?php echo $staff_email; ?>",
-    "image": <?php echo json_encode($staff_image); ?>,
-    "telephone": "<?php echo $staff_phone; ?>",
+    "name": "<?php echo $person_name; ?>",
+    "jobTitle": "<?php echo $person_title; ?>",
+    "memberOf": "<?php echo $person_dept; ?>",
+    "email": "<?php echo $person_email; ?>",
+    "image": <?php echo json_encode($person_image); ?>,
+    "telephone": "<?php echo $person_phone; ?>",
 <?php
-if (strlen($staff_web) > 3) {
+if (strlen($person_web) > 3) {
 ?>
-    "url": "<?php echo $staff_web; ?>",
+    "url": "<?php echo $person_web; ?>",
 <?php
 }
 ?>
-    "affiliation": "<?php echo $affiliation; ?>",
+    "affiliation": "<?php echo $person_affiliation; ?>",
     "worksFor": {
       "@id": <?php echo json_encode($protocol.$server.$path.'/'.$id.'#organization'); ?>,
       "@type": "EducationalOrganization",
-      "name": "<?php echo $affiliation; ?> Library",
+      "name": "<?php echo $person_affiliation; ?> Library",
       "sameAs": [ 
         <?php echo json_encode('https://dbpedia.org/resource/Montana_State_University_Library'); ?>,
         <?php echo json_encode('http://www.freebase.com/m/0j3y9r1'); ?>,
@@ -132,9 +130,9 @@ if (strlen($staff_web) > 3) {
       "member": {
         "@id": <?php echo json_encode($protocol.$server.$path.'/'.$id.'#member'); ?>,
         "@type": "OrganizationRole",
-        "name": "<?php echo $staff_name; ?>",
+        "name": "<?php echo $person_name; ?>",
         "sameAs": <?php echo json_encode($protocol.$server.$path.'/'.$id.'#person'); ?>,
-        "roleName": "<?php echo $staff_title; ?>"
+        "roleName": "<?php echo $person_title; ?>"
       }
     },
     "address": {
@@ -151,7 +149,7 @@ if (strlen($staff_web) > 3) {
       "colleague": [
 <?php
 //get person's colleagues
-$query = "SELECT person_id FROM linked_people.person WHERE staff_status = 'a' AND staff_dept='$staff_dept'";
+$query = "SELECT person_id FROM linked_people.person WHERE person_status = 'a' AND memberOf='$person_dept'";
 $getColleagues = $connectLibstaff->query($query);
 if ($getColleagues->num_rows == 0) {
 ?>
@@ -180,7 +178,7 @@ FROM linked_people.person, linked_people.create_action, linked_people.create_act
 WHERE person.person_id = '$id'
 AND create_action_match.create_id = create_action.create_id
 AND create_action_match.person_id = '$id'
-AND person.staff_status =  'a'";
+AND person.person_status =  'a'";
 
 $getPersonExpertise = $connectLibstaff->query($query);
 if ($getPersonExpertise->num_rows == 0) {
@@ -203,18 +201,18 @@ while ($row = $getPersonExpertise->fetch_object()) {
     },
     "sameAs" : [
 <?php
-if (strlen($same_as) < 3 && strlen($same_as2) < 3) {
+if (strlen($person_identifier) < 3 && strlen($person_same_as) < 3) {
     echo '"No equivalency mapped for this person."'."\n";
 }
-if (strlen($same_as) > 3 && strlen($same_as2) > 3) {
-    echo json_encode($same_as).",\n";
-    echo json_encode($same_as2);
+if (strlen($person_identifier) > 3 && strlen($person_same_as) > 3) {
+    echo json_encode($person_identifier).",\n";
+    echo json_encode($person_same_as);
 }
-if (strlen($same_as) > 3 && strlen($same_as2) < 3) {
-    echo json_encode($same_as)."\n";
+if (strlen($person_identifier) > 3 && strlen($person_same_as) < 3) {
+    echo json_encode($person_identifier)."\n";
 }
-if (strlen($same_as2) > 3 && strlen($same_as) < 3) {
-    echo json_encode($same_as2)."\n";
+if (strlen($person_same_as) > 3 && strlen($person_identifier) < 3) {
+    echo json_encode($person_same_as)."\n";
 }
 }//end initial while loop
 ?>
