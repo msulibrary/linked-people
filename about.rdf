@@ -28,12 +28,12 @@ if (isset($_GET['id']) and is_numeric($_GET['id'])) {
 <rdf:RDF
   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
   xmlns:schema="http://schema.org/"
-	xmlns:owl="http://www.w3.org/2002/07/owl#"
-	xmlns:dbo="http://dbpedia.org/ontology/"
+  xmlns:owl="http://www.w3.org/2002/07/owl#"
+  xmlns:dbo="http://dbpedia.org/ontology/"
 >
 <?php
-//request selected staff data fields
-$query = "SELECT * FROM linked_people.person WHERE staff_status = 'a' AND person_id='$id'";
+//request selected person data fields
+$query = "SELECT * FROM linked_people.person WHERE person_status = 'a' AND person_id='$id'";
 $getPerson = $connectLibstaff->query($query);
 if ($getPerson->num_rows == 0) {
   header("HTTP/1.0 404 Not Found", true, 404);
@@ -41,53 +41,52 @@ if ($getPerson->num_rows == 0) {
   exit();
 }
 
-
-// store items in array, strip out html tags, generate valid date stamp
+//list person data fields, print out as RDF
 while ($row = $getPerson->fetch_object()) {
 	$person_id = stripslashes($row->person_id);
-	$staff_fname = stripslashes($row->givenName);
-	$staff_lname = stripslashes($row->familyName);
-	$staff_name = stripslashes($row->givenName . ' ' . $row->familyName);
-	$staff_title = stripslashes($row->jobTitle);
-	$staff_dept = stripslashes($row->staff_dept);
-	$affiliation = stripslashes($row->affiliation);
-	$staff_room = stripslashes($row->staff_room);
-	$staff_phone = stripslashes($row->staff_phone);
-	$staff_email = stripslashes($row->staff_email);
-	$staff_vita = stripslashes($row->staff_vita);
-	$staff_web = stripslashes($row->staff_web);
-	$staff_image = 'http://' . $server . $path . '/meta/img/photos/' . stripslashes($row->staff_image);
-	$same_as = htmlentities(stripslashes($row->sameAs));
-	$same_as2 = htmlentities(stripslashes($row->sameAs2));
-	$staff_privacy = $row->staff_privacy;
-	$staff_libcal_id = $row->staff_libcal_id;
+	$person_fname = stripslashes($row->givenName);
+	$person_lname = stripslashes($row->familyName);
+	$person_name = stripslashes($row->givenName . ' ' . $row->familyName);
+	$person_title = stripslashes($row->jobTitle);
+	$person_dept = stripslashes($row->memberOf);
+	$person_affiliation = stripslashes($row->affiliation);
+	$person_room = stripslashes($row->workLocation);
+	$person_phone = stripslashes($row->telephone);
+	$person_email = stripslashes($row->email);
+	$person_vita = stripslashes($row->person_vita);
+	$person_web = stripslashes($row->url);
+	$person_image = $protocol.$server.$path.'/meta/img/photos/'.stripslashes($row->image);
+	$person_identifier = htmlentities(stripslashes($row->identifier));
+	$person_same_as = htmlentities(stripslashes($row->sameAs));
+	$person_privacy = $row->person_privacy;
+	$person_libcal_id = $row->person_libcal_id;
 
 // output to client
 ?>
-  <rdf:Description rdf:about="<?php echo 'http://'.$server.$path.'/'.$id; ?>">
+  <rdf:Description rdf:about="<?php echo $protocol.$server.$path.'/'.$id; ?>">
     <rdf:type rdf:resource="http://schema.org/WebPage"/>
-    <schema:mainContentOfPage rdf:resource="<?php echo 'http://'.$server.$path.'/'.$id.'#person'; ?>"/>
+    <schema:mainContentOfPage rdf:resource="<?php echo $protocol.$server.$path.'/'.$id.'#person'; ?>"/>
   </rdf:Description>
-  <rdf:Description rdf:about="<?php echo 'http://'.$server.$path.'/'.$id.'#person'; ?>">
-    <rdf:type rdf:resource="http://schema.org/Person"/>
-    <schema:address rdf:resource="<?php echo 'http://'.$server.$path.'/'.$id.'#address'; ?>"/>
-    <schema:organization rdf:resource="<?php echo 'http://'.$server.$path.'/'.$id.'#organization'; ?>"/>
-    <schema:name><?php echo $staff_name; ?></schema:name>
-    <schema:jobTitle><?php echo $staff_title; ?></schema:jobTitle>
-    <schema:telephone><?php echo $staff_phone; ?></schema:telephone>
-    <schema:email><?php echo $staff_email; ?></schema:email>
-    <schema:image rdf:resource="<?php echo $staff_image; ?>"/>
+  <rdf:Description rdf:about="<?php echo $protocol.$server.$path.'/'.$id.'#person'; ?>">
+    <rdf:type rdf:resource="https://schema.org/Person"/>
+    <schema:address rdf:resource="<?php echo $protocol.$server.$path.'/'.$id.'#address'; ?>"/>
+    <schema:organization rdf:resource="<?php echo $protocol.$server.$path.'/'.$id.'#organization'; ?>"/>
+    <schema:name><?php echo $person_name; ?></schema:name>
+    <schema:jobTitle><?php echo $person_title; ?></schema:jobTitle>
+    <schema:telephone><?php echo $person_phone; ?></schema:telephone>
+    <schema:email><?php echo $person_email; ?></schema:email>
+    <schema:image rdf:resource="<?php echo $person_image; ?>"/>
 <?php
-if (strlen($staff_web) > 3) {
+if (strlen($person_web) > 3) {
 ?>
-    <schema:url rdf:resource="<?php echo $staff_web; ?>"/>
+    <schema:url rdf:resource="<?php echo $person_web; ?>"/>
 <?php
 }
 ?>
-    <schema:primaryImageOfPage rdf:resource="<?php echo $staff_image; ?>"/>
+    <schema:primaryImageOfPage rdf:resource="<?php echo $person_image; ?>"/>
 <?php
-    //request selected staff data fields
-		$query = "SELECT person_id FROM linked_people.person WHERE staff_status = 'a' AND staff_dept='$staff_dept'";
+    //request selected person data fields
+		$query = "SELECT person_id FROM linked_people.person WHERE person_status = 'a' AND memberOf='$person_dept'";
     $getColleagues = $connectLibstaff->query($query);
 		if ($getColleagues->num_rows == 0) {
 	  	die('<p>Error retrieving colleagues data from database!<br />'.
@@ -96,7 +95,7 @@ if (strlen($staff_web) > 3) {
     while ($row = $getColleagues->fetch_object()) {
         $colleague_id = stripslashes($row->person_id);
 ?>
-    <schema:colleague rdf:resource="<?php echo 'http://'.$server.$path; ?>/<?php echo $colleague_id; ?>"/>
+    <schema:colleague rdf:resource="<?php echo $protocol.$server.$path; ?>/<?php echo $colleague_id; ?>"/>
 <?php
     }
 ?>
@@ -107,15 +106,13 @@ if (strlen($staff_web) > 3) {
 		WHERE person.person_id = '$id'
 		AND create_action_match.create_id = create_action.create_id
 		AND create_action_match.person_id = '$id'
-		AND person.staff_status =  'a'";
-
-    echo $query;
+		AND person.person_status =  'a'";
 
     $getPersonExpertise = $connectLibstaff->query($query);
  
     if ($getPersonExpertise->num_rows == 0) {
 ?>
-    <schema:Specialty>No expertise or skill(s) assigned to this person.</schema:Specialty>
+    <schema:makesOffer>No expertise or skill(s) assigned to this person.</schema:makesOffer>
 <?php
 		}
     while ($row = $getPersonExpertise->fetch_object()) {
@@ -123,52 +120,52 @@ if (strlen($staff_web) > 3) {
 			$object = $row->object;
 			$object_url = $row->object_uri;
 ?>
-    <schema:Specialty><?php echo $object_url; ?></schema:Specialty>
+    <schema:makesOffer><?php echo $object_url; ?></schema:makesOffer>
 <?php
     }
 ?>
-    <schema:affiliation xml:lang="en"><?php echo $affiliation; ?></schema:affiliation>
-    <schema:worksFor xml:lang="en"><?php echo $affiliation; ?></schema:worksFor>
-    <schema:workLocation xml:lang="en"><?php echo $staff_dept; ?></schema:workLocation>
+    <schema:affiliation xml:lang="en"><?php echo $person_affiliation; ?></schema:affiliation>
+    <schema:worksFor xml:lang="en"><?php echo $person_affiliation; ?></schema:worksFor>
+    <schema:memberOf xml:lang="en"><?php echo $person_dept; ?></schema:memberOf>
 <?php
-if (strlen($same_as) > 3 && strlen($same_as2) > 3) {
+if (strlen($person_identifier) > 3 && strlen($person_same_as) > 3) {
 ?>
-    <owl:sameAs><?php echo $same_as; ?></owl:sameAs>
-    <schema:sameAs rdf:resource="<?php echo $same_as; ?>"/>
-    <owl:sameAs><?php echo $same_as2; ?></owl:sameAs>
-    <schema:sameAs rdf:resource="<?php echo $same_as2; ?>"/>
-<?php
-}
-if (strlen($same_as) > 3 && strlen($same_as2) < 3) {
-?>
-    <owl:sameAs><?php echo $same_as; ?></owl:sameAs>
-    <schema:sameAs rdf:resource="<?php echo $same_as; ?>"/>
+    <owl:sameAs><?php echo $person_identifier; ?></owl:sameAs>
+    <schema:sameAs rdf:resource="<?php echo $person_identifier; ?>"/>
+    <owl:sameAs><?php echo $person_same_as; ?></owl:sameAs>
+    <schema:sameAs rdf:resource="<?php echo $person_same_as; ?>"/>
 <?php
 }
-if (strlen($same_as2) > 3 && strlen($same_as) < 3) {
+if (strlen($person_identifier) > 3 && strlen($person_same_as) < 3) {
 ?>
-    <owl:sameAs><?php echo $same_as2; ?></owl:sameAs>
-    <schema:sameAs rdf:resource="<?php echo $same_as2; ?>"/>
+    <owl:sameAs><?php echo $person_identifier; ?></owl:sameAs>
+    <schema:sameAs rdf:resource="<?php echo $person_identifier; ?>"/>
+<?php
+}
+if (strlen($person_same_as) > 3 && strlen($person_identifier) < 3) {
+?>
+    <owl:sameAs><?php echo $person_same_as; ?></owl:sameAs>
+    <schema:sameAs rdf:resource="<?php echo $person_same_as; ?>"/>
 <?php
 }
 ?>
   </rdf:Description>
-  <rdf:Description rdf:about="<?php echo 'http://'.$server.$path.'/'.$id.'#address'; ?>">
-    <rdf:type rdf:resource="http://schema.org/PostalAddress"/>
-    <schema:streetAddress>P.O. Box 173320, Room # <?php echo $staff_room; ?></schema:streetAddress>
+  <rdf:Description rdf:about="<?php echo $protocol.$server.$path.'/'.$id.'#address'; ?>">
+    <rdf:type rdf:resource="https://schema.org/PostalAddress"/>
+    <schema:streetAddress>P.O. Box 173320, Room # <?php echo $person_room; ?></schema:streetAddress>
     <schema:addressLocality>Bozeman</schema:addressLocality>
     <schema:addressRegion>MT</schema:addressRegion>
     <schema:postalCode>59717-3320</schema:postalCode>
   </rdf:Description>
-  <rdf:Description rdf:about="<?php echo 'http://'.$server.$path.'/'.$id.'#organization'; ?>">
-    <schema:member rdf:resource="<?php echo 'http://'.$server.$path.'/'.$id.'#member'; ?>"/>
+  <rdf:Description rdf:about="<?php echo $protocol.$server.$path.'/'.$id.'#organization'; ?>">
+    <schema:member rdf:resource="<?php echo $protocol.$server.$path.'/'.$id.'#member'; ?>"/>
     <schema:name>Montana State University (MSU) Library</schema:name>
     <schema:sameAs rdf:resource="http://www.freebase.com/m/0j3y9r1"/>
-    <rdf:type rdf:resource="http://schema.org/EducationalOrganization"/>
+    <rdf:type rdf:resource="https://schema.org/EducationalOrganization"/>
   </rdf:Description>
-  <rdf:Description rdf:about="<?php echo 'http://'.$server.$path.'/'.$id.'#member'; ?>">
+  <rdf:Description rdf:about="<?php echo $protocol.$server.$path.'/'.$id.'#member'; ?>">
     <rdf:type rdf:resource="http://schema.org/OrganizationRole"/>
-    <schema:member rdf:resource="<?php echo 'http://'.$server.$path.'/'.$id.'#person'; ?>"/>
+    <schema:member rdf:resource="<?php echo $protocol.$server.$path.'/'.$id.'#person'; ?>"/>
   </rdf:Description>
 <?php
 }
