@@ -313,28 +313,28 @@ class QueryData
 			}
 		}
 
-		$queryString = 'SELECT 	staff.staff_id, jobTitle, givenName, familyName, staff_dept, staff_room, staff_phone, staff_email, staff_vita, staff_web, staff_image, staff_privacy, staff_libcal_id	';
+		$queryString = 'SELECT person.person_id, jobTitle, givenName, familyName, memberOf, workLocation, telephone, email, person_vita, url, image, person_privacy, person_libcal_id	';
 
 		
 		if ($this->facet === "topic")
 		{
-			$queryString .= " FROM staff, interact_action, interact_action_match, create_action, create_action_match";
+			$queryString .= " FROM person, interact_action, interact_action_match, create_action, create_action_match";
 		}
 		else if ($element === "liaison")
 		{
-			$queryString .= " FROM staff, interact_action, interact_action_match ";	
+			$queryString .= " FROM person, interact_action, interact_action_match ";	
 		}
 		else if ($element === "expertise")
 		{
-			$queryString .= " FROM staff, create_action, create_action_match ";	
+			$queryString .= " FROM person, create_action, create_action_match ";	
 		}
 		else
 		{
-			$queryString .= " FROM staff ";
+			$queryString .= " FROM person ";
 		}
 
 
-		$queryString .= " WHERE staff.staff_status = 'a' ";
+		$queryString .= " WHERE person.person_status = 'a' ";
 
 		foreach ($this->queryArray as $element => $value) 
 		{
@@ -347,7 +347,7 @@ class QueryData
 				{
 					$value = $this->connectLibstaff->real_escape_string($value);
 
-					$queryString .= "AND MATCH (givenName, familyName, jobTitle, staff_dept) AGAINST ('+$value*' IN BOOLEAN MODE)";
+					$queryString .= "AND MATCH (givenName, familyName, jobTitle, memberOf) AGAINST ('+$value*' IN BOOLEAN MODE)";
 				}
 				else if ($element === "q" && $this->facet === "topic")
 				{
@@ -356,19 +356,19 @@ class QueryData
 					$queryString .= "
 							AND MATCH (create_action.object) AGAINST ('+$value*' IN BOOLEAN MODE)
 							AND create_action_match.create_id = create_action.create_id
-							AND create_action_match.staff_id = staff.staff_id
+							AND create_action_match.person_id = person.person_id
 
 						OR MATCH (interact_action.object) AGAINST ('+$value*' IN BOOLEAN MODE)
 							AND interact_action_match.interact_id = interact_action.interact_id
-							AND interact_action_match.staff_id = staff.staff_id
-							AND staff_status='a'
+							AND interact_action_match.person_id = person.person_id
+							AND person_status='a'
 					";
 				}
 				else if ($element === "team")
 				{
 					$value = $this->connectLibstaff->real_escape_string($value);
 
-					$queryString .= " AND staff_dept LIKE '$value' ";
+					$queryString .= " AND memberOf LIKE '$value' ";
 				}
 				else if ($element === "liaison")
 				{
@@ -377,7 +377,7 @@ class QueryData
 					$queryString .= "
 						AND interact_action.object = '$value'
 						AND interact_action_match.interact_id = interact_action.interact_id
-						AND interact_action_match.staff_id = staff.staff_id
+						AND interact_action_match.person_id = person.person_id
 					";
 				}
 				else if ($element === "expertise")
@@ -388,7 +388,7 @@ class QueryData
 					$queryString .= "
 						AND create_action.object_uri = '$value_url'
 						AND create_action_match.create_id = create_action.create_id
-						AND create_action_match.staff_id = staff.staff_id
+						AND create_action_match.person_id = person.person_id
 					";
 				}
 			}
@@ -417,7 +417,7 @@ class QueryData
 			}
 		}
 
-		$queryString .= "GROUP BY staff.staff_id ORDER BY staff.familyName ASC";
+		$queryString .= "GROUP BY person.person_id ORDER BY person.familyName ASC";
 			
 		$queryString .= " LIMIT $this->start, $this->limit;";
 			
@@ -456,7 +456,7 @@ class QueryData
 		
 		if ($this->facet === "topic")
 		{
-			$queryCountString = "SELECT COUNT(t.staff_id) as matchCount";
+			$queryCountString = "SELECT COUNT(t.person_id) as matchCount";
 		}
 		else
 		{
@@ -467,29 +467,29 @@ class QueryData
 	    {
 			$queryCountString .= " 
 				FROM 
-				(SELECT staff.staff_id 
-				 FROM staff
-				 INNER JOIN create_action_match ON staff.staff_id = create_action_match.staff_id
+				(SELECT person.person_id 
+				 FROM person
+				 INNER JOIN create_action_match ON person.person_id = create_action_match.person_id
 				 INNER JOIN create_action ON create_action_match.create_id = create_action.create_id
-				 LEFT JOIN interact_action_match ON interact_action_match.staff_id = staff.staff_id
+				 LEFT JOIN interact_action_match ON interact_action_match.person_id = person.person_id
 				 LEFT JOIN interact_action ON interact_action_match.interact_id = interact_action.interact_id
 			";
 	    }
 	    else if ($element === "liaison")
 	    {
-	        $queryCountString .= " FROM staff, interact_action, interact_action_match ";
+	        $queryCountString .= " FROM person, interact_action, interact_action_match ";
 	    }
 	    else if ($element === "expertise")
 	    {
-	        $queryCountString .= " FROM staff, create_action, create_action_match ";
+	        $queryCountString .= " FROM person, create_action, create_action_match ";
 	    }
 		else
 		{
-			$queryCountString .= " FROM staff";
+			$queryCountString .= " FROM person";
 		}
 		
 		
-		$queryCountString .= " WHERE staff_status = 'a' ";
+		$queryCountString .= " WHERE person_status = 'a' ";
 		
 
 		$useLike = TRUE;
@@ -504,7 +504,7 @@ class QueryData
 				if ($element === "q" && $this->facet === "keyword")
 				{
 					$value = $this->connectLibstaff->real_escape_string($value);
-                    $queryCountString .= "AND MATCH (givenName, familyName, jobTitle, staff_dept) AGAINST ('+$value*' IN BOOLEAN MODE)";
+                    $queryCountString .= "AND MATCH (givenName, familyName, jobTitle, memberOf) AGAINST ('+$value*' IN BOOLEAN MODE)";
                 }
                 else if ($element === "q" && $this->facet === "topic")
                 {
@@ -512,15 +512,15 @@ class QueryData
                     $queryCountString .= "
 	                    	AND MATCH (create_action.object) AGAINST ('+$value*' IN BOOLEAN MODE)
 							OR MATCH (interact_action.object) AGAINST ('+$value*' IN BOOLEAN MODE)
-							GROUP BY staff.staff_id
-							ORDER BY staff.familyName
+							GROUP BY person.person_id
+							ORDER BY person.familyName
 							) as t
 					";
                 }
                 else if ($element === "team")
                 {
 	                $value = $this->connectLibstaff->real_escape_string($value);
-                    $queryCountString .= " AND staff_dept LIKE '$value' ";
+                    $queryCountString .= " AND memberOf LIKE '$value' ";
                 }
                 else if ($element === "liaison")
                 {
@@ -528,7 +528,7 @@ class QueryData
                     $queryCountString .= "
                         AND interact_action.object = '$value'
                         AND interact_action_match.interact_id = interact_action.interact_id
-                        AND interact_action_match.staff_id = staff.staff_id
+                        AND interact_action_match.person_id = person.person_id
                     ";
                 }
                 else if ($element === "expertise")
@@ -538,7 +538,7 @@ class QueryData
                     $queryCountString .= "
                         AND create_action.object_uri = '$value_url'
                         AND create_action_match.create_id = create_action.create_id
-                        AND create_action_match.staff_id = staff.staff_id
+                        AND create_action_match.person_id = person.person_id
                     ";
 	            }
 			}
@@ -572,10 +572,10 @@ class QueryData
 					}
 				else
 			       {
-				               $queryCountString .= " FROM staff";
-							           }
+				        $queryCountString .= " FROM person";
+					}
 									   
-									   {
+					{
 						$queryCountString .= "$continuation$explodedField = '$value' ";
 					}
 					$continuation = "OR ";
@@ -669,13 +669,13 @@ class QueryData
 			if(func_num_args() == 0) { return ""; }
 
 			// get the e-mail address.
-			$staff_email = func_get_arg(0);
+			$person_email = func_get_arg(0);
 
 			// bounce back if the e-mail address is missing the @ sign.
-			if(!preg_match("/@/", $staff_email)) { return $staff_email; }
+			if(!preg_match("/@/", $person_email)) { return $person_email; }
 
 			// break the address into two pieces, removing any single quotes.
-			$piece = explode("@", preg_replace("/'/", "\\'", $staff_email));
+			$piece = explode("@", preg_replace("/'/", "\\'", $person_email));
 
 			// if they supplied a name get that too.
 			if(func_num_args() == 2) 
@@ -795,10 +795,10 @@ class QueryData
 			$queryData->setStart(isSet($_REQUEST['start']) ? $_REQUEST['start'] : 0);
 			$queryData->setLimit(isSet($_REQUEST['limit']) ? $_REQUEST['limit'] : $recordsPerPage);
 
-			// Perform the query and queryCount
-//echo $queryData->getSqlQueryString() . "\n";
-//echo "</br>";
-//echo $queryData->getSqlQueryCountString() . "\n";
+			// perform the query and queryCount
+            //echo $queryData->getSqlQueryString() . "\n";
+            //echo "</br>";
+            //echo $queryData->getSqlQueryCountString() . "\n";
 			$result = $connectLibstaff->query($queryData->getSqlQueryString()) or die("Data query error");
 			$countResult = $connectLibstaff->query($queryData->getSqlQueryCountString()) or die("Count query error");
 			$count = $countResult->fetch_object();
@@ -840,7 +840,7 @@ class QueryData
 						}
 
 						$prevLink = "<a class=\"bck\" href=\"./search.php?{$queryData->getQueryString()}&start=$prevStart&limit=$prevGroup\">" .
-									"View previous $prevGroup result" . (($prevGroup == 1) ? "" : "s") . "</a>&nbsp;&nbsp;&nbsp;";
+						"View previous $prevGroup result" . (($prevGroup == 1) ? "" : "s") . "</a>&nbsp;&nbsp;&nbsp;";
 					}
 
 					// create a link to the next items if there are more items to display
@@ -862,83 +862,89 @@ class QueryData
 				// display links to more items at top of results page if there are more than $limit items
 				if ($prevLink != "" || $nextLink != "") 
 				{
-					echo "<p class=\"nav\">";
-					echo "$prevLink$nextLink";
-					echo "</p>";
+?>
+					<p class="nav">
+					<?php echo $prevLink.$nextLink; ?>
+					</p>
+<?php
 				}
 
 				// display all summary information about matching item(s)
-				while ($record = $result->fetch_object()) 
+				while ($row = $result->fetch_object()) 
 				{
-//					echo "In fetch object while loop.\n";
-					$staff_id = $record->staff_id;
-				//	$identifier = $record->identifier;
-					$staff_title = stripslashes($record->jobTitle);
-					$staff_name = html_entity_decode(stripslashes($record->givenName . ' ' . $record->familyName));
-					$staff_dept = stripslashes($record->staff_dept);
-					$staff_room = $record->staff_room;
-					$staff_phone = $record->staff_phone;
-					$staff_email = $record->staff_email;
-					$staff_vita = $record->staff_vita;
-					$staff_web = $record->staff_web;
-					$staff_image = 'http://' . $_SERVER['SERVER_NAME'] . dirname($_SERVER['PHP_SELF']) . '/meta/img/photos/' . $record->staff_image;
-					$staff_privacy = $record->staff_privacy;
-					$staff_libcal_id = $record->staff_libcal_id;
+					$person_id = $row->person_id;
+					$person_title = stripslashes($row->jobTitle);
+					$person_name = html_entity_decode(stripslashes($row->givenName . ' ' . $row->familyName));
+					$person_dept = stripslashes($row->memberOf);
+					$person_room = $row->workLocation;
+					$person_phone = $row->telephone;
+					$person_email = $row->email;
+					$person_vita = $row->person_vita;
+					$person_web = $row->url;
+					$person_image = 'https://' . $_SERVER['SERVER_NAME'] . dirname($_SERVER['PHP_SELF']) . '/meta/img/photos/' . $row->image;
+					$person_privacy = $row->person_privacy;
+					$person_libcal_id = $row->person_libcal_id;
 
-					// get object number
-				//	$path = explode('/', $record->identifier);
-				//	$filename = $path[count($path)-1];
-				//	$object = strtok($filename, ".");
-
-					// Display the info to the user
-					echo "<ul class='aboutList'>\n";
-					echo "<li class='photo'><a href=\"./about.html?id=$staff_id\"><img alt=\"photo of $staff_name\" src=\"$staff_image\"/></a></li>\n";
-					echo "<li class='infoContact'>\n";
-					echo '<h3><a href="./about.html?id=' . $staff_id . '">' . $staff_name . '</a></h3>' . "\n";
-					echo '<p><span class="about-heading"><strong>Title: </strong></span>' .  $staff_title . '</p>' . "\n";
-					echo '<p><span class="about-heading"><strong>Department: </strong></span>' .  $staff_dept . '</p>' . "\n";
-					echo '<p><span class="about-heading"><strong>Phone: </strong></span>' . $staff_phone . '</p>' . "\n";
-					echo '<p><span class="about-heading"><strong>Email: </strong></span>' .  formatEmailLink($staff_email) . '</p>' . "\n";
-					if (!empty($staff_libcal_id)) {
+					// print HTML to page
+?>
+					<ul class="aboutList">
+					<li class="photo"><a href="./about.html?id=<?php echo $person_id; ?>"><img alt="photo of <?php echo $person_name; ?>" src="<?php echo $person_image; ?>"/></a></li>
+					<li class="infoContact">
+					<h3><a href="./about.html?id=<?php echo $person_id; ?>"><?php echo $person_name; ?></a></h3>
+					<p><span class="about-heading"><strong>Title: </strong></span><?php echo $person_title; ?></p>
+					<p><span class="about-heading"><strong>Department: </strong></span><?php echo $person_dept; ?></p>
+					<p><span class="about-heading"><strong>Phone: </strong></span><?php echo $person_phone; ?></p>
+					echo '<p><span class="about-heading"><strong>Email: </strong></span><?php echo formatEmailLink($person_email); ?></p>
+<?php
+					if (!empty($person_libcal_id)) {
 ?>
 					<p>
-						<span class="about-heading"><strong>Calendar: </strong></span>
-						<a href="http://calendar.lib.montana.edu/appointment/<?php echo $staff_libcal_id; ?>" onclick="javascript:void window.open('http://calendar.lib.montana.edu/appointment/<?php echo $staff_libcal_id; ?>','1364572273698','width=820,height=600');return false;">Schedule Appointment</a>
+					<span class="about-heading"><strong>Calendar: </strong></span>
+					<a href="http://calendar.lib.montana.edu/appointment/<?php echo $person_libcal_id; ?>" onclick="javascript:void window.open('http://calendar.lib.montana.edu/appointment/<?php echo $person_libcal_id; ?>','1364572273698','width=820,height=600');return false;">Schedule Appointment</a>
 					</p>
 <?php
 					}
+?>
 
-					echo "</li>\n";
-					echo '<li class="infoLocation">' . "\n";
-					echo '<p><span class="about-heading"><strong>Room: </strong></span>' .  $staff_room . '</p>' . "\n";
-					if (strlen($staff_vita) > 3) {
-						echo '<p><a class="vita" title="vita of ' . $staff_name . '" href="' . $staff_vita . '">Vita</a></p>' . "\n";
+					</li>
+					<li class="infoLocation">
+					<p><span class="about-heading"><strong>Room: </strong></span><?php echo $person_room; ?></p>
+<?php
+					if (strlen($person_vita) > 3) {
+?>
+					<p><a class="vita" title="vita of <?php echo $person_name; ?>" href="<?php echo $person_vita; ?>">Vita</a></p>
+<?php
 					}
-					if(strlen($staff_web) > 3) {
-						echo '<p><a class="homepage" title="homepage of ' . $staff_name . '" href="' . $staff_web . '">Homepage</a></p>' . "\n";
+					if(strlen($person_web) > 3) {
+?>
+					<p><a class="homepage" title="homepage of <?php echo $person_name; ?>" href="<?php echo $person_web; ?>">Homepage</a></p>
+<?php
 					}
-					if($staff_privacy == 'n') {
-						echo '<p><a class="code" title="QR code for ' . $staff_name . '" href="./about.html?id=' . $staff_id . '">Get QR code</a></p>' . "\n";
+					if($person_privacy == 'n') {
+?>
+					<p><a class="code" title="QR code for <?php echo $person_name; ?>" href="./about.html?id=<?php echo $person_id; ?>">Get QR code</a></p>
+<?php
 					}
-					echo "</li>\n";
-					echo "</ul>\n";
+?>
+					</li>
+					</ul>
+<?php
 				}
-
 				// display links to more items at bottom of results page if there are more than $limit items
 				if ($prevLink != "" || $nextLink != "") {
-					echo "<p class=\"nav\">";
-					echo "$prevLink$nextLink";
-					echo "</p>";
+?>
+					<p class="nav">
+					<?php echo $prevLink.$nextLink; ?>
+					</p>
+<?php
 				}
 
 			} // end - if ($numRecords == 0) else
-
-			echo "<p class=\"nav\"><a class=\"bck\" href=\"./index.html\">Back to Homepage</a></p>\n";
-
-
+?>
+                    <p class="nav"><a class="bck" href="./index.html">Back to Homepage</a></p>
+<?php
 		} // end - else // Valid request
 ?>
-
     </section>
   </div>
 </main>
