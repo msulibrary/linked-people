@@ -1,3 +1,13 @@
+<?php
+//get and set url protocol
+$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? 'https://' : 'http://';
+//set and sanitize global variables for URL construction
+$server = isset($_SERVER['SERVER_NAME']) ? htmlentities(strip_tags($_SERVER['SERVER_NAME'])) : null;
+$path = isset($_SERVER['PHP_SELF']) ? htmlentities(strip_tags(dirname($_SERVER['PHP_SELF']))) : null;
+$fileName = isset($_SERVER['SCRIPT_NAME']) ? htmlentities(strip_tags(basename($_SERVER['SCRIPT_NAME']))) : null;
+$fileNameURI = isset($_SERVER['REQUEST_URI']) ? htmlentities(strip_tags($_SERVER['REQUEST_URI'])) : null;
+$fileExtension = isset($_SERVER['PATH_INFO']) ? pathinfo($fileName, PATHINFO_EXTENSION) : null;
+?>
 <!DOCTYPE html>
 <html lang="en-US">
 <head>
@@ -6,7 +16,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>Linked People</title>
 <meta name="description" content="Code prototype for Linked People"/>
-<link rel="canonical" href="ADD-PREFERRED-PAGE-URL-HERE"/>
+<link rel="canonical" href="<?php echo $protocol.$server.$path; ?>/<?php echo $fileName; ?>"/>
 <link rel="stylesheet prefetch" href="https://fonts.googleapis.com/css?family=Oswald"/>
 <style>
 html {-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;box-sizing:border-box;}
@@ -51,7 +61,7 @@ hr {border:0;border-bottom:0 solid #fff;border-top:.0725em solid #c4c4c4;box-siz
 }
 </style>
 </head>
-<body id="page" vocab="https://schema.org/" typeof="CollectionPage" resource="ADD-PREFERRED-PAGE-RESOURCE-URI-HERE">
+<body id="page" vocab="https://schema.org/" typeof="CollectionPage" resource="<?php echo $protocol.$server.$path; ?>/<?php echo $fileName; ?>#page">
 <header>
   <h1>Linked People</h1><nav>by <a href="https://www.lib.montana.edu">MSU Library</a></nav>
 </header>
