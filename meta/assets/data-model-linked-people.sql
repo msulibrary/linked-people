@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS `interact_action_match` (
 -- Table structure for table `person`
 --
 
-CREATE TABLE `person` (
+CREATE TABLE IF NOT EXISTS `person` (
   `person_id` int(6) NOT NULL AUTO_INCREMENT,
   `person_libcal_id` varchar(6) NOT NULL COMMENT 'person ID for external libguides system',
   `familyName` varchar(150) DEFAULT NULL,
