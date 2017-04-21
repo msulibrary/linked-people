@@ -82,11 +82,11 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
       <h2>By Topic</h2>
       <ul>
       <?php
-      //run and hold query data from type table for formats
+      //request expertise topics
       $query = 'SELECT create_id, object, object_uri FROM linked_people.create_action ORDER BY object ASC';
       $getExpertiseTopics =  $connectLibstaff->query($query) or die("Error retrieving data from database.");
 
-      //display list of expertise topics for view on public pages
+      //list expertise topics and print out as HTML
       while ($row = $getExpertiseTopics->fetch_object()) {
         $object_id = $row->create_id;
         $object = $row->object;
@@ -94,7 +94,7 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
         $url_term = basename($object_url);
         if ($getExpertiseTopics->num_rows) {
 ?>
-        <li><a href="./search.php?expertise=<?php echo urlencode($url_term);?>"><?php echo $object; ?></a></li>
+        <li><a href="./search.html?expertise=<?php echo urlencode($url_term);?>"><?php echo $object; ?></a></li>
 <?php
         } else {
 ?>
