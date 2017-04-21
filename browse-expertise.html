@@ -1,4 +1,12 @@
 <?php
+//get and set url protocol
+$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? 'https://' : 'http://';
+//set and sanitize global variables for URL construction
+$server = isset($_SERVER['SERVER_NAME']) ? htmlentities(strip_tags($_SERVER['SERVER_NAME'])) : null;
+$path = isset($_SERVER['PHP_SELF']) ? htmlentities(strip_tags(dirname($_SERVER['PHP_SELF']))) : null;
+$fileName = isset($_SERVER['SCRIPT_NAME']) ? htmlentities(strip_tags(basename($_SERVER['SCRIPT_NAME']))) : null;
+$fileNameURI = isset($_SERVER['REQUEST_URI']) ? htmlentities(strip_tags($_SERVER['REQUEST_URI'])) : null;
+$fileExtension = isset($_SERVER['PATH_INFO']) ? pathinfo($fileName, PATHINFO_EXTENSION) : null;
 //assign value for title of page
 $pageTitle = 'Linked People (Demo) - Expertise';
 //declare filename for additional stylesheet variable - default is "none"
@@ -18,7 +26,7 @@ $customScript[0] = 'none';
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title><?php echo($pageTitle); ?>: Montana State University (MSU) Library</title>
 <meta name="description" content="<?php echo($pageTitle); ?>: Code prototype for Linked People"/>
-<link rel="canonical" href="ADD-PREFERRED-PAGE-URL-HERE"/>
+<link rel="canonical" href="<?php echo $protocol.$server.$path; ?>/<?php echo $fileName; ?>"/>
 <link rel="stylesheet prefetch" href="https://fonts.googleapis.com/css?family=Oswald"/>
 <style>
 html {-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;box-sizing:border-box;}
@@ -71,8 +79,9 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
   }
 }
 ?>
-</head> 
-<body id="page" vocab="https://schema.org/" typeof="AboutPage" resource="ADD-PREFERRED-PAGE-RESOURCE-URI-HERE">
+</head>
+<body id="page" vocab="https://schema.org/" typeof="AboutPage" resource="<?php echo $protocol.$server.$path; ?>/<?php echo $fileName; ?>#page">
+<link property="isPartOf" typeof="CollectionPage" href="<?php echo $protocol.$server.$path; ?>/"/>
 <header>
   <h1>Linked People</h1><nav>by <a href="https://www.lib.montana.edu">MSU Library</a></nav>
 </header>
