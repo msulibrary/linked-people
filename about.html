@@ -147,6 +147,7 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
 <main>
   <section>
   <div typeof="ProfilePage" about="<?php echo $protocol.$server.$path.'/'.$id; ?>" resource="<?php echo $protocol.$server.$path.'/about/'.$id;?>">
+    <link property="isPartOf" typeof="CollectionPage" href="<?php echo $protocol.$server.$path; ?>/"/>
     <meta property="mainEntity" content="<?php echo $protocol.$server.$path.'/about/'.$id; ?>" resource="<?php echo $protocol.$server.$path.'/about/'.$id;?>" />
     <meta property="thumbnailUrl primaryImageOfPage" content="<?php echo $person_image; ?>" />
   </div>
