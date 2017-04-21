@@ -39,7 +39,6 @@ while ($row = $getPerson->fetch_object()) {
   $person_fname = stripslashes($row->givenName);
   $person_lname = stripslashes($row->familyName);
   $person_name = stripslashes($row->givenName . ' ' . $row->familyName);
-  $person_name_rdf = stripslashes($row->givenName . ' ' . $row->familyName);
   $person_title = stripslashes($row->jobTitle);
   $person_dept = stripslashes($row->memberOf);
   $person_affiliation = stripslashes($row->affiliation);

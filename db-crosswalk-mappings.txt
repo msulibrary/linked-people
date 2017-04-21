@@ -1,0 +1,97 @@
+Mapping original staff fields to schema.org person properties
+
+CREATE TABLE `person` (
+  `person_id` int(6) NOT NULL AUTO_INCREMENT,
+  `staff_libcal_id` varchar(6) NOT NULL, -> person_libcal_id
+  `familyName` varchar(150) DEFAULT NULL,
+  `givenName` varchar(75) DEFAULT NULL,
+  `staff_dept` varchar(255) DEFAULT NULL COMMENT ‘person’s department’, -> memberOf
+  `staff_room` varchar(10) DEFAULT 'unassigned' COMMENT ‘person’s room or work address’, -> workLocation
+  `jobTitle` text,
+  `staff_phone` varchar(20) DEFAULT NULL, -> telephone
+  `staff_fax` varchar(20) DEFAULT 'unassigned', -> faxNumber
+  `staff_email` varchar(80) DEFAULT NULL, -> email
+
+DROPPED staff_im
+staff_im	varchar(40)	utf8_general_ci	 -> DROPPED!
+ 
+ `staff_web` varchar(255) DEFAULT NULL COMMENT ‘person’s website’, -> url
+  `staff_vita` varchar(255) DEFAULT NULL COMMENT ‘person’s vita or resume’, -> person_vita
+  `staff_libguides_link` varchar(255) NOT NULL, person_libguides_link
+  `staff_category` varchar(125) DEFAULT NULL COMMENT 'faculty, staff, or student', -> person_category
+  `staff_role` varchar(50) DEFAULT 'unassigned' COMMENT ‘role(s) within organization’, -> potentialAction
+  `staff_primary_liaison` varchar(125) DEFAULT NULL COMMENT ‘primary liaison’, -> makesOffer
+  `staff_secondary_liaison` varchar(125) DEFAULT NULL ‘secondary liaison’, -> makesOffer_secondary
+
+DROPPED provider and producer!
+provider	varchar(255)	utf8_general_ci		Yes	NULL		Change Change	Drop Drop	
+More
+	20	provider2	varchar(255)	utf8_general_ci		Yes	NULL		Change Change	Drop Drop	
+More
+	21	provider3	varchar(255)	utf8_general_ci		Yes	NULL		Change Change	Drop Drop	
+More
+	22	provider4	varchar(255)	utf8_general_ci		Yes	NULL		Change Change	Drop Drop	
+More
+	23	provider5	varchar(255)	utf8_general_ci		Yes	NULL		Change Change	Drop Drop	
+More
+	24	provider6	varchar(255)	utf8_general_ci		Yes	NULL		Change Change	Drop Drop	
+More
+	25	provider7	varchar(255)	utf8_general_ci		Yes	NULL		Change Change	Drop Drop	
+More
+	26	producer	varchar(255)	utf8_general_ci		Yes	NULL		Change Change	Drop Drop	
+More
+	27	producer2	varchar(255)	utf8_general_ci		Yes	NULL		Change Change	Drop Drop	
+More
+	28	producer3	varchar(255)	utf8_general_ci		Yes	NULL		Change Change	Drop Drop	
+More
+	29	producer4
+
+  `affiliation` varchar(255) DEFAULT 'Montana State University (MSU)',
+  `worksFor` varchar(255) DEFAULT 'Montana State University (MSU) Library’, -> NEW!
+  `sameAs` varchar(255) DEFAULT NULL COMMENT ‘primary ID for disambiguation’, -> identifier
+  `sameAs2` varchar(255) DEFAULT NULL COMMENT ‘external resource establishing equivalent relationship’, -> sameAs
+  `additionalType` varchar(255) DEFAULT NULL COMMENT ‘Additional external vocabulary link and value’, -> NEW!
+  `staff_image` varchar(255) DEFAULT NULL, -> image
+  `staff_description` text, -> description
+  `staff_privacy` varchar(10) DEFAULT 'n', -> person_privacy
+  `staff_status` varchar(10) NOT NULL DEFAULT 'a', -> person_status
+  `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`person_id`),
+  FULLTEXT KEY `full_index` (`givenName`,`familyName`,`jobTitle`,`staff_dept`,`staff_description`),
+  FULLTEXT KEY `staff_primary_liaison` (`staff_primary_liaison`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+
+
+NEW TABLE
+
+CREATE TABLE `person` (
+  `person_id` int(6) NOT NULL AUTO_INCREMENT,
+  `person_libcal_id` varchar(6) NOT NULL COMMENT 'person ID for external libguides system',
+  `familyName` varchar(150) DEFAULT NULL,
+  `givenName` varchar(75) DEFAULT NULL,
+  `memberOf` varchar(255) DEFAULT NULL COMMENT 'department of person',
+  `workLocation` varchar(140) DEFAULT 'unassigned' COMMENT 'room or work address for person',
+  `jobTitle` text,
+  `telephone` varchar(20) DEFAULT NULL,
+  `faxNumber` varchar(20) DEFAULT 'unassigned',
+  `email` varchar(80) DEFAULT NULL,
+  `url` varchar(255) DEFAULT NULL COMMENT 'website of person',
+  `person_vita` varchar(255) DEFAULT NULL COMMENT 'vita or resume of person',
+  `person_libguides_link` varchar(255) NOT NULL COMMENT 'link to libguides page for person',
+  `person_category` varchar(125) DEFAULT NULL COMMENT 'faculty, staff, student, etc.',
+  `potentialAction` varchar(50) DEFAULT 'unassigned' COMMENT 'role(s) within organization',
+  `makesOffer` varchar(125) DEFAULT NULL COMMENT 'primary liaison',
+  `makesOffer_secondary` varchar(125) DEFAULT NULL COMMENT 'secondary liaison',
+  `affiliation` varchar(255) DEFAULT 'Montana State University (MSU)' COMMENT 'parent organization',
+  `worksFor` varchar(255) DEFAULT 'Montana State University (MSU) Library' COMMENT 'primary organization',
+  `identifier` varchar(255) DEFAULT NULL COMMENT 'primary ID for disambiguation',
+  `sameAs` varchar(255) DEFAULT NULL COMMENT 'external resource establishing equivalent relationship',
+  `additionalType` varchar(255) DEFAULT NULL COMMENT 'additional external vocabulary link and value',
+  `image` varchar(255) DEFAULT NULL COMMENT 'profile image for person',
+  `description` text COMMENT 'description of the person',
+  `person_privacy` varchar(10) DEFAULT 'n' COMMENT 'admin flag for rule on privacy/visibility on web',
+  `person_status` varchar(10) NOT NULL DEFAULT 'a' COMMENT 'admin flag for whether record is live or hidden',
+  `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`person_id`),
+  FULLTEXT KEY `full_index` (`givenName`,`familyName`,`jobTitle`,`memberOf`,`description`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
