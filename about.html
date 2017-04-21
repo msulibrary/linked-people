@@ -28,7 +28,7 @@ if (isset($_GET['id']) and is_numeric($_GET['id'])) {
 }
 
 //request selected staff data fields
-$query = "SELECT * FROM linked_people.person WHERE staff_status = 'a' AND person_id='$id'";
+$query = "SELECT * FROM linked_people.person WHERE person_status = 'a' AND person_id='$id'";
 $getPerson = $connectLibstaff->query($query);
 if ($getPerson->num_rows == 0) {
   header("HTTP/1.0 404 Not Found", true, 404);
@@ -38,36 +38,35 @@ if ($getPerson->num_rows == 0) {
 //Display selected staff entry fields in a list
 while ($row = $getPerson->fetch_object()) {
   $person_id = stripslashes($row->person_id);
-  $staff_fname = stripslashes($row->givenName);
-  $staff_lname = stripslashes($row->familyName);
-  $staff_name = stripslashes($row->givenName . ' ' . $row->familyName);
-  $staff_name_rdf = stripslashes($row->givenName . ' ' . $row->familyName);
-  $staff_title = stripslashes($row->jobTitle);
-  $staff_dept = stripslashes($row->staff_dept);
-  $affiliation = stripslashes($row->affiliation);
-  $staff_room = stripslashes($row->staff_room);
-  $staff_phone = stripslashes($row->staff_phone);
-  $staff_email = stripslashes($row->staff_email);
-  $staff_emailHidden = stripslashes(formatEmailLink($row->staff_email));
-  $staff_vita = stripslashes($row->staff_vita);
-  $staff_web = stripslashes($row->staff_web);
-  $staff_image = 'https://' . $_SERVER['SERVER_NAME'] . dirname($_SERVER['PHP_SELF']) . '/meta/img/photos/' . stripslashes($row->staff_image);
-  $same_as = stripslashes(htmlentities($row->sameAs));
-  $same_as2 = stripslashes(htmlentities($row->sameAs2));
-  $staff_privacy = $row->staff_privacy;
-  $staff_libcal_id = $row->staff_libcal_id;
-  $staff_libguides_link = $row->staff_libguides_link;
+  $person_fname = stripslashes($row->givenName);
+  $person_lname = stripslashes($row->familyName);
+  $person_name = stripslashes($row->givenName . ' ' . $row->familyName);
+  $person_title = stripslashes($row->jobTitle);
+  $person_dept = stripslashes($row->memberOf);
+  $person_affiliation = stripslashes($row->affiliation);
+  $person_room = stripslashes($row->workLocation);
+  $person_phone = stripslashes($row->telephone);
+  $person_email = stripslashes($row->email);
+  $person_emailHidden = stripslashes(formatEmailLink($row->email));
+  $person_vita = stripslashes($row->person_vita);
+  $person_web = stripslashes($row->url);
+  $person_image = $protocol.$server.$path.'/meta/img/photos/'.stripslashes($row->image);
+  $person_identifier = stripslashes(htmlentities($row->identifier));
+  $person_same_as = stripslashes(htmlentities($row->sameAs));
+  $person_privacy = $row->person_privacy;
+  $person_libcal_id = $row->person_libcal_id;
+  $person_libguides_link = $row->person_libguides_link;
 
   $vcard_raw =
     'BEGIN:VCARD
     VERSION:3.0
-    N:'.$staff_lname.';'.$staff_fname.'
-    FN:'.$staff_name.'
+    N:'.$person_lname.';'.$person_fname.'
+    FN:'.$person_name.'
     ORG:MSU Library
-    TITLE:'.$staff_title.'
-    TEL;TYPE=WORK,VOICE:'.$staff_phone.'
-    EMAIL;TYPE=PREF,INTERNET:'.$staff_email.'
-    URL:'.$staff_web.'
+    TITLE:'.$person_title.'
+    TEL;TYPE=WORK,VOICE:'.$person_phone.'
+    EMAIL;TYPE=PREF,INTERNET:'.$person_email.'
+    URL:'.$person_web.'
     REV:20111013T195243Z
     END:VCARD';
 
@@ -79,9 +78,9 @@ while ($row = $getPerson->fetch_object()) {
 <head>
 <meta charset="utf-8"/>
 <meta content="ie=edge" http-equiv="x-ua-compatible"/>
-<title><?php (empty($staff_name)) ? null : $staff_name; if (strlen($staff_name) < 3 ) { echo $pageTitle; } else { echo $staff_name.' - '.$staff_title.', '.$staff_dept; } ?> - Montana State University (MSU) Library</title>
-<meta content="<?php echo $staff_name.' - '.$pageTitle; ?>" name="description"/>
-<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title><?php (empty($person_name)) ? null : $person_name; if (strlen($person_name) < 3 ) { echo $pageTitle; } else { echo $person_name.' - '.$person_title.', '.$person_dept; } ?> - Montana State University (MSU) Library</title>
+<meta name="description" content="<?php echo $person_name.' - '.$pageTitle; ?>"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
 <?php
 //get default value for id for setting rel=canonical URL
 $fileID = isset($_GET['id']) ? strip_tags((int)$_GET['id']) : null;
@@ -148,52 +147,52 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
   <section>
   <div typeof="ProfilePage" about="<?php echo $protocol.$server.$path.'/'.$id; ?>" resource="<?php echo $protocol.$server.$path.'/about/'.$id;?>">
     <meta property="mainEntity" content="<?php echo $protocol.$server.$path.'/about/'.$id; ?>" resource="<?php echo $protocol.$server.$path.'/about/'.$id;?>" />
-    <meta property="thumbnailUrl primaryImageOfPage" content="<?php echo $staff_image; ?>" />
+    <meta property="thumbnailUrl primaryImageOfPage" content="<?php echo $person_image; ?>" />
   </div>
-  <h2 id="about"><?php echo $staff_name.' - '.$pageTitle; ?></h2>
+  <h2 id="about"><?php echo $person_name.' - '.$pageTitle; ?></h2>
   <div id="person" typeof="Person" about="<?php echo $protocol.$server.$path.'/about/'.$id; ?>">
   <ul class="aboutList">
-    <li class="photo"><img property="image" src="<?php echo $staff_image; ?>" alt="photo of <?php echo $staff_name; ?>" /></li>
+    <li class="photo"><img property="image" src="<?php echo $person_image; ?>" alt="photo of <?php echo $person_name; ?>" /></li>
     <li class="infoContact">
-  <h3 property="name"><?php echo $staff_name; ?></h3>
+  <h3 property="name"><?php echo $person_name; ?></h3>
 <?php
-if (strlen($same_as) > 3 && strlen($same_as2) > 3) {
+if (strlen($person_identifier) > 3 && strlen($person_same_as) > 3) {
 ?>
-  <link rel="sameAs" href="<?php echo $same_as; ?>" resource="<?php echo $same_as; ?>" />
-  <link rel="sameAs" href="<?php echo $same_as2; ?>" resource="<?php echo $same_as2; ?>" />
-<?php
-}
-?>
-<?php
-if (strlen($same_as) > 3 && strlen($same_as2) < 3) {
-?>
-  <link rel="sameAs" href="<?php echo $same_as; ?>" resource="<?php echo $same_as; ?>" />
+  <link rel="sameAs" href="<?php echo $person_identifier; ?>" resource="<?php echo $person_identifier; ?>" />
+  <link rel="sameAs" href="<?php echo $person_same_as; ?>" resource="<?php echo $person_same_as; ?>" />
 <?php
 }
 ?>
 <?php
-if (strlen($same_as2) > 3 && strlen($same_as) < 3) {
+if (strlen($person_identifier) > 3 && strlen($person_same_as) < 3) {
 ?>
-  <link rel="sameAs" href="<?php echo $same_as2; ?>" resource="<?php echo $same_as2; ?>" />
+  <link rel="sameAs" href="<?php echo $person_identifier; ?>" resource="<?php echo $person_identifier; ?>" />
 <?php
 }
 ?>
-  <p><span class="about-heading">Title </span><span property="jobTitle"><?php echo $staff_title; ?></span></p>
-  <p><span class="about-heading">Department </span><a property="workLocation" href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/search.html?team=<?php echo urlencode($staff_dept);?>"><?php echo $staff_dept; ?></a>, <span property="affiliation worksFor memberOf">Montana State University (MSU)</span></p>
-  <span id="role" typeof="Organization" about="<?php echo 'http://'.$server; ?>">
+<?php
+if (strlen($person_same_as) > 3 && strlen($person_identifier) < 3) {
+?>
+  <link rel="sameAs" href="<?php echo $person_same_as; ?>" resource="<?php echo $person_same_as; ?>" />
+<?php
+}
+?>
+  <p><span class="about-heading">Title </span><span property="jobTitle"><?php echo $person_title; ?></span></p>
+  <p><span class="about-heading">Department </span><a property="workLocation" href="<?php echo $path; ?>/search.html?team=<?php echo urlencode($person_dept);?>"><?php echo $person_dept; ?></a>, <span property="affiliation worksFor memberOf">Montana State University (MSU)</span></p>
+  <span id="role" typeof="Organization" about="<?php echo $protocol.$server; ?>" resource="<?php echo $protocol.$server.$path.'/about/'.$id; ?>#organization">
     <meta property="name" content="Montana State University (MSU) Library" />
     <meta property="sameAs" content="http://www.freebase.com/m/0j3y9r1" />
     <meta property="sameAs" content="https://www.worldcat.org/wcr/organization/data/56245" />
     <span property="member employee" typeof="OrganizationRole" resource="<?php echo $protocol.$server.$path.'/about/'.$id;?>#role">
       <meta property="url" content="<?php echo $protocol.$server.$path.'/about/'.$id;?>" />
-      <meta property="name" content="<?php echo $staff_name; ?>" />
-      <meta property="roleName" content="<?php echo $staff_title; ?>" />
+      <meta property="name" content="<?php echo $person_name; ?>" />
+      <meta property="roleName" content="<?php echo $person_title; ?>" />
     </span>
   </span>
   <span id="knows" rel="knows" resource="<?php echo $protocol.$server.$path.'/about/'.$id; ?>#knows">
 <?php
 //get person's colleagues
-$query = "SELECT person_id,givenName,familyName FROM linked_people.person WHERE staff_status = 'a' AND staff_dept='$staff_dept'";
+$query = "SELECT person_id,givenName,familyName FROM linked_people.person WHERE person_status = 'a' AND memberOf='$person_dept'";
 $getColleagues = $connectLibstaff->query($query);
 if ($getColleagues->num_rows == 0) {
 ?>
@@ -210,21 +209,21 @@ while ($row = $getColleagues->fetch_object()) {
 }
 ?>
   </span>
-  <p><span class="about-heading">Phone</span><span><a href="tel:<?php echo $staff_phone; ?>"><?php echo $staff_phone; ?></a></span></p>
-  <p><span class="about-heading">Email</span><span class="email-wrap" property="email"><?php echo formatEmailLink($staff_email); ?></span></p>
-  <p property="address"><span class="about-heading">Room</span><?php echo $staff_room; ?></p>
+  <p><span class="about-heading">Phone</span><span><a href="tel:<?php echo $person_phone; ?>"><?php echo $person_phone; ?></a></span></p>
+  <p><span class="about-heading">Email</span><span class="email-wrap" property="email"><?php echo formatEmailLink($person_email); ?></span></p>
+  <p property="address"><span class="about-heading">Room</span><?php echo $person_room; ?></p>
 <?php
-if (!empty($staff_libcal_id)) {
+if (!empty($person_libcal_id)) {
 ?>
   <p><span class="about-heading">Calendar</span>
-    <a href="http://calendar.lib.montana.edu/appointment/<?php echo $staff_libcal_id; ?>" onclick="javascript:void window.open('http://calendar.lib.montana.edu/appointment/<?php echo $staff_libcal_id; ?>','1364572273698','width=820,height=600');return false;">Schedule Appointment</a>
+    <a href="http://calendar.lib.montana.edu/appointment/<?php echo $person_libcal_id; ?>" onclick="javascript:void window.open('http://calendar.lib.montana.edu/appointment/<?php echo $person_libcal_id; ?>','1364572273698','width=820,height=600');return false;">Schedule Appointment</a>
   </p>
 <?php
 }
-if (!empty($staff_libguides_link)) {
+if (!empty($person_libguides_link)) {
 ?>
   <p><span class="about-heading">Guides</span>
-    <a href="<?php echo $staff_libguides_link; ?>">Subject and Course Help</a>
+    <a href="<?php echo $person_libguides_link; ?>">Subject and Course Help</a>
   </p>
 <?php
 }
@@ -240,9 +239,7 @@ FROM linked_people.person, linked_people.interact_action, linked_people.interact
 WHERE person.person_id = '$id'
 AND interact_action_match.interact_id = interact_action.interact_id
 AND interact_action_match.person_id = '$id'
-AND person.staff_status =  'a'";
-
-//echo $query;
+AND person.person_status =  'a'";
 
 $getPersonLiaison = $connectLibstaff->query($query);
 if ($getPersonLiaison->num_rows == 0) {
@@ -270,9 +267,7 @@ FROM linked_people.person, linked_people.create_action, linked_people.create_act
 WHERE person.person_id = '$id'
 AND create_action_match.create_id = create_action.create_id
 AND create_action_match.person_id = '$id'
-AND person.staff_status =  'a'";
-
-//echo $query;
+AND person.person_status =  'a'";
 
 $getPersonExpertise = $connectLibstaff->query($query);
 if ($getPersonExpertise->num_rows == 0) {
@@ -287,7 +282,7 @@ while ($row = $getPersonExpertise->fetch_object()) {
   $object_url = $row->object_uri;
   $url_term = basename($object_url);
 ?>
-    <dd><a property="makesOffer" typeof="Offer" resource="<?php echo $object_url; ?>" href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/search.html?expertise=<?php echo htmlentities($url_term); ?>"><?php echo $object;?></a></dd>
+    <dd><a property="makesOffer" typeof="Offer" resource="<?php echo $object_url; ?>" href="<?php echo $path; ?>/search.html?expertise=<?php echo htmlentities($url_term); ?>"><?php echo $object;?></a></dd>
 <?php
 }
 ?>
@@ -296,33 +291,33 @@ while ($row = $getPersonExpertise->fetch_object()) {
   <li class="infoLocation">
   <dl class="more-information">
 <?php
-if (strlen($staff_vita) > 3) {
+if (strlen($person_vita) > 3) {
 ?>
     <dt class="about-heading">More Information</dt>
-    <dd><a class="vita" title="vita of <?php echo $staff_name_rdf; ?>" href="<?php echo $staff_vita; ?>">Vita</a></dd>
+    <dd><a class="vita" title="vita of <?php echo $person_name; ?>" href="<?php echo $person_vita; ?>">Vita</a></dd>
 <?php
 }
 ?>
 <?php
-if (strlen($staff_web) > 3) {
+if (strlen($person_web) > 3) {
 ?>
-    <dd><a property="url" resource="<?php echo $staff_web; ?>" class="homepage" title="homepage of <?php echo $staff_name_rdf; ?>" href="<?php echo $staff_web; ?>">Homepage</a></dd>
+    <dd><a property="url" resource="<?php echo $person_web; ?>" class="homepage" title="homepage of <?php echo $person_name; ?>" href="<?php echo $person_web; ?>">Homepage</a></dd>
 <?php
 }
-if ($staff_privacy == 'n') {
+if ($person_privacy == 'n') {
 ?>
     <dd>
     <form action="#" name="embedForm" id="embedForm">
       <label class="embed" for="embed">Get QR Embed Code</label>
-      <input id="embed" name="embed" type="text" onClick="this.select();" onFocus="this.select();" readonly="readonly" value="&lt;img src=&quot;http://chart.apis.google.com/chart?chs=180x180&amp;cht=qr&amp;chld=|0&amp;chl=<?php echo $vcard; ?>&quot; alt=&quot;QR code to contact <?php echo $staff_name; ?>&quot; width=&quot;180&quot; height=&quot;180&quot; /&gt;" />
+      <input id="embed" name="embed" type="text" onClick="this.select();" onFocus="this.select();" readonly="readonly" value="&lt;img src=&quot;http://chart.apis.google.com/chart?chs=180x180&amp;cht=qr&amp;chld=|0&amp;chl=<?php echo $vcard; ?>&quot; alt=&quot;QR code to contact <?php echo $person_name; ?>&quot; width=&quot;180&quot; height=&quot;180&quot; /&gt;" />
     </form>
     </dd>
-    <!--<p><img class="qr-code" src="http://chart.apis.google.com/chart?chs=200x200&cht=qr&chld=|0&chl=<?php echo $vcard; ?>" alt="QR code to contact <?php echo $staff_name; ?>" width="140" height="140" /></p>-->
+    <!--<p><img class="qr-code" src="http://chart.apis.google.com/chart?chs=200x200&cht=qr&chld=|0&chl=<?php echo $vcard; ?>" alt="QR code to contact <?php echo $person_name; ?>" width="140" height="140" /></p>-->
 <?php
 }
 }//end while loop
 ?>
-    <dd><a class="rdf" title="rdf representation of <?php echo $staff_name_rdf; ?>" href="<?php echo $protocol.$server.$path.'/'; ?>about.rdf?id=<?php echo $id; ?>">RDF</a></dd>
+    <dd><a class="rdf" title="rdf representation of <?php echo $person_name; ?>" href="<?php echo $protocol.$server.$path.'/'; ?>about.rdf?id=<?php echo $id; ?>">RDF</a></dd>
   </dl>
   </li>
   </ul>
