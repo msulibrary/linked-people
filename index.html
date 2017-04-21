@@ -59,13 +59,13 @@ hr {border:0;border-bottom:0 solid #fff;border-top:.0725em solid #c4c4c4;box-siz
   	<div class="content">
 		<section>
 		  <h2>Search</h2>
-			<form action="search.html" class="searchPeople" id="search-form" method="get" name="searchform">
-        <input class="text" id="q" maxlength="45" name="q" placeholder="Enter people or topics..." size="35" type="text"> 
+      <form class="search" name="searchform" action="search.html" method="get">
+        <input class="text" type="text" name="q" id="q" maxlength="55" placeholder="Enter people or topics..."/>
         <select name="facet">
           <option id="keyword" name="keyword" selected value="keyword">People</option>
           <option id="topic" name="topic" value="topic">Topics</option>
         </select>
-        <button class="submit" id="submit" name="submit">Search</button>
+        <button class="submit" id="submit" role="button" type="submit">Search</button>
       </form>
 		</section>
 		<section>
