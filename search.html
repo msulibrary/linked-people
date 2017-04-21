@@ -31,7 +31,7 @@ $customScript[0] = 'none';
 <meta http-equiv="x-ua-compatible" content="ie=edge"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title><?php echo($pageTitle); ?>: Montana State University (MSU) Library</title>
-<meta name="description" content="Code prototype for Linked People"/>
+<meta name="description" content="<?php echo($pageTitle); ?>: Code prototype for Linked People"/>
 <link rel="canonical" href="ADD-PREFERRED-PAGE-URL-HERE"/>
 <link rel="stylesheet prefetch" href="https://fonts.googleapis.com/css?family=Oswald"/>
 <style>
@@ -839,7 +839,7 @@ class QueryData
 							$prevStart = 0;
 						}
 
-						$prevLink = "<a class=\"bck\" href=\"./search.php?{$queryData->getQueryString()}&start=$prevStart&limit=$prevGroup\">" .
+						$prevLink = "<a class=\"bck\" href=\"./search.html?{$queryData->getQueryString()}&start=$prevStart&limit=$prevGroup\">" .
 						"View previous $prevGroup result" . (($prevGroup == 1) ? "" : "s") . "</a>&nbsp;&nbsp;&nbsp;";
 					}
 
@@ -849,7 +849,7 @@ class QueryData
 					{
 						$remainingRecords = $numRecords - $nextStart;
 						$nextGroup = ($remainingRecords < $limit) ? $remainingRecords : $limit;
-						$nextLink = "<a class=\"fwd\" href=\"./search.php?{$queryData->getQueryString()}&start=$nextStart&limit=$limit\">" .
+						$nextLink = "<a class=\"fwd\" href=\"./search.html?{$queryData->getQueryString()}&start=$nextStart&limit=$limit\">" .
 								"View next $nextGroup result" . (($nextGroup == 1) ? "" : "s") . "</a>";
 					}
 				}
