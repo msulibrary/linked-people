@@ -93,19 +93,24 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
       <ul>
       <?php
       //request expertise topics
-      $query = 'SELECT create_id, object, object_uri FROM linked_people.create_action ORDER BY object ASC';
+      $query = 'SELECT create_action.object, create_action.object_uri, 
+      COUNT(create_action_match.create_id) as object_count 
+      FROM linked_people.create_action_match 
+      JOIN linked_people.create_action ON (create_action.create_id = create_action_match.create_id)
+      JOIN linked_people.person ON (create_action_match.person_id = person.person_id)
+      GROUP BY create_action.object';   
       $getExpertiseTopics =  $connectLibstaff->query($query) or die("Error retrieving data from database.");
 
       //list expertise topics and print out as HTML
       while ($row = $getExpertiseTopics->fetch_object()) {
-        $object_id = $row->create_id;
         $object = $row->object;
         $object_url = $row->object_uri;
+        $object_count = $row->object_count;
         $url_term = basename($object_url);
         if ($getExpertiseTopics->num_rows) {
 ?>
         <li property="additionalType" resource="<?php echo $object_url; ?>">
-          <a href="./search.html?expertise=<?php echo urlencode($url_term);?>"><?php echo $object; ?></a>
+          <a href="./search.html?expertise=<?php echo urlencode($url_term);?>"><?php echo $object; ?> (<?php echo $object_count; ?>)</a>
           <link property="about" href="https://en.wikipedia.org/wiki/<?php echo str_replace(' ', '_', $object); ?>" />
         </li>
 <?php
