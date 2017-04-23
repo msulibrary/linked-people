@@ -892,7 +892,7 @@ class QueryData
 					$person_email = $row->email;
 					$person_vita = $row->person_vita;
 					$person_web = $row->url;
-					$person_image = 'https://' . $_SERVER['SERVER_NAME'] . dirname($_SERVER['PHP_SELF']) . '/meta/img/photos/' . $row->image;
+					$person_image = $protocol.$server.$path.'/meta/img/photos/'.stripslashes($row->image);
 					$person_privacy = $row->person_privacy;
 					$person_libcal_id = $row->person_libcal_id;
 
@@ -905,7 +905,7 @@ class QueryData
 					<p><span class="about-heading"><strong>Title: </strong></span><?php echo $person_title; ?></p>
 					<p><span class="about-heading"><strong>Department: </strong></span><?php echo $person_dept; ?></p>
 					<p><span class="about-heading"><strong>Phone: </strong></span><?php echo $person_phone; ?></p>
-					echo '<p><span class="about-heading"><strong>Email: </strong></span><?php echo formatEmailLink($person_email); ?></p>
+					<p><span class="about-heading"><strong>Email: </strong></span><?php echo formatEmailLink($person_email); ?></p>
 <?php
 					if (!empty($person_libcal_id)) {
 ?>
