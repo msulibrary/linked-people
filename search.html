@@ -11,8 +11,8 @@ $fileNameURI = isset($_SERVER['REQUEST_URI']) ? htmlentities(strip_tags($_SERVER
 $fileExtension = isset($_SERVER['PATH_INFO']) ? pathinfo($fileName, PATHINFO_EXTENSION) : null;
 
 //set title, description, and keywords
-$pageTitle = 'Linked People (Demo) - Search Results';
-$pageDescription = 'Search results for searching within the Linked People database.';
+$pageTitle = 'Linked People (Demo) - Search';
+$pageDescription = 'Search page and search results for querying the Linked People database.';
 
 //declare filname for additional css - default is "none"
 $customCSS = 'people.css';
@@ -92,9 +92,17 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
   <h1>Linked People</h1><nav>by <a href="https://www.lib.montana.edu">MSU Library</a></nav>
 </header>
 <main>
-	<h1>Search Results</h1>
+	<h1>Search</h1>
   	<div class="content">
-		<section>
+	  <section>
+      <form class="search" name="searchform" action="search.html" method="get">
+        <input class="text" type="text" name="q" id="q" maxlength="55" placeholder="Enter people or topics..."/>
+        <select name="facet">
+          <option id="keyword" name="keyword" selected value="keyword">People</option>
+          <option id="topic" name="topic" value="topic">Topics</option>
+        </select>
+        <button class="submit" id="submit" role="button" type="submit">Search</button>
+      </form>
 <?php
 
 //number of records to display per page
@@ -117,6 +125,7 @@ $queryToModsMap = array (
 	"liaison"  	=> "",
 	"expertise" => ""
 );
+
 // QueryData Class
 class QueryData
 {
@@ -784,10 +793,10 @@ class QueryData
 		elseif ($queryData->getQueryString() == "") 
 		{
 			// no search element found
-			echo "<h2><strong>There is missing information in your request.</strong></h2>";
+			echo "<h2><strong>Are you looking to search?</strong></h2>";
 			echo "<hr />";
-			echo "<h3>Please enter a value for which to search.<br />";
-			echo "<br />Use your browsers <strong>BACK</strong> button and enter the missing information.</h3>";
+			echo "<h3>We don't have your query or are waiting for you to start your search.<br />";
+			echo "<br />Use our search form above to enter the missing information.</h3>";
 		}
 		else 
 		{
