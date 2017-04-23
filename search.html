@@ -827,7 +827,7 @@ class QueryData
 				echo "<h2>Your search for " . $queryData->getSearchTerms() .
 					" resulted in <strong>$numRecords</strong> item" .
 					(($numRecords == 1) ? "" : "s") . ".</h2>\n";
-				echo "<p class=\"nav\"><a class=\"bck\" href=\"./index.html\">Back to Homepage</a></p>";
+				echo "<p class=\"nav\"><a href=\"./search.html\">Run new search?</a> <a class=\"bck\" href=\"./index.html\">Back to Homepage</a></p>";
 
 				$start = $queryData->getStart();
 				$limit = $queryData->getLimit();
@@ -952,7 +952,7 @@ class QueryData
 
 			} // end - if ($numRecords == 0) else
 ?>
-                    <p class="nav"><a class="bck" href="./index.html">Back to Homepage</a></p>
+                    <p class="nav"><a href="./search.html">Run new search?</a> <a class="bck" href="./index.html">Back to Homepage</a></p>
 <?php
 		} // end - else // Valid request
 ?>
