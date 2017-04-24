@@ -33,9 +33,9 @@ html,body {-webkit-font-smoothing:antialiased;background-color:#eee;color:#333;f
 header {background-color:#002a61;color:#fff;line-height:70px;padding:0 70px;width:100%;}
 nav {color:#828282;display:inline;font-size:.7em;padding:0 10px;}
 a {color:#002a61;transition:all .3s;}
-nav a {color:#828282;text-decoration:none;}
-nav a:hover {color:#bebebe;}
-header .nav a,footer .nav a {font-size:14px;vertical-align:middle;}
+nav a {color:#bebebe;text-decoration:none;}
+nav a:hover {text-decoration:underline;}
+header .nav a,footer .nav a {font-size:14px;}
 header .nav a:not(:last-child),footer .nav a:not(:last-child) {border-right:.0725em solid #c4c4c4;margin-right:5px;padding-right:10px;}
 main {/*height:100vh;*/min-height:396px;padding:20px 40px;}
 .content {column-gap:40px;column-width:300px;}
@@ -62,7 +62,8 @@ hr {border:0;border-bottom:0 solid #fff;border-top:.0725em solid #c4c4c4;box-siz
 }
 /*small screen view < 801px (based on 16px browser default)*/
 @media all and (max-width:50.063em) {
-  header {padding:0 45px;}
+  header {line-height:40px;padding:0 45px;}
+  header nav {display:block;padding:0;}
   main {padding-left:15px;padding-right:15px;}
   .content {grid-template-columns: repeat(1, 100%);}
 }
@@ -81,7 +82,8 @@ if ($customCSS = (empty($customCSS)) ? null : $customCSS) {
 <body id="page" vocab="https://schema.org/" typeof="AboutPage" resource="<?php echo $protocol.$server.$path; ?>/<?php echo $fileName; ?>#page">
 <link property="isPartOf" typeof="CollectionPage" href="<?php echo $protocol.$server.$path; ?>/"/>
 <header>
-  <h1>Linked People</h1><nav>by <a href="https://www.lib.montana.edu">MSU Library</a></nav>
+  <h1>Linked People</h1>
+  <nav class="nav"><a href="index.html">Home</a> <a href="search.html">Search</a> <a href="browse-expertise.html">Browse</a></nav>
 </header>
 <main>
   <h1 id="top">Browse Alphabetical List of People</h1>
