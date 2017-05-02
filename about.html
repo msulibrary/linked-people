@@ -10,9 +10,8 @@ $fileExtension = isset($_SERVER['PATH_INFO']) ? pathinfo($fileName, PATHINFO_EXT
 
 //assign value for title of page
 $pageTitle = 'Linked People (Demo) at Your Library';
-
 //declare filename for additional stylesheet variable - default is "none"
-$customCSS[0] = 'main.css';
+$customCSS[0] = 'none';
 //pass database parameters and connect to database
 include_once './meta/assets/database-params.inc';
 //bring special functions and utilities onto page
