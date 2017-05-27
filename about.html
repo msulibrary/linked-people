@@ -156,9 +156,10 @@ if ($customCSS[0] != 'none') {
     <meta property="thumbnailUrl primaryImageOfPage" content="<?php echo $person_image; ?>" />
   </div>
   <div id="person" typeof="Person" about="<?php echo $protocol.$server.$path.'/about/'.$id; ?>">
-  <ul class="aboutList">
-    <li class="photo"><img property="image" src="<?php echo $person_image; ?>" alt="photo of <?php echo $person_name; ?>" /></li>
-    <li class="infoContact">
+  <section>
+    <img class="photo" property="image" src="<?php echo $person_image; ?>" alt="photo of <?php echo $person_name; ?>" />
+  </section>
+  <section>
   <h2 property="name"><?php echo $person_name; ?></h2>
 <?php
 if (strlen($person_identifier) > 3 && strlen($person_same_as) > 3) {
@@ -233,8 +234,8 @@ if (!empty($person_libguides_link)) {
 <?php
 }
 ?>
-  </li>
-  <li class="infoCode">
+  </section>
+  <section>
   <dl class="liaison">
     <dt class="about-heading">Liaison Role(s)</dt>
 <?php
@@ -292,8 +293,8 @@ while ($row = $getPersonExpertise->fetch_object()) {
 }
 ?>
   </dl>
-  </li>
-  <li class="infoLocation">
+  </section>
+  <section>
   <dl class="more-information">
 <?php
 if (strlen($person_vita) > 3) {
@@ -324,10 +325,8 @@ if ($person_privacy == 'n') {
 ?>
     <dd><a class="rdf" title="rdf representation of <?php echo $person_name; ?>" href="<?php echo $protocol.$server.$path.'/'; ?>about.rdf?id=<?php echo $id; ?>">RDF</a></dd>
   </dl>
-  </li>
-  </ul>
+  </section>
   </div><!-- end typeof="schema:Person" -->
-  <p class="nav"><a class="bck" href="<?php echo $protocol.$server.$path.'/'; ?>index.html">Back to Staff Home page</a></p>
   </div><!-- end .content <div> -->
 </main>
 <footer>
