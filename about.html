@@ -215,9 +215,9 @@ while ($row = $getColleagues->fetch_object()) {
 }
 ?>
   </span>
-  <p><span class="about-heading">Phone</span><span><a href="tel:<?php echo $person_phone; ?>"><?php echo $person_phone; ?></a></span></p>
-  <p><span class="about-heading">Email</span><span class="email-wrap" property="email"><?php echo formatEmailLink($person_email); ?></span></p>
-  <p property="address"><span class="about-heading">Room</span><?php echo $person_room; ?></p>
+  <p><span class="about-heading">Phone</span> <a href="tel:<?php echo $person_phone; ?>"><?php echo $person_phone; ?></a></p>
+  <p><span class="about-heading">Email</span> <span property="email"><?php echo formatEmailLink($person_email); ?></span></p>
+  <p property="address"><span class="about-heading">Room</span> <?php echo $person_room; ?></p>
 <?php
 if (!empty($person_libcal_id)) {
 ?>
