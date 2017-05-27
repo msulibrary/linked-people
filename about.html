@@ -148,18 +148,18 @@ if ($customCSS[0] != 'none') {
   <nav class="nav"><a href="index.html">Home</a> <a href="search.html">Search</a> <a href="browse-expertise.html">Browse</a></nav>
 </header>
 <main>
-  <section>
+  <h1><?php echo $person_name.' - '.$pageTitle; ?></h1>
+  <div class="content">
   <div typeof="ProfilePage" about="<?php echo $protocol.$server.$path.'/'.$id; ?>" resource="<?php echo $protocol.$server.$path.'/about/'.$id;?>">
     <link property="isPartOf" typeof="CollectionPage" href="<?php echo $protocol.$server.$path; ?>/"/>
     <meta property="mainEntity" content="<?php echo $protocol.$server.$path.'/about/'.$id; ?>" resource="<?php echo $protocol.$server.$path.'/about/'.$id;?>" />
     <meta property="thumbnailUrl primaryImageOfPage" content="<?php echo $person_image; ?>" />
   </div>
-  <h2 id="about"><?php echo $person_name.' - '.$pageTitle; ?></h2>
   <div id="person" typeof="Person" about="<?php echo $protocol.$server.$path.'/about/'.$id; ?>">
   <ul class="aboutList">
     <li class="photo"><img property="image" src="<?php echo $person_image; ?>" alt="photo of <?php echo $person_name; ?>" /></li>
     <li class="infoContact">
-  <h3 property="name"><?php echo $person_name; ?></h3>
+  <h2 property="name"><?php echo $person_name; ?></h2>
 <?php
 if (strlen($person_identifier) > 3 && strlen($person_same_as) > 3) {
 ?>
@@ -328,7 +328,7 @@ if ($person_privacy == 'n') {
   </ul>
   </div><!-- end typeof="schema:Person" -->
   <p class="nav"><a class="bck" href="<?php echo $protocol.$server.$path.'/'; ?>index.html">Back to Staff Home page</a></p>
-  </section>
+  </div><!-- end .content <div> -->
 </main>
 <footer>
   <hr class="border-ftr">
