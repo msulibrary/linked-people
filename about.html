@@ -183,8 +183,8 @@ if (strlen($person_same_as) > 3 && strlen($person_identifier) < 3) {
 <?php
 }
 ?>
-  <p><span class="about-heading">Title </span><span property="jobTitle"><?php echo $person_title; ?></span></p>
-  <p><span class="about-heading">Department </span><a property="workLocation" href="<?php echo $path; ?>/search.html?team=<?php echo urlencode($person_dept);?>"><?php echo $person_dept; ?></a>, <span property="affiliation worksFor memberOf">Montana State University (MSU)</span></p>
+  <p>Title <span property="jobTitle"><?php echo $person_title; ?></span></p>
+  <p>Department <a property="workLocation" href="<?php echo $path; ?>/search.html?team=<?php echo urlencode($person_dept);?>"><?php echo $person_dept; ?></a>, <span property="affiliation worksFor memberOf">Montana State University (MSU)</span></p>
   <span id="role" typeof="Organization" about="<?php echo $protocol.$server; ?>" resource="<?php echo $protocol.$server.$path.'/about/'.$id; ?>#organization">
     <meta property="name" content="Montana State University (MSU) Library" />
     <meta property="sameAs" content="http://www.freebase.com/m/0j3y9r1" />
@@ -215,20 +215,20 @@ while ($row = $getColleagues->fetch_object()) {
 }
 ?>
   </span>
-  <p><span class="about-heading">Phone</span> <a href="tel:<?php echo $person_phone; ?>"><?php echo $person_phone; ?></a></p>
-  <p><span class="about-heading">Email</span> <span property="email"><?php echo formatEmailLink($person_email); ?></span></p>
-  <p property="address"><span class="about-heading">Room</span> <?php echo $person_room; ?></p>
+  <p>Phone <a href="tel:<?php echo $person_phone; ?>"><?php echo $person_phone; ?></a></p>
+  <p>Email <span property="email"><?php echo formatEmailLink($person_email); ?></span></p>
+  <p property="address">Room <?php echo $person_room; ?></p>
 <?php
 if (!empty($person_libcal_id)) {
 ?>
-  <p><span class="about-heading">Calendar</span>
+  <p>Calendar
     <a href="http://calendar.lib.montana.edu/appointment/<?php echo $person_libcal_id; ?>" onclick="javascript:void window.open('http://calendar.lib.montana.edu/appointment/<?php echo $person_libcal_id; ?>','1364572273698','width=820,height=600');return false;">Schedule Appointment</a>
   </p>
 <?php
 }
 if (!empty($person_libguides_link)) {
 ?>
-  <p><span class="about-heading">Guides</span>
+  <p>Guides
     <a href="<?php echo $person_libguides_link; ?>">Subject and Course Help</a>
   </p>
 <?php
@@ -237,7 +237,7 @@ if (!empty($person_libguides_link)) {
   </section>
   <section>
   <dl class="liaison">
-    <dt class="about-heading">Liaison Role(s)</dt>
+    <dt>Liaison Role(s)</dt>
 <?php
 //get person's liaison topics
 $query = "SELECT *
@@ -265,7 +265,7 @@ if ($getPersonLiaison->num_rows == 0) {
 ?>
   </dl>
   <dl class="expertise">
-  <dt class="about-heading">Expertise and Skill(s)</dt>
+  <dt>Expertise and Skill(s)</dt>
 <?php
 //get person's expertise topics
 $query = "SELECT *
@@ -299,7 +299,7 @@ while ($row = $getPersonExpertise->fetch_object()) {
 <?php
 if (strlen($person_vita) > 3) {
 ?>
-    <dt class="about-heading">More Information</dt>
+    <dt>More Information</dt>
     <dd><a class="vita" title="vita of <?php echo $person_name; ?>" href="<?php echo $person_vita; ?>">Vita</a></dd>
 <?php
 }
