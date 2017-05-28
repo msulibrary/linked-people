@@ -1,0 +1,176 @@
+<?php
+//set correct content-type for json output
+header('Content-Type: application/json');
+
+//pass database parameters and connect to database
+include_once './meta/assets/database-params.inc';
+//bring special functions and utilities onto page
+include './meta/inc/utilities.php';
+
+//check if the $id variable was passed in url, escape the string for mysql, and validate that it is a numeric value - pass id value to select record
+if (isset($_GET['id']) and is_numeric($_GET['id'])) {
+  $id = strip_tags($connectLibstaff->real_escape_string((int)$_GET['id']));
+} else {
+  echo 'Query type not supported.';
+  exit;
+}
+
+//get and set url protocol
+$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? 'https://' : 'http://';
+//set and sanitize global variables for URL construction
+$server = isset($_SERVER['SERVER_NAME']) ? htmlentities(strip_tags($_SERVER['SERVER_NAME'])) : null;
+$path = isset($_SERVER['PHP_SELF']) ? htmlentities(strip_tags(dirname($_SERVER['PHP_SELF']))) : null;
+$fileName = isset($_SERVER['SCRIPT_NAME']) ? htmlentities(strip_tags(basename($_SERVER['SCRIPT_NAME']))) : null;
+$fileNameURI = isset($_SERVER['REQUEST_URI']) ? htmlentities(strip_tags($_SERVER['REQUEST_URI'])) : null;
+$fileExtension = isset($_SERVER['PATH_INFO']) ? pathinfo($fileName, PATHINFO_EXTENSION) : null;
+
+//request selected staff data fields
+$query = "SELECT * FROM linked_people.person WHERE person_status = 'a' AND person_id='$id'";
+$getPerson = $connectLibstaff->query($query);
+
+if ($getPerson->num_rows == 0) {
+  header("HTTP/1.0 404 Not Found", true, 404);
+  readfile("https://lib.montana.edu/error.php");
+  exit();
+}
+//Display selected staff entry fields in a list
+while ($row = $getPerson->fetch_object()) {
+  $person_id = stripslashes($row->person_id);
+  $person_fname = stripslashes($row->givenName);
+  $person_lname = stripslashes($row->familyName);
+  $person_name = stripslashes($row->givenName . ' ' . $row->familyName);
+  $person_title = stripslashes($row->jobTitle);
+  $person_dept = stripslashes($row->memberOf);
+  $person_affiliation = stripslashes($row->affiliation);
+  $person_room = stripslashes($row->workLocation);
+  $person_phone = stripslashes($row->telephone);
+  $person_email = stripslashes($row->email);
+  $person_emailHidden = stripslashes(formatEmailLink($row->email));
+  $person_vita = stripslashes($row->person_vita);
+  $person_web = stripslashes($row->url);
+  $person_image = $protocol.$server.$path.'/meta/img/photos/'.stripslashes($row->image);
+  $person_identifier = stripslashes(htmlentities($row->identifier));
+  $person_same_as = stripslashes(htmlentities($row->sameAs));
+  $person_privacy = $row->person_privacy;
+?>
+{
+  "@context": "https://schema.org/",
+  "@id": <?php echo json_encode($protocol.$server.$path.'/'.$fileName.'?id='.$id); ?>,
+  "@type": "Person",
+  "name": "<?php echo $person_name; ?>",
+  "description": "Description of <?php echo $person_name; ?>'s skills, expertise, and networks",
+  "url": <?php echo json_encode($protocol.$server.$path.'/'.$id); ?>,
+  "jobTitle": "<?php echo $person_title; ?>",
+  "memberOf": "<?php echo $person_dept; ?>",
+  "email": "<?php echo $person_email; ?>",
+  "image": <?php echo json_encode($person_image); ?>,
+  "telephone": "<?php echo $person_phone; ?>",
+<?php
+if (strlen($person_web) > 3) {
+?>
+  "url": "<?php echo $person_web; ?>",
+<?php
+}
+?>
+  "affiliation": "<?php echo $person_affiliation; ?>",
+  "worksFor": {
+    "@id": <?php echo json_encode($protocol.$server.$path.'/'.$id.'#organization'); ?>,
+    "@type": "EducationalOrganization",
+    "name": "<?php echo $person_affiliation; ?> Library",
+    "sameAs": [ 
+      <?php echo json_encode('https://dbpedia.org/resource/Montana_State_University_Library'); ?>,
+      <?php echo json_encode('http://www.freebase.com/m/0j3y9r1'); ?>,
+      <?php echo json_encode('https://www.wikidata.org/entity/Q15255419'); ?>,
+      <?php echo json_encode('https://www.worldcat.org/wcr/organization/data/56245'); ?>
+    ],
+    "member": {
+      "@id": <?php echo json_encode($protocol.$server.$path.'/'.$id.'#member'); ?>,
+      "@type": "OrganizationRole",
+      "name": "<?php echo $person_name; ?>",
+      "sameAs": <?php echo json_encode($protocol.$server.$path.'/'.$id.'#person'); ?>,
+      "roleName": "<?php echo $person_title; ?>"
+    }
+  },
+  "address": {
+    "@id": <?php echo json_encode($protocol.$server.$path.'/'.$id.'#address'); ?>,
+    "@type": "PostalAddress",
+    "streetAddress": "P.O. Box 173320",
+    "addressLocality": "Bozeman",
+    "addressRegion": "MT",
+    "postalCode": "59717-3320"
+  },
+  "knows": {
+    "@id": <?php echo json_encode($protocol.$server.$path.'/'.$id.'#colleague'); ?>,
+    "@type": "Person",
+    "colleague": [
+<?php
+//get person's colleagues
+$query = "SELECT person_id FROM linked_people.person WHERE person_status = 'a' AND memberOf='$person_dept'";
+$getColleagues = $connectLibstaff->query($query);
+if ($getColleagues->num_rows == 0) {
+?>
+    "No colleagues assigned to this person."
+<?php
+}
+$separator = "";
+while ($row = $getColleagues->fetch_object()) {
+  $colleague_id = $row->person_id;
+  $colleague_url = json_encode($protocol.$server.$path.'/'.$colleague_id);
+  //print list of colleagues
+  echo $separator.$colleague_url;
+  $separator = ",\n";
+}
+?>
+    ]
+  },
+  "makesOffer": {
+    "@id": <?php echo json_encode($protocol.$server.$path.'/'.$id.'#offer'); ?>,
+    "@type": "Offer",
+    "category": [
+<?php
+//get person's expertise topics
+$query = "SELECT *
+FROM linked_people.person, linked_people.create_action, linked_people.create_action_match
+WHERE person.person_id = '$id'
+AND create_action_match.create_id = create_action.create_id
+AND create_action_match.person_id = '$id'
+AND person.person_status =  'a'";
+
+$getPersonExpertise = $connectLibstaff->query($query);
+if ($getPersonExpertise->num_rows == 0) {
+?>
+    "No expertise or skill(s) assigned to this person."
+<?php
+}
+$separator = "";
+while ($row = $getPersonExpertise->fetch_object()) {
+  $object_id = $row->create_id;
+  $object = $row->object;
+  $object_url = $row->object_uri;
+  $specialtyURL = json_encode($row->object_uri);
+  //print list of expertise topics
+  echo $separator.$specialtyURL;
+  $separator = ",\n";
+}
+?>
+    ]
+  },
+  "sameAs" : [
+<?php
+if (strlen($person_identifier) < 3 && strlen($person_same_as) < 3) {
+    echo '"No equivalency mapped for this person."'."\n";
+}
+if (strlen($person_identifier) > 3 && strlen($person_same_as) > 3) {
+    echo json_encode($person_identifier).",\n";
+    echo json_encode($person_same_as);
+}
+if (strlen($person_identifier) > 3 && strlen($person_same_as) < 3) {
+    echo json_encode($person_identifier)."\n";
+}
+if (strlen($person_same_as) > 3 && strlen($person_identifier) < 3) {
+    echo json_encode($person_same_as)."\n";
+}
+}//end initial while loop
+?>
+  ]
+}
