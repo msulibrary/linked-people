@@ -55,10 +55,10 @@ while ($row = $getPerson->fetch_object()) {
 ?>
 {
   "@context": "https://schema.org/",
-  "@id": <?php echo json_encode($protocol.$server.$path.'/'.$id); ?>,
+  "@id": "<?php echo $protocol.$server.$path.'/about/'.$id; ?>",
   "@type": "ProfilePage",
   "isPartOf": {
-    "@id": <?php echo json_encode($protocol.$server.$path.'/'); ?>,
+    "@id": "<?php echo $protocol.$server.$path.'/'; ?>",
     "@type": [
       "Website", 
       "CollectionPage"
@@ -68,14 +68,14 @@ while ($row = $getPerson->fetch_object()) {
   "name": "About - <?php echo $person_name; ?>",
   "description": "Profile page describing <?php echo $person_name; ?>",
   "publisher": {
-    "@id": <?php echo json_encode($protocol.$server.$path.'/'.$id.'#organization'); ?>
+    "@id": "<?php echo $protocol.$server.$path.'/about/'.$id.'#organization'; ?>"
   },
   "reviewedBy": {
-    "@id": <?php echo json_encode($protocol.$server.$path.'/'.$id.'#organization'); ?>
+    "@id": "<?php echo $protocol.$server.$path.'/about/'.$id.'#organization'; ?>"
   },
   "license": "https://creativecommons.org/licenses/by-nc-sa/3.0/us/deed.en_US",
-  "url": <?php echo json_encode($protocol.$server.$path.'/'.$id); ?>,
-  "significantLink": <?php echo json_encode($protocol.$server.$path.'/'.$id); ?>,
+  "url": "<?php echo $protocol.$server.$path.'/about/'.$id; ?>",
+  "significantLink": "<?php echo $protocol.$server.$path.'/about/'.$id; ?>",
   "breadcrumb": {
     "@type": "BreadcrumbList",
     "itemListElement":[
@@ -84,7 +84,7 @@ while ($row = $getPerson->fetch_object()) {
       "position": "1",
       "item": {
         "@type": "WebSite",
-        "@id": <?php echo json_encode($protocol.$server.'/'); ?>,
+        "@id": "<?php echo $protocol.$server.'/'; ?>",
         "name": "Home"
       }
     },
@@ -93,20 +93,20 @@ while ($row = $getPerson->fetch_object()) {
       "position": "2",
       "item": {
         "@type": "WebPage",
-        "@id": <?php echo json_encode($protocol.$server.$path.'/'); ?>,
+        "@id": "<?php echo $protocol.$server.$path.'/'; ?>",
         "name": "People"
       }
     }
     ]
   },
   "mainEntity": {
-    "@id": <?php echo json_encode($protocol.$server.$path.'/'.$id.'#person'); ?>,
+    "@id": "<?php echo $protocol.$server.$path.'/about/'.$id.'#person'; ?>",
     "@type": "Person",
     "name": "<?php echo $person_name; ?>",
     "jobTitle": "<?php echo $person_title; ?>",
     "memberOf": "<?php echo $person_dept; ?>",
     "email": "<?php echo $person_email; ?>",
-    "image": <?php echo json_encode($person_image); ?>,
+    "image": "<?php echo $person_image; ?>",
     "telephone": "<?php echo $person_phone; ?>",
 <?php
 if (strlen($person_web) > 3) {
@@ -117,25 +117,25 @@ if (strlen($person_web) > 3) {
 ?>
     "affiliation": "<?php echo $person_affiliation; ?>",
     "worksFor": {
-      "@id": <?php echo json_encode($protocol.$server.$path.'/'.$id.'#organization'); ?>,
+      "@id": "<?php echo $protocol.$server.$path.'/about/'.$id.'#organization'; ?>",
       "@type": "EducationalOrganization",
       "name": "<?php echo $person_affiliation; ?> Library",
       "sameAs": [ 
-        <?php echo json_encode('https://dbpedia.org/resource/Montana_State_University_Library'); ?>,
-        <?php echo json_encode('http://www.freebase.com/m/0j3y9r1'); ?>,
-        <?php echo json_encode('https://www.wikidata.org/entity/Q15255419'); ?>,
-        <?php echo json_encode('https://www.worldcat.org/wcr/organization/data/56245'); ?>
+        "<?php echo 'https://dbpedia.org/resource/Montana_State_University_Library'; ?>",
+        "<?php echo 'http://www.freebase.com/m/0j3y9r1'; ?>",
+        "<?php echo 'https://www.wikidata.org/entity/Q15255419'; ?>",
+        "<?php echo 'https://www.worldcat.org/wcr/organization/data/56245'; ?>"
       ],
       "member": {
-        "@id": <?php echo json_encode($protocol.$server.$path.'/'.$id.'#member'); ?>,
+        "@id": "<?php echo $protocol.$server.$path.'/about/'.$id.'#member'; ?>",
         "@type": "OrganizationRole",
         "name": "<?php echo $person_name; ?>",
-        "sameAs": <?php echo json_encode($protocol.$server.$path.'/'.$id.'#person'); ?>,
+        "sameAs": "<?php echo $protocol.$server.$path.'/about/'.$id.'#person'; ?>",
         "roleName": "<?php echo $person_title; ?>"
       }
     },
     "address": {
-      "@id": <?php echo json_encode($protocol.$server.$path.'/'.$id.'#address'); ?>,
+      "@id": "<?php echo $protocol.$server.$path.'/about/'.$id.'#address'; ?>",
       "@type": "PostalAddress",
       "streetAddress": "P.O. Box 173320",
       "addressLocality": "Bozeman",
@@ -143,7 +143,7 @@ if (strlen($person_web) > 3) {
       "postalCode": "59717-3320"
     },
     "knows": {
-      "@id": <?php echo json_encode($protocol.$server.$path.'/'.$id.'#colleague'); ?>,
+      "@id": "<?php echo $protocol.$server.$path.'/'.$id.'#colleague'; ?>",
       "@type": "Person",
       "colleague": [
 <?php
@@ -158,16 +158,16 @@ if ($getColleagues->num_rows == 0) {
 $separator = "";
 while ($row = $getColleagues->fetch_object()) {
   $colleague_id = $row->person_id;
-  $colleague_url = json_encode($protocol.$server.$path.'/'.$colleague_id);
+  $colleague_url = $protocol.$server.$path.'/about/'.$colleague_id;
   //print list of colleagues
-  echo $separator.$colleague_url;
+  echo $separator.'"'.$colleague_url.'"';
   $separator = ",\n";
 }
 ?>
       ]
     },
     "makesOffer": {
-      "@id": <?php echo json_encode($protocol.$server.$path.'/'.$id.'#offer'); ?>,
+      "@id": "<?php echo $protocol.$server.$path.'/about/'.$id.'#offer'; ?>",
       "@type": "Offer",
       "category": [
 <?php
@@ -187,12 +187,11 @@ if ($getPersonExpertise->num_rows == 0) {
 }
 $separator = "";
 while ($row = $getPersonExpertise->fetch_object()) {
-  $object_id = $row->create_id;
-  $object = $row->object;
-  $object_url = $row->object_uri;
-  $specialtyURL = json_encode($row->object_uri);
+  $expertise_id = $row->create_id;
+  $expertise = $row->object;
+  $expertise_url = $row->object_uri;
   //print list of expertise topics
-  echo $separator.$specialtyURL;
+  echo $separator.'"'.$expertise_url.'"';
   $separator = ",\n";
 }
 ?>
@@ -204,14 +203,14 @@ if (strlen($person_identifier) < 3 && strlen($person_same_as) < 3) {
     echo '"No equivalency mapped for this person."'."\n";
 }
 if (strlen($person_identifier) > 3 && strlen($person_same_as) > 3) {
-    echo json_encode($person_identifier).",\n";
-    echo json_encode($person_same_as);
+    echo '"'.$person_identifier.'"'.",\n";
+    echo '"'.$person_same_as.'"';
 }
 if (strlen($person_identifier) > 3 && strlen($person_same_as) < 3) {
-    echo json_encode($person_identifier)."\n";
+    echo '"'.$person_identifier.'"'."\n";
 }
 if (strlen($person_same_as) > 3 && strlen($person_identifier) < 3) {
-    echo json_encode($person_same_as)."\n";
+    echo '"'.$person_same_as.'"'."\n";
 }
 }//end initial while loop
 ?>
